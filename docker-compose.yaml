@@ -1,0 +1,27 @@
+version: "2.1"
+services:
+  # cityverse-ui:
+  #   container_name: cityverse-ui
+  #   restart: always
+  #   build: ./cityverse-ui
+  #   env_file:
+  #     - ./cityverse-ui/.env
+  #   ports:
+  #     - 80:80
+
+  # cityverse-neptune-api:
+  #   container_name: cityverse-neptune-api
+  #   build: ./cityverse-neptune-api
+  #   ports:
+  #     - "5000:5000"
+  #   env_file:
+  #     - ./cityverse-neptune-api/.env
+
+  cityverse-dynamo-api:
+    container_name: cityverse-dynamo-api
+    build: ./cityverse-dynamo-api
+    ports:
+      - "5001:5001"
+    env_file:
+      - ./cityverse-dynamo-api/.env
+    
