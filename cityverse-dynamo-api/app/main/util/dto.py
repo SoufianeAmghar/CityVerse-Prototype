@@ -9,8 +9,8 @@ class UserDto:
         'password': fields.String(required=True, description='User password'),
         'created_on': fields.String(description='Created on'),
         'modified_on': fields.String(description='Modified on'),
-        # 'admin': fields.Boolean(description='Admin status'),
-        # 'role': fields.String(description='User role'),
+        'is_creator': fields.Boolean(description='Content creator or not'),
+        'interest_points': fields.List(fields.Raw, description='Points of interest', allow_null=True),
         'id': fields.String(description='User Identifier')
     })
 
@@ -19,6 +19,13 @@ class UserDto:
         'size': fields.Integer,
         'total': fields.Integer,
         'content': fields.List(fields.Nested(user)),
+    })
+
+class AuthDto:
+    api = Namespace('auth', description='authentication related operations')
+    user_auth = api.model('auth_details', {
+        'email': fields.String(required=True, description='The email address'),
+        'password': fields.String(required=True, description='The user password '),
     })
 
 

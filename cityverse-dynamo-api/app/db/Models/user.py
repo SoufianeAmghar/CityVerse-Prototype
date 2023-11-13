@@ -1,15 +1,15 @@
 import datetime
 import jwt
 from app.db.Models.black_list_token import BlacklistToken  # Ensure the correct import path
-from app.db.document import Document
+from app.db.dynamodb_document import Document
 from app.main import flask_bcrypt
 from app.main.config import key
 
 class User(Document):
-    __TABLE_NAME__ = "users"  # Specify the DynamoDB table name
+    __TABLE_NAME__ = "User"  # Specify the DynamoDB table name
 
-    def __init__(self, table_name):
-        super().__init__(table_name)
+    def __init__(self, table_name='User', **kwargs):
+        super().__init__(table_name=table_name, **kwargs)
 
     email = None
     password_hash = None
@@ -51,11 +51,10 @@ class User(Document):
 
     @staticmethod
     def decode_auth_token(auth_token, table_name):
-        dynamodb_client = boto3.client('dynamodb')
 
         try:
             payload = jwt.decode(auth_token, key)
-            is_blacklisted_token = BlacklistToken.check_blacklist(auth_token, table_name)
+            is_blacklisted_token = BlacklistToken.check_blacklist(dict(token=payload['sub']), table_name)
             if is_blacklisted_token:
                 return 'Token blacklisted. Please log in again.'
             else:
