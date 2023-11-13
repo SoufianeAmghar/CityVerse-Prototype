@@ -1,6 +1,9 @@
 import boto3
 from botocore.exceptions import NoCredentialsError
 import logging
+import bcrypt
+from app.main.util.strings import generate_id
+import json
 
 # Set up logging configuration
 logging.basicConfig(
@@ -8,12 +11,15 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
+
 class Document:
 
     __TABLE_NAME__ = None
 
-    def __init__(self, **kwargs):
+    def __init__(self, table_name=None, **kwargs):
         self._id = None
+        self.__TABLE_NAME__ = table_name or self.__TABLE_NAME__
+
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -25,28 +31,25 @@ class Document:
     def id(self, value):
         self._id = value
 
-    def save(self, dynamodb_client=None):
-        if not dynamodb_client:
-            dynamodb_client = boto3.client('dynamodb')
+    def save(self, item):
+        dynamodb_resource = boto3.resource('dynamodb')
 
-        # Generate a unique ID (assuming generate_id is your custom function)
-        self._id = generate_id()
 
-        table = dynamodb_client.Table(self.__TABLE_NAME__)
-        item = self.to_dict()
-        item['_id'] = self._id
-        response = table.put_item(Item=item)
-        return self
+        table = dynamodb_resource.Table(self.__TABLE_NAME__)
+
+        table.put_item(Item=item)
 
     def load(self, dynamodb_client=None, query=None):
         if not dynamodb_client:
             dynamodb_client = boto3.client('dynamodb')
 
         if not query:
-            query = {'_id': self._id}
+            query = {'id': {'S': self._id}}
 
-        table = dynamodb_client.Table(self.__TABLE_NAME__)
-        response = table.get_item(Key={'_id': self._id})
+        response = dynamodb_client.get_item(
+                TableName=self.__TABLE_NAME__,
+                Key=query  
+            )
 
         item = response.get('Item')
         if item:
@@ -55,15 +58,15 @@ class Document:
             self._id = None
         return self
 
-    def get_item(self,id):
+    def get_item(self, id):
         dynamodb_client = boto3.client('dynamodb')
-        
+
         try:
             response = dynamodb_client.get_item(
                 TableName=self.__TABLE_NAME__,
                 Key={'id': {'S': id}}  # Pass the primary key as a dictionary
             )
-            
+
             item = response.get('Item')
             if item:
                 return item
@@ -71,9 +74,28 @@ class Document:
                 return None
         except Exception as e:
             # Handle any exceptions or errors here
-            logging.info(f"Error: {e}")
+            logging.error(f"Error: {e}")
             return None
+    
+    def query(self, index, condition, value):
+        dynamodb = boto3.resource('dynamodb')
+        table = dynamodb.Table(self.__TABLE_NAME__)
 
+        # Ensure that value is a dictionary
+        if not isinstance(value, dict):
+            raise ValueError("The 'value' parameter must be a dictionary.")
+
+        response = table.query(
+            IndexName=index,
+            KeyConditionExpression=condition,
+            ExpressionAttributeValues=value
+        )
+
+        
+
+        items = response.get('Items', [])
+
+        return items if items else None
 
 
     def delete(self, dynamodb_client=None):
@@ -91,12 +113,16 @@ class Document:
         return {}
 
     def from_dict(self, d):
-        if d:
-            for key, value in d.items():
+     if d:
+        for key, value in d.items():
+            if key == 'password':
+                # Handle password separately
+                self.password_hash = bcrypt.hashpw(str(value).encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            else:
                 setattr(self, key, value)
-        else:
-            self._id = None
-        return self
+     else:
+        self._id = None
+     return self
 
     def get_all(self, dynamodb_client=None):
         if not dynamodb_client:
@@ -104,9 +130,8 @@ class Document:
 
         table = dynamodb_client.Table(self.__TABLE_NAME__)
 
-
         response = table.scan()
-        
+
         return response.get('Items', [])
 
     @classmethod
