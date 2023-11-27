@@ -1,5 +1,5 @@
 # Use an official Python runtime as the base image
-FROM rappdw/docker-java-python:latest
+FROM python:3.8
 
 # SETUP PYTHON ENV
 RUN mkdir -p /usr/src/app
