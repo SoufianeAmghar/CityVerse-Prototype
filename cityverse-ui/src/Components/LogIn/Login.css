@@ -1,0 +1,66 @@
+.bg-video {
+  background-image: url('../../Asset/rose.png');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: white;
+  font-family: "Avenir Medium", sans-serif;
+}
+
+.login {
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+  }
+  .login_flex {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  .left_panel {
+    background:  #08089C;
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 50px;
+    height: 100%;
+  }
+  
+  .left_panel > h5 {
+    color: white;
+    font-size: 1.5rem !important;
+    margin-bottom: 20px;
+  }
+  
+  .left_panel > h4 {
+    color: #ddd;
+  }
+  
+  .right_panel {
+    width: 100%;
+    height: 100%;
+    background-color: #F4F6FC;
+    gap: 20px;
+    flex: 7;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 50px;
+  }
+  
+  .login_field {
+    width: 350px;
+  }
+  #start_btn {
+    margin-top: 20px;
+    
+  }
