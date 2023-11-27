@@ -10,6 +10,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
+    SECRET_KEY = os.getenv('SECRET_KEY', 'my_precious_secret_key')
     DEBUG = False
     UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', 'CityVerse-data')
 
@@ -42,3 +43,4 @@ config_by_name = dict(
     prod=ProductionConfig
 )
 
+key = Config.SECRET_KEY
