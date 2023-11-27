@@ -10,9 +10,8 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
-    SECRET_KEY = os.getenv('SECRET_KEY', 'my_precious_secret_key')
     DEBUG = False
-    UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', 'LVMH-data')
+    UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', 'CityVerse-data')
 
     # Set the AWS DynamoDB configuration
     AWS_ACCESS_KEY_ID = AWS_ACCESS_KEY_ID
@@ -31,7 +30,6 @@ class TestingConfig(Config):
 
 class ProductionConfig(Config):
     DEBUG = False
-    SECRET_KEY = os.getenv('SECRET_KEY')
 
     # Set the AWS DynamoDB configuration
     AWS_ACCESS_KEY_ID = AWS_ACCESS_KEY_ID
@@ -44,4 +42,3 @@ config_by_name = dict(
     prod=ProductionConfig
 )
 
-key = Config.SECRET_KEY
