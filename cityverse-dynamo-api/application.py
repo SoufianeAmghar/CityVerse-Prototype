@@ -1,12 +1,13 @@
 import os
 import unittest
+from app.main import create_app
 
 from flask import Flask
 from flask_script import Manager
 from app.main.service.startup_service import save_user_up
 
 # Create a Flask app instance
-app = Flask(__name__)
+app = create_app(os.getenv('APP_ENV') or 'dev')
 
 # Import your blueprint
 from app import blueprint
