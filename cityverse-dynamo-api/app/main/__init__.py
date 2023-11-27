@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
-import boto3
 
 from .config import config_by_name
 
