@@ -3,6 +3,7 @@ from flask_restx import Namespace, fields
 class UserDto:
     api = Namespace('user', description='user related operations')
     user = api.model('user', {
+        'profile_image': fields.String(description='URL or file path for the user profile image'),
         'first_name': fields.String(required=True, description='User first name'),
         'last_name': fields.String(required=True, description='User last name'),
         'email': fields.String(required=True, description='User email address'),

@@ -3,6 +3,7 @@ from botocore.exceptions import NoCredentialsError
 import logging
 import bcrypt
 from app.main.util.strings import generate_id
+from pathlib import Path
 import json
 
 # Set up logging configuration
@@ -16,12 +17,23 @@ class Document:
 
     __TABLE_NAME__ = None
 
+    __BUCKET_NAME__ = None
+
+    __S3_OBJECT_PREFIX__ = None
+
     def __init__(self, table_name=None, **kwargs):
         self._id = None
         self.__TABLE_NAME__ = table_name or self.__TABLE_NAME__
 
         for k, v in kwargs.items():
             setattr(self, k, v)
+
+    def is_image_file(self, filename):
+        # Define a list of allowed image file extensions
+        allowed_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'}
+
+        # Check if the file extension is in the list of allowed extensions
+        return any(filename.lower().endswith(ext) for ext in allowed_extensions)
 
     @property
     def id(self):
@@ -142,3 +154,29 @@ class Document:
         table = dynamodb_client.Table(cls.__TABLE_NAME__)
         response = table.delete()
         return response
+    
+
+    def upload_profile_image_to_s3(self,local_path):
+      s3 = boto3.client('s3')
+
+      image_key = f"{self.__S3_OBJECT_PREFIX__}{generate_id()}"
+
+      file_extension = Path(local_path).suffix.lower()
+      if not file_extension or not self.is_image_file(file_extension):
+            logging.error("Invalid image file format.")
+            return None
+
+        # Append the file extension to the image key
+      image_key += file_extension
+
+      try:
+          s3.upload_file(local_path, self.__BUCKET_NAME__, image_key,ExtraArgs={'ContentType': f'image/{file_extension[1:]}'})
+          profile_image_url = f"https://{self.__BUCKET_NAME__}.s3.amazonaws.com/{image_key}"
+          logging.info("Image uploaded to S3 successfully.")
+          return profile_image_url
+      except FileNotFoundError:
+          logging.error("Profile image file not found.")
+          return None
+      except NoCredentialsError:
+          logging.error("Credentials not available for uploading profile image to S3.")
+          return None

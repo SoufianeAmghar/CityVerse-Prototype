@@ -11,7 +11,7 @@ logging.basicConfig(
 
 
 def save_new_user(data):
-    document = Document(__TABLE_NAME__='User')
+    document = Document(__TABLE_NAME__='User',__BUCKET_NAME__='cityverse-profilepics',__S3_OBJECT_PREFIX__='profile-images/')
 
     # Check if the user already exists by email
     
@@ -21,6 +21,14 @@ def save_new_user(data):
             'status': 'fail',
             'message': 'User with this email already exists. Please log in.',
         }, 409
+    
+    # Upload user image to S3
+    profile_image_url = document.upload_profile_image_to_s3(data['profile_image'])
+    if profile_image_url is None:
+        return {
+            'status': 'fail',
+            'message': 'Failed to upload profile image to S3.',
+        }, 500
     
     # Create a new user item
     user_item = {
@@ -32,6 +40,7 @@ def save_new_user(data):
         'created_on': datetime.utcnow().isoformat(),
         'modified_on': datetime.utcnow().isoformat(),
         'is_creator': data['is_creator'],
+        'profile_image': profile_image_url,
         # Use [] as a default value if interest_points is None
         'interest_points': data.get('interest_points', [])
     }
@@ -68,15 +77,27 @@ def get_a_user(user_id):
 def update_user(user_id, data):
     document = Document(__TABLE_NAME__='User')
 
-    # Update user information based on the provided data
-    user = get_a_user(table_name, user_id)
+    if 'profile_image' in data:
+      profile_image_url = document.upload_profile_image_to_s3(data['profile_image'])
+      if profile_image_url is None:
+        return {
+            'status': 'fail',
+            'message': 'Failed to upload profile image to S3.',
+        }, 500
+    user = get_a_user(user_id)
     if user:
-        user['email'] = data['email']
-        user['last_name'] = data['last_name']
-        user['first_name'] = data['first_name']
-        user['role'] = data.get('role')
-        user['admin'] = data.get('admin')
-        user['password'] = data.get('password')
+        if 'email' in data:
+         user['email'] = data['email']
+        if 'last_name' in data:
+         user['last_name'] = data['last_name']
+        if 'first_name' in data:
+          user['first_name'] = data['first_name']
+        if 'password' in data:
+          user['password'] = data.get('password')
+        if 'is_creator' in data:
+           user['is_creator'] = data['is_creator']
+        if profile_image_url is not None:
+           user['profile_image'] = profile_image_url
         user['modified_on'] = datetime.utcnow().isoformat()
 
         # Save the updated user item
@@ -97,7 +118,7 @@ def delete_user(user_id):
     document = Document(__TABLE_NAME__='User')
 
     # Delete a user by their unique identifier
-    user = get_a_user(table_name, user_id)
+    user = get_a_user(user_id)
     if user:
         document.delete_item(Key={'user_id': user_id})
         return True
@@ -109,7 +130,7 @@ def update_password(user_id, new_password):
     document = Document(__TABLE_NAME__='User')
 
     # Update a user's password
-    user = get_a_user(table_name, user_id)
+    user = get_a_user(user_id)
     if user:
         user['password'] = new_password
         user['modified_on'] = datetime.utcnow().isoformat()
@@ -136,3 +157,4 @@ def get_user_by_email(email):
         return True
     else:
         return False
+    
