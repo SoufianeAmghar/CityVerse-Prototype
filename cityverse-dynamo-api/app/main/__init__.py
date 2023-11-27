@@ -6,7 +6,6 @@ import boto3
 from .config import config_by_name
 
 flask_bcrypt = Bcrypt()
-dynamodb_client = boto3.client('dynamodb')
 
 def create_app(config_name):
     app = Flask(__name__)
@@ -16,4 +15,4 @@ def create_app(config_name):
 
     flask_bcrypt.init_app(app)
 
-    return app, dynamodb_client
+    return app
