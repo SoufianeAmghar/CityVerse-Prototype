@@ -1,0 +1,106 @@
+{
+    "RateofExchangetoUSD": 0,
+    "pricing_input": [
+      {
+        "occurrence": 0,
+        "commissionType": 0,
+        "otherCommision": 0
+      }
+    ],
+    "premium_income": [
+        {
+          "earnedValue": 0,
+          "catValue": 0,
+          "nonCatValue": 0,
+          "nonCatResult": 0,
+          "catResult" : 0
+        }
+      ],
+    "deduction_commission":  [
+        {
+          "nonCatCommission": 0,
+          "resultNonCatCommission": 0,
+          "catCommission": 0,
+          "resultCatCommission": 0,
+          "brokerage" : 0,
+          "resultatBrokerage": 0,
+          "tax": 0,
+          "resultTax": 0,
+          "commonAccount": 0,
+          "resultCommonAccount" : 0
+        }
+      ],
+      "pc_information":  [
+        {
+          "PcType": 0,
+          "ReinsurersExpenses": 0,
+          "deficitAmount": 0,
+          "deficitAmountResult": 0,
+          "PcRate" : 0,
+          "ResultOfPcRate": 0
+        }
+      ],
+      "sliding_scal_commission":  [
+        {
+          "pas": 0,
+          "min": 0,
+          "max": 0,
+          "loss_list": [
+            {
+                "loss": 0,
+                "sliding": 0
+            }
+          ]
+        }
+      ],
+      "loss_participation":  [
+        {
+          "grossLossRatioTrigger": 0,
+          "contributionAmount": 0,
+          "lossRatioCap": 0,
+          "totalContribution": 0
+        }
+      ],
+      "loss_cap":  [
+        {
+          "lossRatio": 0,
+          "contribution": 0
+        }
+      ],
+      "loss_contribution":  [
+        {
+          "totalContribution": 0,
+          "contribution": 0
+        }
+      ],
+      "attrition_inputs":  [
+        {
+          "attritionMean": 0,
+          "attritionMeanResult": 0,
+          "attritionStandard": 0,
+          "attritionStandardResult": 0
+        }
+      ],
+      "attrition_output":  [
+        {
+          "year": "string",
+          "pc": 0,
+          "sliding": 0
+        }
+      ],
+      "large_loss_inputs":  [
+        {
+          "LargeMean": 0,
+          "LargeMeanResult": 0,
+          "Shape1": 0,
+          "Shape2": 0
+        }
+      ],
+      "large_loss_output":  [
+        {
+          "year": "string",
+          "pc": 0,
+          "sliding": 0
+        }
+      ]
+}

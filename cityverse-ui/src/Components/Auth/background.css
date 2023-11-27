@@ -1,0 +1,15 @@
+.bg-video {
+    background-image: url('./Asset/rose.png');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: white;
+    font-family: "Avenir Medium", sans-serif;
+  
+    
+  }
+  

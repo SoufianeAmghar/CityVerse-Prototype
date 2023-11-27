@@ -1,0 +1,7 @@
+<svg width="72" height="72" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
+  <linearGradient x1="0" y1="0" x2="100%" y2="100%" id="gradient">
+    <stop class="gradient__brand-secondary" offset="0"/>
+    <stop class="gradient__brand" offset="100%"/>
+  </linearGradient>
+  <circle fill="url(#gradient)" cx="36" cy="36" r="20"/>
+</svg>
