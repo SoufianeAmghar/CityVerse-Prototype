@@ -35,16 +35,10 @@ class BlacklistToken:
             self._id = None
 
     @staticmethod
-    def check_blacklist(token, table_name):
-
+    def check_blacklist(token_id, table_name):
         dynamodb = boto3.resource('dynamodb')
-
         table = dynamodb.Table(table_name)
-        response = table.get_item(Key={'token': token['token']})
- 
+        response = table.get_item(Key={'token': token_id})
         item = response.get('Item')
-        if item:
-            return True
-        else:
-             return False
+        return bool(item)
        

@@ -1,4 +1,5 @@
 import datetime
+import uuid
 import jwt
 from app.db.Models.black_list_token import BlacklistToken  # Ensure the correct import path
 from app.db.dynamodb_document import Document
@@ -33,10 +34,12 @@ class User(Document):
     @staticmethod
     def encode_auth_token(user_id, days=1, seconds=5, minutes=0):
         try:
+            unique_id = str(uuid.uuid4()) 
             payload = {
                 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=days, seconds=seconds, minutes=minutes),
                 'iat': datetime.datetime.utcnow(),
-                'sub': user_id
+                'sub': user_id,
+                'jti': unique_id
             }
             return jwt.encode(
                 payload,
@@ -50,8 +53,9 @@ class User(Document):
     def decode_auth_token(auth_token, table_name):
 
         try:
-            payload = jwt.decode(auth_token, key)
-            is_blacklisted_token = BlacklistToken.check_blacklist(dict(token=payload['sub']), table_name)
+            payload = jwt.decode(auth_token, key, algorithms=['HS256'])
+            token_data = {'token': payload['sub'], 'exp': payload['exp'], 'jti': payload.get('jti')}
+            is_blacklisted_token = BlacklistToken.check_blacklist(token_data['jti'], table_name)
             if is_blacklisted_token:
                 return 'Token blacklisted. Please log in again.'
             else:

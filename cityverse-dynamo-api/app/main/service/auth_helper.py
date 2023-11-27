@@ -57,7 +57,6 @@ class Auth:
     def login_user(data):
 
         try:
-            # Check if data is None
             if data is None:
                 response_object = {
                     'status': 'fail',

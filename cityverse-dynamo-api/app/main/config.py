@@ -1,4 +1,6 @@
 import os
+import random
+import string
 
 
 # Define the AWS DynamoDB configuration variables
@@ -43,4 +45,13 @@ config_by_name = dict(
     prod=ProductionConfig
 )
 
+def generate_key():
+        # Generate a random key (you can replace this with your own key generation logic)
+        key = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(32))
+        return key
+
+Config.SECRET_KEY = generate_key()
+
 key = Config.SECRET_KEY
+
+
