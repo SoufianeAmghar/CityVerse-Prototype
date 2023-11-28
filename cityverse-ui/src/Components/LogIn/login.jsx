@@ -17,17 +17,8 @@ import { useHistory } from "react-router-dom";
 import "./Login.css";
 import { UserLoginContext } from "./usercontextlogin/UserLoginContext";
 
-// styles
 
-// logo
-import logo from "../../assets/logo.png";
-//import google from "../../images/google.svg";
-
-// context
-
-const Login = (props) => {
-  // global
-  
+const Login = (props) => {  
   var [error, setError] = useState(false);
   var [loginValue, setLoginValue] = useState("");
   var [passwordValue, setPasswordValue] = useState("");

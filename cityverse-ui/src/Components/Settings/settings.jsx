@@ -104,9 +104,9 @@ export default function Settings() {
           value={value}
           onChange={handleChange}
         >
-          <AntTab label={"Accounts and Profiles"} {...a11yProps(0)} />
-          <AntTab label="Personal details" {...a11yProps(1)} />
-          <AntTab label="Language" {...a11yProps(2)} />
+          {/* <AntTab label={"Accounts and Profiles"} {...a11yProps(0)} /> */}
+          <AntTab label="Personal details" {...a11yProps(0)} />
+          <AntTab label="Language" {...a11yProps(1)} />
          
         </AntTabs>   
     </AntTabs>
@@ -116,7 +116,7 @@ export default function Settings() {
           index={value}
           onChangeIndex={handleChangeIndex}
         >
-          <TabPanel value={value} index={0}>
+          {/* <TabPanel value={value} index={0}>
           <Suspense fallback=
               {<div style={{display:'flex',flexDirection:"column",alignItems:"center",justifyContent:'center',height:"100vh",width:"100%"}}>
                 <CircularProgress
@@ -132,8 +132,8 @@ export default function Settings() {
               <AccountProfile/>
             </Suspense>
             
-          </TabPanel>
-           <TabPanel value={value} index={1} dir={theme.direction}>
+          </TabPanel> */}
+           <TabPanel value={value} index={0} dir={theme.direction}>
            <Suspense fallback=
               {<div style={{display:'flex',flexDirection:"column",alignItems:"center",justifyContent:'center',height:"100vh",width:"100%"}}>
                 <CircularProgress
@@ -150,7 +150,7 @@ export default function Settings() {
             </Suspense>
            
           </TabPanel>  
-          <TabPanel value={value} index={2} dir={theme.direction}>
+          <TabPanel value={value} index={1} dir={theme.direction}>
            <Suspense fallback=
               {<div style={{display:'flex',flexDirection:"column",alignItems:"center",justifyContent:'center',height:"100vh",width:"100%"}}>
                 <CircularProgress

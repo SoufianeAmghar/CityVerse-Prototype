@@ -91,20 +91,27 @@ export default function PersonalDetails() {
           component="main"
           sx={{ padding: "20px" }}
         >
-          <div className="rowDirection">
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "start",
+              bgcolor: "background.paper",
+              borderRadius: 1,
+            }}
+          >
             <div
               style={{
                 marginLeft: "20px",
               }}
-              className="backGroundIconCedant"
+              
             >
               <AccountCircleIcon className="paramsIconColorCedant" />
-            </div>
+           
             <Typography
               color="text.primary"
               style={{
                 fontWeight: "600",
-                marginLeft: "1%",
+                marginLeft: "0.5%",
                 paddingBottom: "5%",
               }}
               component="h1"
@@ -114,7 +121,8 @@ export default function PersonalDetails() {
                 ? "Personal details"
                 : "Personal details"}
             </Typography>
-          </div>
+            </div>
+            </Box> 
           <Box
             component="form"
             // onSubmit={() => ()}
