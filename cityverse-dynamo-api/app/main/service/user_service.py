@@ -22,13 +22,15 @@ def save_new_user(data):
             'message': 'User with this email already exists. Please log in.',
         }, 409
     
+    profile_image_url = None
     # Upload user image to S3
-    profile_image_url = document.upload_profile_image_to_s3(data['profile_image'])
-    if profile_image_url is None:
-        return {
-            'status': 'fail',
-            'message': 'Failed to upload profile image to S3.',
-        }, 500
+    if data.get('profile_image'):
+      profile_image_url = document.upload_profile_image_to_s3(data['profile_image'])
+    # if profile_image_url is None:
+    #     return {
+    #         'status': 'fail',
+    #         'message': 'Failed to upload profile image to S3.',
+    #     }, 500
     
     # Create a new user item
     user_item = {
@@ -40,7 +42,7 @@ def save_new_user(data):
         'created_on': datetime.utcnow().isoformat(),
         'modified_on': datetime.utcnow().isoformat(),
         'is_creator': data['is_creator'],
-        'profile_image': profile_image_url,
+        'profile_image': profile_image_url if profile_image_url else "https://cityverse-profilepics.s3.us-east-2.amazonaws.com/profile-images/blank-profile-picture.webp",
         # Use [] as a default value if interest_points is None
         'interest_points': data.get('interest_points', [])
     }
