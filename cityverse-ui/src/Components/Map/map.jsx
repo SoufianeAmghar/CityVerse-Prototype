@@ -37,6 +37,8 @@ import CardVelo from "../Card/cardVelo";
 import DirectionsBikeIcon from "@mui/icons-material/DirectionsBike";
 import { Chip } from "@material-ui/core";
 import CardWifi from "../Card/cardWifi";
+import WifiIcon from "@mui/icons-material/Wifi";
+import EventIcon from "@mui/icons-material/Event";
 
 // {
 //   "type": "FeatureCollection",
@@ -230,15 +232,16 @@ export default function MapCart() {
                 onClick={handleOpenEvent}
                 // deleteIcon={<DoneIcon />}
               /> */}
-             <Button
-              variant="outlined"
+            <Button
+              variant={openVelo ? "contained" : "outlined"}
+              startIcon={<DirectionsBikeIcon />}
               sx={{
-               // backgroundColor: "success",
+                // backgroundColor: "success",
                 minWidth: "5%",
                 borderRadius: "20px",
                 mb: "1%",
-                mr: "0.5%"
-               // color: "#fff",
+                mr: "0.5%",
+                // color: "#fff",
               }}
               color="info"
               onClick={handleOpenVelo}
@@ -246,28 +249,30 @@ export default function MapCart() {
               Bikecycle
             </Button>
             <Button
-              variant="outlined"
+              variant={openWifi ? "contained" : "outlined"}
+              startIcon={<WifiIcon />}
               sx={{
-               // backgroundColor: "success",
+                // backgroundColor: "success",
                 minWidth: "5%",
                 borderRadius: "20px",
                 mb: "1%",
-                mr: "0.5%"
-               // color: "#fff",
+                mr: "0.5%",
+                // color: "#fff",
               }}
               color="warning"
               onClick={handleOpenWifi}
             >
-             wifi
+              wifi
             </Button>
             <Button
-              variant="outlined"
+              variant={openEvent ? "contained" : "outlined"}
+              startIcon={<EventIcon />}
               sx={{
-               // backgroundColor: "success",
+                // backgroundColor: "success",
                 minWidth: "5%",
                 borderRadius: "20px",
                 mb: "1%",
-               // color: "#fff",
+                // color: "#fff",
               }}
               color="error"
               onClick={handleOpenEvent}
@@ -331,8 +336,8 @@ export default function MapCart() {
                   icon={iconWifi}
                 >
                   <Popup>
-                      <CardWifi key={index} item={item} />
-                    </Popup>
+                    <CardWifi key={index} item={item} />
+                  </Popup>
                 </Marker>
               ))}
             {openEvent &&

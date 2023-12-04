@@ -34,7 +34,7 @@ import Toolbar from "@mui/material/Toolbar";
 import { styled, useTheme } from "@mui/material/styles";
 import React from "react";
 import { BrowserRouter, Link as LinkDom, useHistory } from "react-router-dom";
-import logo from "../../assets/scr1.png";
+
 
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import GroupIcon from "@mui/icons-material/Group";
@@ -201,6 +201,9 @@ const Sidebar = ({ children }) => {
         }
       )
       .then((value) => {
+
+        setdata(value.data.data)
+        console.log(value.data.data)
        
       })
       .catch((err) => {
@@ -493,7 +496,7 @@ const Sidebar = ({ children }) => {
                   />
 
                   <Typography variant="h6" sx={{ color: "#1e1e82" }}>
-                    {data.name}
+                  {data?.first_name?.S} {data?.last_name?.S} 
                   </Typography>
                 </div>
               )}
