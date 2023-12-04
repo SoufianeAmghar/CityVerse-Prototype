@@ -2,11 +2,10 @@ import { useContext } from 'react'
 import { Redirect, Route } from 'react-router-dom'
 import { UserLoginContext } from './usercontextlogin/UserLoginContext'
 const PrivateRoute = ({children, ...rest}) => {
-    var {isAuthenticated,setisAuthenticated}=useContext(UserLoginContext)
+    //var {isAuthenticated,setisAuthenticated}=useContext(UserLoginContext)
     const access_token=sessionStorage.getItem('acces_token')
-    
     return(
-        <Route {...rest}>
+        <Route {...rest}>     
                 {access_token 
                     ?
                     children
@@ -15,4 +14,5 @@ const PrivateRoute = ({children, ...rest}) => {
         </Route>
     )
 }
+
 export default PrivateRoute

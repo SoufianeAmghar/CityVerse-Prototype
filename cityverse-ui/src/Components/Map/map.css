@@ -1,0 +1,24 @@
+.custom-marker-cluster {
+  background-image: url(../../Asset/group.png);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 61.027px;
+  height: 62.641px;
+  justify-content: center;
+ 
+}
+
+.custom-marker-cluster span {
+  width: 36.968px;
+  height: 22.833px;
+  color: #000;
+  text-align: center;
+  font-family: Inter;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  margin-left: 25%;
+  margin-top: 25%;
+}

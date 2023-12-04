@@ -1,6 +1,39 @@
+import { useState } from "react";
 import "./Login.css";
+import axios from "axios";
 
 const Sigup = (props) => {
+  const [first_name, setFirst_name] = useState()
+  const [last_name, setLast_name ] = useState()
+  const [email , setEmail] = useState()
+  const [phone , setPhone] = useState()
+  const [password ,  setPassword] = useState()
+  const [confirm_password ,  setConfirmPassword] = useState()
+  const [created_on, setcreated_on] = useState()
+  const [modified_on, setmodified_on] = useState()
+  const [is_creator , setIscreator ] = useState()
+
+  const sign_up = () => {
+    const obj = {
+     // profile_image: "C:/Users/hp/Desktop/profile.png",
+      first_name: first_name,
+      last_name: last_name,
+      email: email,
+      password: password,
+      is_creator: is_creator === "CR" ? true : false,
+      interest_points: [],
+    }
+
+    axios
+      .post(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "/auth/signup",      
+          obj,
+      )
+      .then((value) => {})
+      .catch((err) => {
+      });
+  };
+
   return (
     <>
       <head>
@@ -35,6 +68,8 @@ const Sigup = (props) => {
                           type="second"
                           placeholder="First Name"
                           class="flex items-center w-full px-3 py-3 mr-2 text-sm font-medium outline-none focus:bg-grey-400 mb-5 placeholder:text-grey-700 bg-grey-200 text-dark-grey-900 rounded-2xl"
+                          value={first_name}
+                          onChange={(e) => setFirst_name(e.target.value)}
                         />
                       </div>
                       <div class="grid justify-items-start">
@@ -46,9 +81,11 @@ const Sigup = (props) => {
                         </label>
                         <input
                           id="email"
-                          type="email"
+                          type="second"
                           placeholder="Second Name"
                           class="flex items-center w-full px-3 py-3 mr-2 text-sm font-medium outline-none focus:bg-grey-400 mb-5 placeholder:text-grey-700 bg-grey-200 text-dark-grey-900 rounded-2xl"
+                          value={last_name}
+                          onChange={(e) => setLast_name(e.target.value)}
                         />
                       </div>
                     </div>
@@ -65,6 +102,8 @@ const Sigup = (props) => {
                           type="email"
                           placeholder="mail@loopple.com"
                           class="flex items-center w-full px-3 py-3 mr-2 text-sm font-medium outline-none focus:bg-grey-400 mb-5 placeholder:text-grey-700 bg-grey-200 text-dark-grey-900 rounded-2xl"
+                          value={email}
+                          onChange={(e) => {setEmail(e.target.value)}}
                         />
                       </div>
                       <div class="grid justify-items-start">
@@ -79,21 +118,11 @@ const Sigup = (props) => {
                           type="tel"
                           placeholder="Tél"
                           class="flex items-center w-full px-3 py-3 mr-2 text-sm font-medium outline-none focus:bg-grey-400 mb-5 placeholder:text-grey-700 bg-grey-200 text-dark-grey-900 rounded-2xl"
+                          value={phone}
+                          onChange={(e) => {setPhone(e.target.value)}}
                         />
                       </div>
                     </div>
-                    {/* <label
-                      for="email"
-                      class="mb-2 text-sm text-start text-white"
-                    >
-                      Email *
-                    </label>
-                    <input
-                      id="email"
-                      type="email"
-                      placeholder="mail@loopple.com"
-                      class="flex items-center w-full px-3 py-3 mr-2 text-sm font-medium outline-none focus:bg-grey-400 mb-5 placeholder:text-grey-700 bg-grey-200 text-dark-grey-900 rounded-2xl"
-                    /> */}
                     <div class="h-56 grid grid-cols-2 gap-4 content-start">
                       <div class="grid justify-items-start">
                         <label
@@ -107,6 +136,8 @@ const Sigup = (props) => {
                           type="password"
                           placeholder="Enter a password"
                           class="flex items-center w-full px-3 py-3 mb-5 mr-2 text-sm font-medium outline-none focus:bg-grey-400 placeholder:text-grey-700 bg-grey-200 text-dark-grey-900 rounded-2xl"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
                         />
                       </div>
                       <div class="grid justify-items-start">
@@ -121,21 +152,11 @@ const Sigup = (props) => {
                           type="password"
                           placeholder="Confirm password"
                           class="flex items-center w-full px-3 py-3 mb-5 mr-2 text-sm font-medium outline-none focus:bg-grey-400 placeholder:text-grey-700 bg-grey-200 text-dark-grey-900 rounded-2xl"
+                          value={confirm_password}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
                         />
                       </div>
                     </div>
-                    {/* <label
-                      for="email"
-                      class="mb-2 text-sm text-start text-white"
-                    >
-                      Email *
-                    </label>
-                    <input
-                      id="email"
-                      type="email"
-                      placeholder="mail@loopple.com"
-                      class="flex items-center w-full px-3 py-3 mr-2 text-sm font-medium outline-none focus:bg-grey-400 mb-5 placeholder:text-grey-700 bg-grey-200 text-dark-grey-900 rounded-2xl"
-                    /> */}
                     <label
                       for="countries"
                       class="mb-2 text-sm text-start text-white"
@@ -145,11 +166,13 @@ const Sigup = (props) => {
                     <select
                       id="countries"
                       class="flex items-center w-full px-3 py-3 mr-2 text-sm font-medium outline-none focus:bg-grey-400 mb-10 placeholder:text-grey-700 bg-grey-200 text-dark-grey-900 rounded-2xl"
+                      value={is_creator}
+                      onChange={(e) => setIscreator(e.target.value)}
                     >
                       <option value="CR">Creator</option>
                       <option selected value="US">user</option>
                     </select>
-                    <button class="w-full px-4 py-4 mb-5 text-sm font-bold leading-none text-white transition duration-300 md:w-full rounded-2xl hover:bg-purple-blue-600 focus:ring-4 focus:ring-purple-blue-100 bg-purple-blue-500">
+                    <button type="button" class="w-full px-4 py-4 mb-5 text-sm font-bold leading-none text-white transition duration-300 md:w-full rounded-2xl hover:bg-purple-blue-600 focus:ring-4 focus:ring-purple-blue-100 bg-purple-blue-500" onClick={sign_up}>
                       Sign Up
                     </button>
                   </form>

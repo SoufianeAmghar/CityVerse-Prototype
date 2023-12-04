@@ -10,15 +10,12 @@ import Stack from '@mui/material/Stack';
 
 
 
-export default function CardVelo(item) {
-
-
+ function CardVelo(item) {
   return (
     <Card variant="outlined">
       <CardContent>
         <Typography variant="h6" component="h2">
           {item?.item?.name}
-          {console.log(item?.item)}
         </Typography>
         <Stack direction="row" spacing={1}>
           <Chip
@@ -57,3 +54,5 @@ export default function CardVelo(item) {
     </Card>
   );
 }
+
+export default React.memo(CardVelo);

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@mui/material";
 import { Container } from "@mui/material";
 import GroupIcon from "@mui/icons-material/Group";
@@ -22,6 +22,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import InputAdornment from "@mui/material/InputAdornment";
+import axios from "axios";
 
 const styleValidate = {
   backgroundColor: "success",
@@ -41,16 +42,36 @@ const styleCancelDelete = {
 };
 
 export default function PersonalDetails() {
-  const [firstName, setFirstName] = useState("abdel");
-  const [SecondeName, setSecondeName] = useState("Daoudi");
-  const [email, setEmail] = useState("abdel.daoudi@gmaul.com");
-  const [phone, setPhone] = useState("+21260000000");
-  const [adress1, setadress1] = useState("35 Rue de Torcy");
-  const [adress2, setadress2] = useState("Paris");
-  const [passWord, setPassWord] = useState("testtest2024");
+  const [firstName, setFirstName] = useState("");
+  const [SecondeName, setSecondeName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [adress1, setadress1] = useState("");
+  const [adress2, setadress2] = useState("");
+  const [passWord, setPassWord] = useState("");
   const [values, setValues] = useState({
     showPassword: false,
   });
+  const headers = {
+    Authorization: sessionStorage.getItem("acces_token").toString(),
+  };
+
+  useEffect(() => {
+    axios
+      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "/auth/info", {
+        headers,
+      })
+      .then((value) => {
+        setFirstName(value.data.data.first_name?.S);
+        setSecondeName(value.data.data.last_name?.S);
+        setEmail(value.data.data.email?.S);
+
+        console.log(value.data.data);
+      })
+      .catch((err) => {
+        //deconnexion();
+      });
+  }, []);
 
   const [selectedImage, setSelectedImage] = useState(null);
   const handleImageChange = (e) => {
@@ -80,6 +101,25 @@ export default function PersonalDetails() {
     selectedImage: selectedImage,
   };
 
+  const sign_up = () => {
+    const obj = {
+      profile_image: selectedImage,
+      first_name: firstName,
+      last_name: SecondeName,
+      email: email,
+      password: passWord,
+      is_creator: true,
+    };
+
+    axios
+      .post(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "/auth/signup",
+        obj
+      )
+      .then((value) => {})
+      .catch((err) => {});
+  };
+
   return (
     <Box disableGutters component="main" width="99%" sx={{}}>
       <Card sx={{ borderRadius: "0px" }}>
@@ -103,26 +143,25 @@ export default function PersonalDetails() {
               style={{
                 marginLeft: "20px",
               }}
-              
             >
               <AccountCircleIcon className="paramsIconColorCedant" />
-           
-            <Typography
-              color="text.primary"
-              style={{
-                fontWeight: "600",
-                marginLeft: "0.5%",
-                paddingBottom: "5%",
-              }}
-              component="h1"
-              variant="h4"
-            >
-              {sessionStorage.getItem("language") === "fr"
-                ? "Personal details"
-                : "Personal details"}
-            </Typography>
+
+              <Typography
+                color="text.primary"
+                style={{
+                  fontWeight: "600",
+                  marginLeft: "0.5%",
+                  paddingBottom: "5%",
+                }}
+                component="h1"
+                variant="h4"
+              >
+                {sessionStorage.getItem("language") === "fr"
+                  ? "Personal details"
+                  : "Personal details"}
+              </Typography>
             </div>
-            </Box> 
+          </Box>
           <Box
             component="form"
             // onSubmit={() => ()}
@@ -270,7 +309,12 @@ export default function PersonalDetails() {
               onChange={(e) => setadress2(e.target.value)}
             />
             <FormControl variant="outlined" color="success" focused>
-              <InputLabel htmlFor="Password" variant="outlined" color="success" InputLabelProps={{ style: { color: "black" } }}>
+              <InputLabel
+                htmlFor="Password"
+                variant="outlined"
+                color="success"
+                InputLabelProps={{ style: { color: "black" } }}
+              >
                 {sessionStorage.getItem("language") === "fr"
                   ? "Mot de passe"
                   : "Password"}
@@ -369,9 +413,7 @@ export default function PersonalDetails() {
               color="success"
               // disabled={handleAdd()}
               sx={styleValidate}
-              onClick={(event) => {
-                console.log("object", objectForm);
-              }}
+              onClick={sign_up}
             >
               {sessionStorage.getItem("language") === "fr"
                 ? "Sauvegarder"
