@@ -5,8 +5,9 @@
   background-size: contain;
   width: 61.027px;
   height: 62.641px;
+  display: flex;
   justify-content: center;
- 
+  
 }
 
 .custom-marker-cluster span {
@@ -19,6 +20,24 @@
   font-style: normal;
   font-weight: 700;
   line-height: normal;
-  margin-left: 25%;
-  margin-top: 25%;
+  display: block;
+  margin: auto;
+  /* margin-right: auto; */
+}
+
+.popup .leaflet-popup-content-wrapper {
+    flex-shrink: 0;
+    overflow-y: 'visible';
+    background-color: white;
+    display: "flex";
+    z-index: 1;
+ 
+}
+
+.popup .leaflet-popup-content {
+  flex-shrink: 0;
+  overflow-y: 'visible';
+  background-color: white;
+  display: "flex";
+  z-index: 1;
 }

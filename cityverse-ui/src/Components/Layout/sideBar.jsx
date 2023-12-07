@@ -453,7 +453,7 @@ const Sidebar = ({ children }) => {
           </Box>
         </Drawer>
 
-        <main style={{ flexGrow: 1, padding: theme.spacing(0) }}>
+        <main style={{  flexGrow: 1, padding: theme.spacing(0) }}>
           <Box width="99%" component="main" sx={{ pt: 1 }}>
             <div disableGutters width="99%" height="auto">
               <Card>

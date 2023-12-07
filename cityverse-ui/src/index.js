@@ -14,6 +14,7 @@ ReactDOM.render(
        <Provider store={store}>
             <AppWrapper />
         </Provider>
+
     </UserProvider>    
   </ThemeProvider>,
   document.getElementById("root")

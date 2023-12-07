@@ -1,9 +1,5 @@
 import { Suspense, lazy, useEffect } from "react";
 import "./App.css";
-
-import { Modal } from "@mui/material";
-import { useState } from "react";
-
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import FirstAuth from "./Components/LogIn/FirstAuth";

@@ -419,20 +419,7 @@ export default function PersonalDetails() {
                 ? "Sauvegarder"
                 : "Save"}
             </Button>
-            {/* <Button
-              variant="contained"
-              style={{
-                backgroundColor: "#FFFF",
-                minWidth: "20%",
-                color: "#08089C",
-                borderRadius: "20px",
-              }}
-              onClick={() => {}}
-            >
-              {sessionStorage.getItem("language") === "fr"
-                ? "Réinitialiser"
-                : "Reset"}
-            </Button> */}
+          
           </Box>
         </Container>
       </Card>
