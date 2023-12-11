@@ -1137,7 +1137,7 @@ export default function Event() {
             zoom={4}
             maxZoom={16}
             scrollWheelZoom={true}
-            style={{ height: "200px", width: "90%", borderRadius: "2%" }}
+            style={{ height: "300px", width: "90%", borderRadius: "2%" }}
           >
             <Marker
               key={"16107"}

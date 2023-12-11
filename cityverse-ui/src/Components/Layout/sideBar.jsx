@@ -53,6 +53,7 @@ import EventAvailableRoundedIcon from "@mui/icons-material/EventAvailableRounded
 import Badge from "@mui/material/Badge";
 import MapIcon from "@mui/icons-material/Map";
 import ExploreIcon from "@mui/icons-material/Explore";
+import StarIcon from "@mui/icons-material/Star";
 
 const drawerWidth = 250;
 
@@ -203,7 +204,7 @@ const Sidebar = ({ children }) => {
         deconnexion();
       });
   };
- 
+
   useEffect(() => {
     call_api_get_user_info();
   }, []);
@@ -266,8 +267,6 @@ const Sidebar = ({ children }) => {
 
             <div
               style={{
-                paddingLeft: "30%",
-                paddingRight: "30%",
                 alignItems: "center",
                 justifyContent: "flex-center",
                 marginBottom: "25%",
@@ -275,21 +274,47 @@ const Sidebar = ({ children }) => {
             >
               <br />
               {open && (
-                <div style={{}}>
-                  <img
+                <>
+                  <div style={{ paddingLeft: "30%", paddingRight: "30%" }}>
+                    <img
+                      style={{
+                        width: "auto",
+                        height: "100px",
+                        borderRadius: "100%",
+                      }}
+                      src="https://images.unsplash.com/photo-1628157588553-5eeea00af15c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80"
+                      alt="webscript"
+                    />
+                  </div>
+                </>
+              )}
+              {open && (
+                <>
+                  <div
                     style={{
-                      width: "auto",
-                      height: "100px",
-                      borderRadius: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      paddingLeft: "25%",
+                      paddingRight: "25%",
                     }}
-                    src="https://images.unsplash.com/photo-1628157588553-5eeea00af15c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80"
-                    alt="webscript"
-                  />
-
-                  <Typography variant="h6" sx={{ color: "#1e1e82" }}>
-                    {data?.first_name?.S} {data?.last_name?.S}
-                  </Typography>
-                </div>
+                  >
+                    {data && (
+                      <>
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            color: "#1e1e82",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          {data?.first_name?.S} {data?.last_name?.S} {15}{" "}
+                          <StarIcon sx={{ color: "#FFD700" }} />
+                        </Typography>
+                      </>
+                    )}
+                  </div>
+                </>
               )}
             </div>
           </Box>
@@ -437,14 +462,14 @@ const Sidebar = ({ children }) => {
                     : "Settings"
                 }
               />
-            </ListItem>       
-          </List>  
-          <Box sx={{ flexDirection: 'row' }}>
+            </ListItem>
+          </List>
+          <Box sx={{ flexDirection: "row" }}>
             <MenuItem
               sx={{ px: "10px", color: "#1e1e82" }}
               onClick={() => deconnexion()}
             >
-              <LogoutIcon sx={{ mx :"10px", color: "#1e1e82" }} />
+              <LogoutIcon sx={{ mx: "10px", color: "#1e1e82" }} />
               <p>&nbsp;&nbsp;{"  "}&nbsp;</p>
               {sessionStorage.getItem("language") === "fr"
                 ? "  Se déconnecter"
@@ -453,7 +478,7 @@ const Sidebar = ({ children }) => {
           </Box>
         </Drawer>
 
-        <main style={{  flexGrow: 1, padding: theme.spacing(0) }}>
+        <main style={{ flexGrow: 1, padding: theme.spacing(0) }}>
           <Box width="99%" component="main" sx={{ pt: 1 }}>
             <div disableGutters width="99%" height="auto">
               <Card>

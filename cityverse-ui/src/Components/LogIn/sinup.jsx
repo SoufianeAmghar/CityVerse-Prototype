@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./Login.css";
 import axios from "axios";
+import { useHistory } from "react-router-dom";
 
 const Sigup = (props) => {
   const [first_name, setFirst_name] = useState()
@@ -12,6 +13,7 @@ const Sigup = (props) => {
   const [created_on, setcreated_on] = useState()
   const [modified_on, setmodified_on] = useState()
   const [is_creator , setIscreator ] = useState()
+  const history = useHistory();
 
   const sign_up = () => {
     const obj = {
@@ -29,7 +31,9 @@ const Sigup = (props) => {
         process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "/auth/signup",      
           obj,
       )
-      .then((value) => {})
+      .then((value) => {
+        history.push("/");
+      })
       .catch((err) => {
       });
   };
