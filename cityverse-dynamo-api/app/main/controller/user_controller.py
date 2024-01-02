@@ -51,8 +51,9 @@ class User(Resource):
     @api.doc('update user')
     def put(self,public_id):
         """Update a User"""
-        form_data_str = request.form.get('data')
-        data = json.loads(form_data_str) if form_data_str else {}
+        json_data_str = request.form.get('json')
+        data = json.loads(json_data_str) if json_data_str else {}
+        print(data)
         image_file = request.files.get('profile_image')
         return update_user(public_id,data,profile_image=image_file)
 

@@ -54,17 +54,14 @@ class Document:
 
             # Update only the attributes present in the update data
             for key, value in item.items():
-                # Skip updating if the key is not present in the update data
-                if key not in existing_item:
-                    continue
 
-                # Update the attribute only if the value is not None
-                if value is not None:
-                    existing_item[key] = value
+                if key in existing_item and value is not None and type(value) == type(existing_item[key]):
+                 existing_item[key] = value
+                elif key not in existing_item and value is not None:
+                 existing_item[key] = value
             table.put_item(Item=existing_item)
         else:
-            # If 'id' is not present, it's a new item, perform a POST (create) operation
-            # You might want to generate a new 'id' here if needed
+            
             table.put_item(Item=item)
 
     def load(self, dynamodb_client=None, query=None):
