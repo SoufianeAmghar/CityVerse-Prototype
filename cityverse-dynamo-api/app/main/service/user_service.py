@@ -76,11 +76,12 @@ def get_a_user(user_id):
     return user
 
 
-def update_user(user_id, data):
-    document = Document(__TABLE_NAME__='User')
+def update_user(user_id,data,profile_image):
+    document = Document(__TABLE_NAME__='User',__BUCKET_NAME__='cityverse-profilepics',__S3_OBJECT_PREFIX__='profile-images/')
+    profile_image_url = None
 
-    if 'profile_image' in data:
-      profile_image_url = document.upload_profile_image_to_s3(data['profile_image'])
+    if profile_image:
+      profile_image_url = document.upload_profile_image_to_s3(profile_image)
       if profile_image_url is None:
         return {
             'status': 'fail',
@@ -101,9 +102,10 @@ def update_user(user_id, data):
         if profile_image_url is not None:
            user['profile_image'] = profile_image_url
         user['modified_on'] = datetime.utcnow().isoformat()
+        user['id'] = str(user_id)
 
         # Save the updated user item
-        document.put_item(Item='User')
+        document.save(item=user)
 
         return {
             'status': 'success',

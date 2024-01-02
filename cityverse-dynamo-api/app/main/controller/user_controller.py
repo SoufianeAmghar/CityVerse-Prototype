@@ -25,14 +25,6 @@ class UserList(Resource):
         data = request.json
         return save_new_user(data)
 
-    @api.expect(_user, validate=True)
-    @api.response(201, 'User successfully updated.')
-    
-    @api.doc('update user')
-    def put(self):
-        """Update a User"""
-        data = request.json
-        return update_user(data)
 
 @api.route('/<public_id>')
 @api.param('public_id', 'The User identifier')
@@ -53,6 +45,14 @@ class User(Resource):
     def delete(self, public_id):
         """Delete a user given its identifier"""
         return delete_user(public_id)
+    
+    @api.response(201, 'User successfully updated.')
+    @api.doc('update user')
+    def put(self,public_id):
+        """Update a User"""
+        data = request.json
+        image_file = request.files.get('profile_image')
+        return update_user(public_id,data,profile_image=image_file)
 
 @api.route('/change-password')
 class UserPassword(Resource):

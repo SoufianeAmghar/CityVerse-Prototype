@@ -156,21 +156,18 @@ class Document:
         return response
     
 
-    def upload_profile_image_to_s3(self,local_path):
+    def upload_profile_image_to_s3(self,image_file):
       s3 = boto3.client('s3')
 
       image_key = f"{self.__S3_OBJECT_PREFIX__}{generate_id()}"
 
-      file_extension = Path(local_path).suffix.lower()
+      file_extension = Path(image_file.filename).suffix.lower()
       if not file_extension or not self.is_image_file(file_extension):
             logging.error("Invalid image file format.")
             return None
 
-        # Append the file extension to the image key
-      image_key += file_extension
-
       try:
-          s3.upload_file(local_path, self.__BUCKET_NAME__, image_key,ExtraArgs={'ContentType': f'image/{file_extension[1:]}'})
+          s3.upload_fileobj(image_file, self.__BUCKET_NAME__, image_key, ExtraArgs={'ContentType': f'image/{file_extension[1:]}'})
           profile_image_url = f"https://{self.__BUCKET_NAME__}.s3.amazonaws.com/{image_key}"
           logging.info("Image uploaded to S3 successfully.")
           return profile_image_url
