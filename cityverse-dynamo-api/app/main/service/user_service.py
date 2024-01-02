@@ -68,10 +68,11 @@ def get_all_users():
 
 def get_a_user(user_id):
     document = Document(__TABLE_NAME__='User')
-
+    
     user = document.get_item(user_id)
 
-    logging.info(user)
+    if user is None:
+        logging.warning(f"User with ID {user_id} not found.")
 
     return user
 
@@ -79,7 +80,7 @@ def get_a_user(user_id):
 def update_user(user_id,data,profile_image):
     document = Document(__TABLE_NAME__='User',__BUCKET_NAME__='cityverse-profilepics',__S3_OBJECT_PREFIX__='profile-images/')
     profile_image_url = None
-
+   
     if profile_image:
       profile_image_url = document.upload_profile_image_to_s3(profile_image)
       if profile_image_url is None:
@@ -88,34 +89,34 @@ def update_user(user_id,data,profile_image):
             'message': 'Failed to upload profile image to S3.',
         }, 500
     user = get_a_user(user_id)
+    
     if user:
-        if 'email' in data:
-         user['email'] = data['email']
-        if 'last_name' in data:
-         user['last_name'] = data['last_name']
-        if 'first_name' in data:
-          user['first_name'] = data['first_name']
-        if 'password' in data:
-          user['password'] = data.get('password')
-        if 'is_creator' in data:
-           user['is_creator'] = data['is_creator']
-        if profile_image_url is not None:
-           user['profile_image'] = profile_image_url
-        user['modified_on'] = datetime.utcnow().isoformat()
-        user['id'] = str(user_id)
+     if 'email' in data:
+        user['email'] = data.get('email')  
+     if 'last_name' in data:
+        user['last_name'] = data.get('last_name')  
+     if 'first_name' in data:
+        user['first_name'] = data.get('first_name')  
+     if 'password' in data:
+        user['password'] = data.get('password')  
+     if 'is_creator' in data:
+        user['is_creator'] = data.get('is_creator')  
+     if 'created_on' in data:
+        user['created_on'] = data.get('created_on')  
+     if profile_image_url:
+        user['profile_image'] = str(profile_image_url)
+    user['id'] = str(user_id)
+    user['modified_on'] = datetime.utcnow().isoformat()
+    print("check user")
+    print(user)
 
         # Save the updated user item
-        document.save(item=user)
+    document.save(item=user)
 
-        return {
+    return {
             'status': 'success',
             'message': 'User successfully updated.',
         }, 201
-
-    return {
-        'status': 'fail',
-        'message': 'No user with the provided ID found.',
-    }, 409
 
 
 def delete_user(user_id):

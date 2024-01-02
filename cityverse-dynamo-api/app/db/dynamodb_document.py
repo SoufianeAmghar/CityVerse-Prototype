@@ -45,11 +45,27 @@ class Document:
 
     def save(self, item):
         dynamodb_resource = boto3.resource('dynamodb')
-
-
         table = dynamodb_resource.Table(self.__TABLE_NAME__)
 
-        table.put_item(Item=item)
+        # Check if the item has the primary key (id)
+        if 'id' in item:
+            # If 'id' is present, it's an existing item, perform a PUT (update) operation
+            existing_item = table.get_item(Key={'id': item['id']}).get('Item', {})
+
+            # Update only the attributes present in the update data
+            for key, value in item.items():
+                # Skip updating if the key is not present in the update data
+                if key not in existing_item:
+                    continue
+
+                # Update the attribute only if the value is not None
+                if value is not None:
+                    existing_item[key] = value
+            table.put_item(Item=existing_item)
+        else:
+            # If 'id' is not present, it's a new item, perform a POST (create) operation
+            # You might want to generate a new 'id' here if needed
+            table.put_item(Item=item)
 
     def load(self, dynamodb_client=None, query=None):
         if not dynamodb_client:
@@ -169,7 +185,7 @@ class Document:
       try:
           s3.upload_fileobj(image_file, self.__BUCKET_NAME__, image_key, ExtraArgs={'ContentType': f'image/{file_extension[1:]}'})
           profile_image_url = f"https://{self.__BUCKET_NAME__}.s3.amazonaws.com/{image_key}"
-          logging.info("Image uploaded to S3 successfully.")
+          logging.info(f"Image uploaded to S3 successfully. URL: {profile_image_url}")
           return profile_image_url
       except FileNotFoundError:
           logging.error("Profile image file not found.")

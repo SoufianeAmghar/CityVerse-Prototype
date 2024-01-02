@@ -1,3 +1,4 @@
+import json
 from flask import request
 from flask_restplus import Resource
 
@@ -50,7 +51,8 @@ class User(Resource):
     @api.doc('update user')
     def put(self,public_id):
         """Update a User"""
-        data = request.json
+        form_data_str = request.form.get('data')
+        data = json.loads(form_data_str) if form_data_str else {}
         image_file = request.files.get('profile_image')
         return update_user(public_id,data,profile_image=image_file)
 
