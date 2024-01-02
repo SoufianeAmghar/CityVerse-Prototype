@@ -34,7 +34,7 @@ import Toolbar from "@mui/material/Toolbar";
 import { styled, useTheme } from "@mui/material/styles";
 import React from "react";
 import { BrowserRouter, Link as LinkDom, useHistory } from "react-router-dom";
-
+import { Card, Container } from "@mui/material";
 
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import GroupIcon from "@mui/icons-material/Group";
@@ -53,6 +53,7 @@ import EventAvailableRoundedIcon from "@mui/icons-material/EventAvailableRounded
 import Badge from "@mui/material/Badge";
 import MapIcon from "@mui/icons-material/Map";
 import ExploreIcon from "@mui/icons-material/Explore";
+import StarIcon from "@mui/icons-material/Star";
 
 const drawerWidth = 250;
 
@@ -159,7 +160,7 @@ const Sidebar = ({ children }) => {
 
   const history = useHistory();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
   const [openItems, setOpenItems] = React.useState(false);
   const { isAuthenticated, setisAuthenticated } = useContext(UserLoginContext);
 
@@ -184,38 +185,30 @@ const Sidebar = ({ children }) => {
     setAnchorEl(null);
   };
 
-  const userRole = sessionStorage.getItem("roles");
-  const useremail = sessionStorage.getItem("email");
+  // const userRole = sessionStorage.getItem("roles");
+  // const useremail = sessionStorage.getItem("email");
   const [data, setdata] = useState([]);
-  const access_token = sessionStorage.getItem("acces_token");
   const headers = {
-    Authorization:  sessionStorage.getItem("acces_token").toString(),
+    Authorization: sessionStorage.getItem("acces_token").toString(),
   };
 
   const call_api_get_user_info = () => {
     axios
-      .get(
-        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "/auth/info",
-        {
-          headers,
-        }
-      )
+      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "/auth/info", {
+        headers,
+      })
       .then((value) => {
-
-        setdata(value.data.data)
-        console.log(value.data.data)
-       
+        setdata(value.data.data);
       })
       .catch((err) => {
-        //deconnexion();
+        deconnexion();
       });
   };
-  const [days, hours, minutes, seconds] = useCountdown(
-    sessionStorage.getItem("check-validity")
-  );
+
   useEffect(() => {
     call_api_get_user_info();
-  }, [minutes]);
+  }, []);
+
   const deconnexion = () => {
     sessionStorage.clear();
     setisAuthenticated(false);
@@ -236,199 +229,6 @@ const Sidebar = ({ children }) => {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      {/* <AppBar
-        style={{
-          background:
-            "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(30,30,130,1) 77%, rgba(63,158,177,1) 100%);",
-          borderBottom: "1px solid  #d3d9ee",
-        }}
-        elevation={1}
-      >
-        <Toolbar
-          style={{
-            background:
-              "linear-gradient(141deg, rgba(2,0,36,1) 0%, rgba(30,30,130,0.9529061624649859) 84%, rgba(63,158,177,1) 100%)",
-            display: "flex",
-            justifyContent: "flex-start",
-            alignItems: "center",
-          }}
-        >
-          Logo
-       
-          <div
-            style={{
-              marginLeft: "auto",
-              display: "flex",
-              gap: "20px",
-            }}
-          >
-            {sessionStorage.getItem("language") === "fr" ? (
-              <div>
-                <IconButton
-                  sx={{ width: 32, height: 32, color: "#34469D" }}
-                  aria-label="more"
-                  id="long-button"
-                  aria-controls={open1 ? "long-menu" : undefined}
-                  aria-expanded={open1 ? "true" : undefined}
-                  aria-haspopup="true"
-                  onClick={handleClick1}
-                >
-                  <TranslateIcon />
-                </IconButton>
-                <Menu
-                  id="long-menu"
-                  MenuListProps={{
-                    "aria-labelledby": "long-button",
-                  }}
-                  anchorEl={anchorEl1}
-                  open={open1}
-                  onClose={handleClose1}
-                  PaperProps={{
-                    style: {
-                      maxHeight: ITEM_HEIGHT * 4.5,
-                      width: "20ch",
-                    },
-                  }}
-                >
-                  {langues.map((langues) => (
-                    <MenuItem key={langues.value} onClick={handleClose1}>
-                      <FormControl>
-                        <RadioGroup
-                          aria-labelledby="demo-radio-buttons-group-label"
-                          defaultValue={sessionStorage.getItem("language")}
-                          name="radio-buttons-group"
-                          onChange={changeLanguage}
-                        >
-                          <FormControlLabel
-                            value={langues.value}
-                            control={<Radio color="success" />}
-                            label={langues.label}
-                          />
-                        </RadioGroup>
-                      </FormControl>
-                    </MenuItem>
-                  ))}
-                </Menu>
-              </div>
-            ) : (
-              <div>
-                <IconButton
-                  sx={{ width: 32, height: 32, color: "#34469D" }}
-                  aria-label="more"
-                  id="long-button"
-                  aria-controls={open1 ? "long-menu" : undefined}
-                  aria-expanded={open1 ? "true" : undefined}
-                  aria-haspopup="true"
-                  onClick={handleClick1}
-                >
-                  <TranslateIcon />
-                </IconButton>
-                <Menu
-                  id="long-menu"
-                  MenuListProps={{
-                    "aria-labelledby": "long-button",
-                  }}
-                  anchorEl={anchorEl1}
-                  open={open1}
-                  onClose={handleClose1}
-                  PaperProps={{
-                    style: {
-                      maxHeight: ITEM_HEIGHT * 4.5,
-                      width: "20ch",
-                    },
-                  }}
-                >
-                  {langues2.map((langues) => (
-                    <MenuItem key={langues.value} onClick={handleClose1}>
-                      <FormControl>
-                        <RadioGroup
-                          aria-labelledby="demo-radio-buttons-group-label"
-                          defaultValue={sessionStorage.getItem("language")}
-                          name="radio-buttons-group"
-                          onChange={changeLanguage}
-                        >
-                          <FormControlLabel
-                            value={langues.value}
-                            control={<Radio color="success" />}
-                            label={langues.label}
-                          />
-                        </RadioGroup>
-                      </FormControl>
-                    </MenuItem>
-                  ))}
-                </Menu>
-              </div>
-            )}
-            <Divider orientation="vertical" flexItem></Divider>
-            <Box>
-              <IconButton
-                onClick={handleClick}
-                sx={{ width: 32, height: 32, color: "#34469D" }}
-                aria-controls={open ? "account-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? "true" : undefined}
-              >
-                <Avatar
-                  style={{ background: "#34469D", width: 30, height: 30 }}
-                >
-                  {data.name?.charAt(0).toUpperCase()}
-                </Avatar>
-              </IconButton>
-            </Box>
-
-            <Menu
-              anchorEl={anchorEl}
-              id="account-menu"
-              open={open2}
-              onClose={handleClose}
-              onClick={handleClose}
-              PaperProps={{
-                elevation: 0,
-                sx: {
-                  overflow: "visible",
-                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                  mt: 1.5,
-                  "& .MuiAvatar-root": {
-                    width: 32,
-                    height: 32,
-                    ml: -0.5,
-                    mr: 1,
-                  },
-                  "&:before": {
-                    content: '""',
-                    display: "block",
-                    position: "absolute",
-                    top: 0,
-                    right: 14,
-                    width: 10,
-                    height: 10,
-                    bgcolor: "background.paper",
-                    zIndex: 0,
-                  },
-                },
-              }}
-              transformOrigin={{ horizontal: "right", vertical: "top" }}
-              anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-            >
-              <MenuItem>
-                <PersonIcon sx={{ mr: 2 }} />
-                {data.name}
-              </MenuItem>
-              <MenuItem>
-                <TaskAltIcon sx={{ mr: 2 }} />
-                {data.role}
-              </MenuItem>
-              <Divider />
-              <MenuItem onClick={() => deconnexion()}>
-                <LogoutIcon sx={{ mr: 2 }} />
-                {sessionStorage.getItem("language") === "fr"
-                  ? "Se déconnecter"
-                  : "Logout"}
-              </MenuItem>
-            </Menu>
-          </div>
-        </Toolbar>
-      </AppBar> */}
       <BrowserRouter>
         <Drawer
           variant="permanent"
@@ -443,7 +243,7 @@ const Sidebar = ({ children }) => {
                   style={{
                     marginTop: "20px",
                     marginBottom: "10px",
-                    marginLeft: "20px",
+                    marginLeft: "16px",
                     color: "rgb(25, 118, 210)",
                   }}
                 >
@@ -467,38 +267,54 @@ const Sidebar = ({ children }) => {
 
             <div
               style={{
-                paddingLeft: "30%",
-                paddingRight: "30%",
                 alignItems: "center",
                 justifyContent: "flex-center",
                 marginBottom: "25%",
               }}
             >
-              {open && (
-                <Typography
-                  variant="h4"
-                  style={{ color: "rgba(2,0,36,1)", marginBottom: "10%" }}
-                >
-                  CityVerse.
-                </Typography>
-              )}
               <br />
               {open && (
-                <div style={{}}>
-                  <img
+                <>
+                  <div style={{ paddingLeft: "30%", paddingRight: "30%" }}>
+                    <img
+                      style={{
+                        width: "auto",
+                        height: "100px",
+                        borderRadius: "100%",
+                      }}
+                      src="https://images.unsplash.com/photo-1628157588553-5eeea00af15c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80"
+                      alt="webscript"
+                    />
+                  </div>
+                </>
+              )}
+              {open && (
+                <>
+                  <div
                     style={{
-                      width: "auto",
-                      height: "100px",
-                      borderRadius: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      paddingLeft: "25%",
+                      paddingRight: "25%",
                     }}
-                    src="https://images.unsplash.com/photo-1628157588553-5eeea00af15c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80"
-                    alt="webscript"
-                  />
-
-                  <Typography variant="h6" sx={{ color: "#1e1e82" }}>
-                  {data?.first_name?.S} {data?.last_name?.S} 
-                  </Typography>
-                </div>
+                  >
+                    {data && (
+                      <>
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            color: "#1e1e82",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          {data?.first_name?.S} {data?.last_name?.S} {15}{" "}
+                          <StarIcon sx={{ color: "#FFD700" }} />
+                        </Typography>
+                      </>
+                    )}
+                  </div>
+                </>
               )}
             </div>
           </Box>
@@ -517,13 +333,12 @@ const Sidebar = ({ children }) => {
               </ListItem>
             </List>
           )}
-          <br />
-          <br />
-          <List style={{ paddingTop: "0px", paddingBottom: "20%" }}>
+
+          <List style={{ paddingTop: "0px", paddingBottom: "70%" }}>
             <ListItem
               style={{
                 fontFamily: "sans-serif",
-                padding: "15px",
+                padding: "20px",
                 color: "#1e1e82",
                 display: "flex",
                 flexDirection: "row",
@@ -565,51 +380,7 @@ const Sidebar = ({ children }) => {
             <ListItem
               style={{
                 fontFamily: "Georgia, serif",
-                padding: "15px",
-                color: "#1e1e82",
-                display: "flex",
-                flexDirection: "row",
-              }}
-              button
-              className={focused1 ? "active" : ""}
-              component={LinkDom}
-              to="/notifications"
-              onClick={(e) => {
-                setfocused(false);
-                setfocused1(true);
-                setfocused2(false);
-                setfocused3(false);
-                setfocused4(false);
-                setfocused5(false);
-                setfocused6(false);
-                setfocused7(false);
-                setfocused8(false);
-                setfocused9(false);
-                setfocused10(false);
-              }}
-            >
-              <ListItemIcon>
-                <Badge color="error" badgeContent={9}>
-                  <NotificationsIcon style={{ color: "#1e1e82" }} />
-                </Badge>
-              </ListItemIcon>
-              <ListItemText
-                sx={{
-                  color: "#00000",
-                  fontWeight: 150,
-                  fontFamily: "Avenir Medium, sans-serif , bold",
-                }}
-                primary={
-                  sessionStorage.getItem("language") === "fr"
-                    ? "Notifications"
-                    : "Notifications"
-                }
-              />
-            </ListItem>
-            <ListItem
-              style={{
-                fontFamily: "Georgia, serif",
-                padding: "15px",
+                padding: "20px",
                 color: "#1e1e82",
                 display: "flex",
                 flexDirection: "row",
@@ -648,23 +419,25 @@ const Sidebar = ({ children }) => {
                 }
               />
             </ListItem>
+          </List>
+          <List style={{ paddingTop: "0px" }}>
             <ListItem
               style={{
-                fontFamily: "Georgia, serif",
-                padding: "15px",
+                fontFamily: "sans-serif",
+                px: "20px",
                 color: "#1e1e82",
                 display: "flex",
                 flexDirection: "row",
               }}
               button
-              className={focused3 ? "active" : ""}
+              //className={focused1 ? "active" : ""}
               component={LinkDom}
               to="/settings"
               onClick={(e) => {
+                setfocused1(true);
                 setfocused(false);
-                setfocused1(false);
                 setfocused2(false);
-                setfocused3(true);
+                setfocused3(false);
                 setfocused4(false);
                 setfocused5(false);
                 setfocused6(false);
@@ -681,7 +454,7 @@ const Sidebar = ({ children }) => {
                 sx={{
                   color: "#00000",
                   fontWeight: 150,
-                  fontFamily: "Avenir Medium, sans-serif , bold",
+                  fontFamily: "Georgia, serif, bold",
                 }}
                 primary={
                   sessionStorage.getItem("language") === "fr"
@@ -691,12 +464,12 @@ const Sidebar = ({ children }) => {
               />
             </ListItem>
           </List>
-          <Box>
+          <Box sx={{ flexDirection: "row" }}>
             <MenuItem
-              sx={{ padding: "10px", color: "#1e1e82" }}
+              sx={{ px: "10px", color: "#1e1e82" }}
               onClick={() => deconnexion()}
             >
-              <LogoutIcon sx={{ ml: "10px", mr: "10px", color: "#1e1e82" }} />
+              <LogoutIcon sx={{ mx: "10px", color: "#1e1e82" }} />
               <p>&nbsp;&nbsp;{"  "}&nbsp;</p>
               {sessionStorage.getItem("language") === "fr"
                 ? "  Se déconnecter"
@@ -707,8 +480,21 @@ const Sidebar = ({ children }) => {
 
         <main style={{ flexGrow: 1, padding: theme.spacing(0) }}>
           <Box width="99%" component="main" sx={{ pt: 1 }}>
-            {children}
+            <div disableGutters width="99%" height="auto">
+              <Card>
+                <Container maxWidth="99%" sx={{ paddingTop: "20px" }}>
+                  <img
+                    style={{
+                      width: "auto",
+                      height: "32.5px",
+                    }}
+                    src={require("../../Asset/logo.png")}
+                  />
+                </Container>
+              </Card>
+            </div>
           </Box>
+          {children}
         </main>
       </BrowserRouter>
     </Box>

@@ -15,19 +15,20 @@ import {
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import React, { useRef, useEffect, useState } from "react";
 import { Marker } from "react-leaflet/Marker";
+import { v4 as uuidv4 } from "uuid";
 import {
   MapContainer,
   TileLayer,
   useMap,
   useMapEvents,
+  GeoJSON,
   Map,
   CircleMarker,
-  // Marker,
   Popup,
 } from "react-leaflet";
-import L from "leaflet";
+import L, { MarkerCluster } from "leaflet";
+import MarkerClusterGroup from "react-leaflet-cluster";
 import "leaflet/dist/leaflet.css";
-import LocationMarker from "./Marker";
 import { Polyline } from "react-leaflet/Polyline";
 import data from "../Data/data.json";
 import dataVélo from "../Data/dataVélo.json";
@@ -39,124 +40,86 @@ import { Chip } from "@material-ui/core";
 import CardWifi from "../Card/cardWifi";
 import WifiIcon from "@mui/icons-material/Wifi";
 import EventIcon from "@mui/icons-material/Event";
+import "./map.css";
+import BikeMarker from "./MarkerBike";
+import CardEvent from "../Card/CardEvent";
+import { styled, Drawer as MuiDrawer } from "@mui/material";
 
-// {
-//   "type": "FeatureCollection",
-//   "features": [
-//     {
-//       "type": "Feature",
-//       "geometry": {
-//         "type": "Point",
-//         "coordinates": [
-//           -70.219841,
-//           8.6310997
-//         ]
-//       },
-//       "properties": {
-//         "id": 336,
-//         "id_user": 1,
-//         "id_device": 1,
-//         "timestamp": 1446571154,
-//         "date": "12:49PM 03-11-2015",
-//         "Latitude": 8.6310997,
-//         "Longitude": -70.219841,
-//         "speedKPH": 0,
-//         "heading": "",
-//         "Name": "N\/D",
-//         "City": "N\/D",
-//         "estatus": "Stop"
-//       }
-//     }
-//   ]
-// }
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import InboxIcon from "@mui/icons-material/MoveToInbox";
+import MailIcon from "@mui/icons-material/Mail";
 
-function createIcon(url) {
-  return new L.Icon({
-    iconUrl: url,
-  });
-}
-const limeOptions = { color: "red" };
-const multiPolyline = [
-  [
-    [48.871084, 2.352386],
-    [48.856127, 2.346525],
-  ],
-  [
-    [48.856127, 2.346525],
-    [48.856127, 2.326525],
-  ],
-];
+import { bikeApi } from "../Data/data";
 
-function MyMap() {
-  const [loc, setLoc] = useState(null);
-  const map = useMapEvents({
-    click: (e) => {
-      setLoc(e.latlng);
-    },
-  });
-  return null;
-}
+const Drawer = styled(MuiDrawer)({
+  width: 300, //drawer width
+  "& .MuiDrawer-paper": {
+    width: 300, //drawer width
+    transition: "none !important",
+  },
+});
 
 export default function MapCart() {
-  const [newLat, setNewLat] = useState(null);
-  const [newLng, setNewLng] = useState(null);
-  const position = [48.871084, 2.352386];
-  const redOptions = { color: "red" };
-  // const data = [
-  //   {
-  //     name: "Paris",
-  //     fillColor: "#7FC9FF",
-  //     id: 1,
-  //     position: {
-  //       lat: 48.871084,
-  //       lng: 2.352386,
-  //     },
-  //   },
-  //   {
-  //     name: "Paris 1",
-  //     fillColor: "#7FC9FF",
-  //     id: 2,
-  //     position: {
-  //       lat: 48.856127,
-  //       lng: 2.346525,
-  //     },
-  //   },
-  //   {
-  //     name: "Paris 2",
-  //     fillColor: "#7FC9FF",
-  //     id: 2,
-  //     position: {
-  //       lat: 48.856127,
-  //       lng: 2.326525,
-  //     },
-  //   },
-  // ];
-
-  const [selectedIndex, setSelectedIndex] = useState(-1);
-
-  function handleClick(e) {
-    setSelectedIndex(e.target.options.index);
-  }
-
-  function getMarkerIcon(index) {
-    if (index === selectedIndex)
-      return createIcon(
-        "https://user-images.githubusercontent.com/1596072/85960867-3baf9700-b9af-11ea-854e-7ef6e656d447.png"
-      );
-    return createIcon(
-      "https://user-images.githubusercontent.com/1596072/85960806-0145fa00-b9af-11ea-91ab-a107d0a64b66.png"
-    );
-  }
-
-  const [reviewData, setReviewData] = useState([]);
-  const [selectedReview, selectReview] = useState();
-  const icon = L.icon({
-    iconSize: [25, 30],
-    iconAnchor: [10, 41],
-    popupAnchor: [2, -40],
-    iconUrl: require("../../Asset/piste-cyclable.png"),
-    shadowUrl: "https://unpkg.com/leaflet@1.6/dist/images/marker-shadow.png",
+  const [openVelo, setOpenVelo] = useState(false);
+  const [openWifi, setOpenWifi] = useState(false);
+  const [openEvent, setOpenEvent] = useState(false);
+  const [state, setState] = React.useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
   });
+
+  const toggleDrawer = (anchor, open) => (event) => {
+    if (
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+
+    setState({ ...state, [anchor]: open });
+  };
+
+  const list = (anchor) => (
+    <Box
+      sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 250 }}
+      role="presentation"
+      onClick={toggleDrawer(anchor, false)}
+      onKeyDown={toggleDrawer(anchor, false)}
+    >
+      <List>
+        {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
+          <ListItem key={text} disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+              </ListItemIcon>
+              <ListItemText primary={text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+      <Divider />
+      <List>
+        {["All mail", "Trash", "Spam"].map((text, index) => (
+          <ListItem key={text} disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+              </ListItemIcon>
+              <ListItemText primary={text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
+
   const iconWifi = L.icon({
     iconSize: [35, 35],
     iconAnchor: [10, 41],
@@ -171,10 +134,16 @@ export default function MapCart() {
     iconUrl: require("../../Asset/event.png"),
     shadowUrl: "https://unpkg.com/leaflet@1.6/dist/images/marker-shadow.png",
   });
+  // NOTE: iconCreateFunction is running by leaflet, which is not support ES6 arrow func syntax
+  // eslint-disable-next-line
+  const createClusterCustomIcon = function (cluster: MarkerCluster) {
+    return L.divIcon({
+      html: `<span>${cluster.getChildCount()}</span>`,
+      className: "custom-marker-cluster",
+      iconSize: L.point(60, 60),
+    });
+  };
 
-  const [openVelo, setOpenVelo] = useState(false);
-  const [openWifi, setOpenWifi] = useState(false);
-  const [openEvent, setOpenEvent] = useState(false);
   function handleOpenVelo() {
     setOpenVelo(!openVelo);
   }
@@ -185,65 +154,66 @@ export default function MapCart() {
     setOpenEvent(!openEvent);
   }
 
-  useEffect(() => {
-    console.log("teeest");
-  }, [openWifi]);
+  const [map, setMap] = useState(null);
 
   return (
     <div disableGutters width="99%" height="auto">
+      {/* <div>
+      {['left', 'right', 'top', 'bottom'].map((anchor) => (
+        <React.Fragment key={anchor}>
+          <Button onClick={toggleDrawer(anchor, true)}>{anchor}</Button>
+          <Drawer
+            anchor={anchor}
+            open={state[anchor]}
+            onClose={toggleDrawer(anchor, false)}
+          >
+            {list(anchor)}
+          </Drawer>
+        </React.Fragment>
+      ))}
+    </div> */}
       <Card>
-        <Container maxWidth="99%" sx={{ padding: "20px" }}>
+        <Container maxWidth="99%" sx={{ px: "20px" }}>
           <Box
             sx={{
               display: "flex",
               justifyContent: "center",
-
               bgcolor: "background.paper",
-              borderRadius: 1,
+              borderRadius: 0,
             }}
           >
-            {/* <Chip
-                variant="outlined"
-                size="small"
-                icon={<DirectionsBikeIcon />}
-                label="bike"
-                clickable
-                color="primary"
-                onClick={handleOpenVelo}
-                // deleteIcon={<DoneIcon />}
-              />
-              <Chip
-                variant="outlined"
-                size="small"
-                icon={<DirectionsBikeIcon />}
-                label="Wifi"
-                clickable
-                color="primary"
-                onClick={handleOpenWifi}
-                // deleteIcon={<DoneIcon />}
-              />
-               <Chip
-                variant="outlined"
-                size="small"
-                icon={<DirectionsBikeIcon />}
-                label="Event"
-                clickable
-                color="primary"
-                onClick={handleOpenEvent}
-                // deleteIcon={<DoneIcon />}
-              /> */}
             <Button
+              startIcon={<DirectionsBikeIcon sx={{ color: "#000" }} />}
               variant={openVelo ? "contained" : "outlined"}
-              startIcon={<DirectionsBikeIcon />}
-              sx={{
-                // backgroundColor: "success",
-                minWidth: "5%",
-                borderRadius: "20px",
-                mb: "1%",
-                mr: "0.5%",
-                // color: "#fff",
-              }}
-              color="info"
+              sx={
+                openVelo
+                  ? {
+                      display: "flex",
+                      padding: "16px",
+                      mx: "10px",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      gap: "8px",
+                      borderBottom: "2px solid #000",
+                      background:
+                        "linear-gradient(180deg, rgba(190, 255, 157, 0.93) 0%, #9FFF6F 21.35%)",
+                      boxShadow: "0px 7px 0px 0px #FFF",
+                      color: "#000",
+                    }
+                  : {
+                      display: "flex",
+                      padding: "16px",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      gap: "8px",
+                      mx: "10px",
+                      borderBottom: "4px solid #000",
+                      background:
+                        "linear-gradient(180deg, rgba(190, 255, 157, 0.00) 0%, #9FFF6F 100%)",
+                      boxShadow: "0px 7px 0px 0px #FFF",
+                      color: "#000",
+                    }
+              }
               onClick={handleOpenVelo}
             >
               Bikecycle
@@ -251,15 +221,35 @@ export default function MapCart() {
             <Button
               variant={openWifi ? "contained" : "outlined"}
               startIcon={<WifiIcon />}
-              sx={{
-                // backgroundColor: "success",
-                minWidth: "5%",
-                borderRadius: "20px",
-                mb: "1%",
-                mr: "0.5%",
-                // color: "#fff",
-              }}
-              color="warning"
+              sx={
+                openWifi
+                  ? {
+                      display: "flex",
+                      padding: "16px",
+                      mx: "10px",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      gap: "8px",
+                      borderBottom: "2px solid #000",
+                      background:
+                        "linear-gradient(180deg, rgba(190, 255, 157, 0.93) 0%, #9FFF6F 21.35%)",
+                      boxShadow: "0px 7px 0px 0px #FFF",
+                      color: "#000",
+                    }
+                  : {
+                      display: "flex",
+                      padding: "16px",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      gap: "8px",
+                      mx: "10px",
+                      borderBottom: "4px solid #000",
+                      background:
+                        "linear-gradient(180deg, rgba(190, 255, 157, 0.00) 0%, #9FFF6F 100%)",
+                      boxShadow: "0px 7px 0px 0px #FFF",
+                      color: "#000",
+                    }
+              }
               onClick={handleOpenWifi}
             >
               wifi
@@ -267,97 +257,106 @@ export default function MapCart() {
             <Button
               variant={openEvent ? "contained" : "outlined"}
               startIcon={<EventIcon />}
-              sx={{
-                // backgroundColor: "success",
-                minWidth: "5%",
-                borderRadius: "20px",
-                mb: "1%",
-                // color: "#fff",
-              }}
-              color="error"
+              sx={
+                openEvent
+                  ? {
+                      display: "flex",
+                      padding: "16px",
+                      mx: "10px",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      gap: "8px",
+                      borderBottom: "2px solid #000",
+                      background:
+                        "linear-gradient(180deg, rgba(190, 255, 157, 0.93) 0%, #9FFF6F 21.35%)",
+                      boxShadow: "0px 7px 0px 0px #FFF",
+                      color: "#000",
+                    }
+                  : {
+                      display: "flex",
+                      padding: "16px",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      gap: "8px",
+                      mx: "10px",
+                      borderBottom: "4px solid #000",
+                      background:
+                        "linear-gradient(180deg, rgba(190, 255, 157, 0.00) 0%, #9FFF6F 100%)",
+                      boxShadow: "0px 7px 0px 0px #FFF",
+                      color: "#000",
+                    }
+              }
               onClick={handleOpenEvent}
             >
               Event
             </Button>
           </Box>
-
+          <br />
           <MapContainer
+            ref={setMap}
             center={[48.871084, 2.352386]}
-            zoom={13}
-            // scrollWheelZoom={false}
-            style={{ height: "100vh", width: "100%" }}
+            zoom={4}
+            maxZoom={16}
+            scrollWheelZoom={true}
+            style={{ height: "100vh", width: "100%", borderRadius: "2%" }}
           >
+            <MarkerClusterGroup
+              chunkedLoading
+              iconCreateFunction={createClusterCustomIcon}
+              showCoverageOnHover={false}
+            >
+              {openVelo &&
+                dataVélo &&
+                dataVélo?.map((item, index) => (
+                  <BikeMarker
+                    key={item?.stationcode}
+                    index={item?.stationcode}
+                    position={[
+                      item.coordonnees_geo.lat,
+                      item.coordonnees_geo.lon,
+                    ]}
+                    item={item}
+                  />
+                ))}
+              {openWifi &&
+                dataWifi?.map((item, index) => (
+                  <Marker
+                    key={index}
+                    position={[item.geo_point_2d.lat, item.geo_point_2d.lon]}
+                    icon={iconWifi}
+                  >
+                    <Popup>
+                      <CardWifi key={index} item={item} />
+                    </Popup>
+                  </Marker>
+                ))}
+              {openEvent &&
+                dataEvent &&
+                dataEvent?.map((item, index) => (
+                  <>
+                    {item?.lat_lon !== null && item?.lat_lon !== undefined ? (
+                      <Marker
+                        key={index}
+                        position={[item.lat_lon.lat, item.lat_lon.lon]}
+                        icon={iconEvent}
+                      >
+                        <Popup
+                        className="popup"
+                        >
+                          <CardEvent key={index} />
+                        </Popup>
+                      </Marker>
+                    ) : (
+                      <></>
+                    )}
+                  </>
+                ))}
+            </MarkerClusterGroup>
+
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-
-            {/* <LocationMarker /> */}
-            {/* <MyMap /> */}
-            {/* <CircleMarker
-                center={[48.849083, 2.352440]}
-                pathOptions={redOptions}
-                radius={20}
-              ></CircleMarker> */}
-            {/* <Polyline pathOptions={limeOptions} positions={multiPolyline} /> */}
-            {/* {data?.filter(it => it?.address.country === "France")?.map((item, index) => (
-                <Marker
-                  key={item?.id}             
-                  position={[item.gps.latitude, item.gps.longitude]}
-                  icon={icon}
-                >
-                  <Popup>       
-                    <h2>Name: {item.name}</h2>
-                    <p>status: {item.status}</p>
-                    <p>Number of charging stations: {item.stallCount}</p>
-                  </Popup>
-                </Marker>
-              ))} */}
-            {openVelo &&
-              dataVélo?.map((item, index) => (
-                <Marker
-                  key={index}
-                  position={[
-                    item.coordonnees_geo.lat,
-                    item.coordonnees_geo.lon,
-                  ]}
-                  icon={icon}
-                >
-                  <Popup>
-                    <CardVelo key={index} item={item} />
-                  </Popup>
-                </Marker>
-              ))}
-            {openWifi &&
-              dataWifi?.map((item, index) => (
-                <Marker
-                  key={index}
-                  position={[item.geo_point_2d.lat, item.geo_point_2d.lon]}
-                  icon={iconWifi}
-                >
-                  <Popup>
-                    <CardWifi key={index} item={item} />
-                  </Popup>
-                </Marker>
-              ))}
-            {openEvent &&
-              dataEvent?.map((item, index) => (
-                <>
-                  {item?.lat_lon !== null && item?.lat_lon !== undefined ? (
-                    <Marker
-                      key={index}
-                      position={[item.lat_lon.lat, item.lat_lon.lon]}
-                      icon={iconEvent}
-                    >
-                      {/* <Popup>
-                      <CardVelo key={index} item={item} />
-                    </Popup> */}
-                    </Marker>
-                  ) : (
-                    <></>
-                  )}
-                </>
-              ))}
           </MapContainer>
         </Container>
       </Card>

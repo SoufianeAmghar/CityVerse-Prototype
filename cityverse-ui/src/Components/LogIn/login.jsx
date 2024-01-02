@@ -47,39 +47,11 @@ const Login = (props) => {
       .then((data) => {     
         sessionStorage.setItem("acces_token", data.data.Authorization);
         axios.defaults.headers.common['Authorization'] = `Bearer ${data.data.Authorization}`;
-        //sessionStorage.setItem("refresh_token", data.data.refresh_token);
+       
         let array = parseJwt(data.data.Authorization);
-        // sessionStorage.setItem("roles", array.roles);
-        // let timer = (new Date().getTime() + 60 * 60 * 1000) / 1000;
-        // sessionStorage.setItem("timer", timer);
-        // sessionStorage.setItem("exp", array.exp);
-        // sessionStorage.setItem("email", array.sub);
-        // sessionStorage.setItem("check-validity", timer);
         console.log('tessst', array )
         history.push("/explore");
         setInprogress(false);
-        // axios
-        //   .post(
-        //     process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
-        //       "/api/activated",
-        //     {
-        //       email: loginValue,
-        //     }
-        //   )
-        //   .then((data) => {
-        //     if (data.data === false) {
-        //       dispatch({ type: "FisrtAuth", FisrtAuth: true });
-        //       history.push("/firstauth");
-           
-           
-        //     } else {
-        //       setisAuthenticated(true);
-        //       dispatch({ type: "NotFirstAuth", FisrtAuth: false });
-        //       history.push("/explore");
-    
-        //       setError(false);
-        //     }
-        //   });
       })
       .catch((err) => {
       
