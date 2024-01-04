@@ -34,6 +34,28 @@ class Document:
 
         # Check if the file extension is in the list of allowed extensions
         return any(filename.lower().endswith(ext) for ext in allowed_extensions)
+    
+    def convert_dynamodb_item_to_string(self,item):
+        def convert_value(value):
+            if isinstance(value, dict):
+                if 'S' in value:
+                    return value['S']
+                elif 'BOOL' in value:
+                    return value['BOOL']
+                elif 'L' in value:
+                    return [convert_value(item) for item in value['L']]
+                elif 'M' in value:
+                     return {key: convert_value(val) for key, val in value['M'].items()}
+            elif isinstance(value, list):
+                return [convert_value(item) for item in value]
+            else:
+                 return str(value)
+
+        result = {}
+        for key, value in item.items():
+            result[key] = convert_value(value)
+
+        return result
 
     @property
     def id(self):
@@ -45,24 +67,8 @@ class Document:
 
     def save(self, item):
         dynamodb_resource = boto3.resource('dynamodb')
-        table = dynamodb_resource.Table(self.__TABLE_NAME__)
-
-        # Check if the item has the primary key (id)
-        if 'id' in item:
-            # If 'id' is present, it's an existing item, perform a PUT (update) operation
-            existing_item = table.get_item(Key={'id': item['id']}).get('Item', {})
-
-            # Update only the attributes present in the update data
-            for key, value in item.items():
-
-                if key in existing_item and value is not None and type(value) == type(existing_item[key]):
-                 existing_item[key] = value
-                elif key not in existing_item and value is not None:
-                 existing_item[key] = value
-            table.put_item(Item=existing_item)
-        else:
-            
-            table.put_item(Item=item)
+        table = dynamodb_resource.Table(self.__TABLE_NAME__)      
+        table.put_item(Item=item)
 
     def load(self, dynamodb_client=None, query=None):
         if not dynamodb_client:
