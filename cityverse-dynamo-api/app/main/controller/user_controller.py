@@ -4,7 +4,7 @@ from flask_restplus import Resource
 
 from app.main.util.decorator import token_required
 from ..util.dto import UserDto
-from ..service.user_service import save_new_user, get_all_users, get_a_user, delete_user, update_user, update_password, get_user_by_email
+from ..service.user_service import join_product, save_new_user, get_all_users, get_a_user, delete_user, unjoin_product, update_user, update_password, get_user_by_email
 
 api = UserDto.api
 _user = UserDto.user
@@ -53,9 +53,39 @@ class User(Resource):
         """Update a User"""
         json_data_str = request.form.get('json')
         data = json.loads(json_data_str) if json_data_str else {}
-        print(data)
         image_file = request.files.get('profile_image')
         return update_user(public_id,data,profile_image=image_file)
+    
+    @api.response(201, 'User successfully joined a product.')
+    @api.doc('join product')
+    def post(self, public_id):
+        """Join a product"""
+        data = request.json
+        product_id = data.get('product_id')
+
+        if not product_id:
+            return {
+                'status': 'fail',
+                'message': 'Product ID is required for joining.',
+            }, 400
+
+        return join_product(public_id, product_id)
+    
+    @api.response(201, 'User successfully removed a product.')
+    @api.doc('unjoin product')
+    def delete(self, public_id):
+        """Unjoin a product"""
+        data = request.json
+        product_id = data.get('product_id')
+
+        if not product_id:
+            return {
+                'status': 'fail',
+                'message': 'Product ID is required for joining.',
+            }, 400
+
+        return unjoin_product(public_id, product_id)
+
 
 @api.route('/change-password')
 class UserPassword(Resource):
