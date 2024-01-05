@@ -19,27 +19,13 @@ const Notifications = lazy(() =>
 const Settings = lazy(() => import("./Components/Settings/settings"));
 const Sidebar = lazy(() => import("./Components/Layout/sideBar"));
 const Event = lazy(() => import("./Components/Event/event"));
-
+const PointInteret = lazy(() =>
+  import("./Components/PointInteret/pointInteret")
+);
+const Profil = lazy(() => import('./Components/Profil/Profil'))
+const Product = lazy(() => import('./Components/Product/product'))
 function App(props) {
-  // const [open, setopen] = useState(false);
-  // const handleClose = () => {
-  //   setopen(false);
-  // };
-  // const handleOpen = () => {
-  //   setopen(true);
-  // };
-  // const [days, hours, minutes, seconds] = useCountdown(
-  //   sessionStorage.getItem("timer")
-  // );
-
-  // useEffect(() => {
-  //   if (days === 0 && hours === 0 && minutes === 0 && seconds === 59) {
-  //     handleOpen();
-  //   }
-  // }, [seconds]);
-  {
-    console.log("App 00");
-  }
+ 
   return (
     <ThemeConfig>
       <BrowserRouter>
@@ -74,11 +60,21 @@ function App(props) {
             <Route exact path="/signup" component={signup} />
             <Route element={<PrivateRoute />}>
               <Sidebar>
-                <Route exact path="/explore"  render={() => <MapCart />} />
+                <Route exact path="/explore" render={() => <MapCart />} />
                 <Route
                   path="/notifications"
                   exact
                   render={(props) => <Notifications {...props} />}
+                />
+                <Route
+                  path="/PointInteret"
+                  exact
+                  render={(props) => <PointInteret {...props} />}
+                />
+                <Route
+                  path="/Profil"
+                  exact
+                  render={(props) => <Profil {...props} />}
                 />
                 <Route
                   path="/settings"
@@ -89,6 +85,11 @@ function App(props) {
                   exact
                   path="/events"
                   render={(props) => <Event {...props} />}
+                />
+                <Route
+                  exact
+                  path="/product"
+                  render={(props) => <Product {...props} />}
                 />
                 {/* <Modal
                   open={open}

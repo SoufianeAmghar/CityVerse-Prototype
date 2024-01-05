@@ -3,7 +3,14 @@ import React, { useEffect, useRef, useState } from "react";
 import CheckCircleTwoToneIcon from "@mui/icons-material/CheckCircleTwoTone";
 import CloseIcon from "@mui/icons-material/Close";
 import TerminalIcon from "@mui/icons-material/Terminal";
-import { Card, Container, MenuItem, Modal, Stack, Typography } from "@mui/material";
+import {
+  Card,
+  Container,
+  MenuItem,
+  Modal,
+  Stack,
+  Typography,
+} from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -21,7 +28,9 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import PreviewIcon from "@mui/icons-material/Preview";
-import PinDropIcon from '@mui/icons-material/PinDrop';
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import DeleteIcon from '@mui/icons-material/Delete';
+import PinDropIcon from "@mui/icons-material/PinDrop";
 import {
   Alert,
   Box,
@@ -32,16 +41,14 @@ import {
   InputLabel,
   Select,
   Snackbar,
-  TextField
+  TextField,
 } from "@mui/material";
 import axios from "axios";
 import { format } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
-import ModalProgram from "../ModalProgram"
-import ModalDeplicateProgram from "../deplicateProgram";
+import "./pointInteret.css";
 import "../info.css";
-import ModalRenewProgram from "../renewProgram";
-
+import ModalPreview from "./PreviewPoint";
 const useStyles = makeStyles((theme) => ({
   input: {
     backgroundColor: "#F0F5FB",
@@ -71,8 +78,6 @@ const styleValidate = {
   borderRadius: "14px",
 };
 
-
-
 const styleValidateDelete = {
   backgroundColor: "success",
   minWidth: "20%",
@@ -80,54 +85,8 @@ const styleValidateDelete = {
   color: "#fff",
 };
 
-const years = [
-  { annee: 2000 },
-  { annee: 2001 },
-  { annee: 2002 },
-  { annee: 2003 },
-  { annee: 2004 },
-  { annee: 2005 },
-  { annee: 2006 },
-  { annee: 2007 },
-  { annee: 2008 },
-  { annee: 2009 },
-  { annee: 2010 },
-  { annee: 2011 },
-  { annee: 2012 },
-  { annee: 2013 },
-  { annee: 2014 },
-  { annee: 2015 },
-  { annee: 2016 },
-  { annee: 2017 },
-  { annee: 2018 },
-  { annee: 2019 },
-  { annee: 2020 },
-  { annee: 2021 },
-  { annee: 2022 },
-  { annee: 2023 },
-  { annee: 2024 },
-  { annee: 2025 },
-  { annee: 2026 },
-  { annee: 2027 },
-  { annee: 2028 },
-  { annee: 2029 },
-  { annee: 2030 },
-  { annee: 2031 },
-  { annee: 2032 },
-  { annee: 2033 },
-  { annee: 2034 },
-  { annee: 2035 },
-  { annee: 2036 },
-  { annee: 2037 },
-  { annee: 2038 },
-  { annee: 2039 },
-  { annee: 2040 },
-];
-
 export default function PointInteret(props) {
   const classes = useStyles();
-
-  const programs = useSelector((state) => state.ProgrammeReducer.programs);
   const [idProgramUpdated, setIdProgramUpdated] = useState(null);
   const [name, setName] = useState("");
   const [cedante, setCedante] = useState("");
@@ -135,12 +94,11 @@ export default function PointInteret(props) {
   const [form, setForm] = useState("");
   const [branch, setBranch] = useState("");
   const [intermediary, setIntermediary] = useState("");
-  const [underwritingYear, setUnderwritingYear] = useState(years[22]);
+  const [underwritingYear, setUnderwritingYear] = useState();
 
-  
   const { history } = props;
   const dispatch = useDispatch();
- 
+
   /** error handling */
   const [ErrTranche, setErrTranche] = useState("");
   const [openErrTranche, setOpenErrTranche] = useState(false);
@@ -178,73 +136,72 @@ export default function PointInteret(props) {
     Authorization: "Bearer " + access_token.toString(),
   };
 
-  useEffect(() => {
-    axios
-      .get(process.env.REACT_APP_PROGRAM_SERVER + "/program/", { headers })
-      .then((response) => {
-        var data = response.data;
-        for (let i = 0; i < response.data.length; i++) {
-          data[i].created_on = format(
-            new Date(data[i].created_on),
-            "dd/MM/yyyy"
-          );
-          data[i].modified_on = format(
-            new Date(data[i].modified_on),
-            "dd/MM/yyyy"
-          );
-          // data[i].startDate = format(new Date(data[i].startDate), 'dd/MM/yyyy')
-          // data[i].endDate = format(new Date(data[i].endDate), 'dd/MM/yyyy')
-        }
-        dispatch({
-          type: "programs",
-          programs: data,
-        });
-      });
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get(process.env.REACT_APP_PROGRAM_SERVER + "/program/", { headers })
+  //     .then((response) => {
+  //       var data = response.data;
+  //       for (let i = 0; i < response.data.length; i++) {
+  //         data[i].created_on = format(
+  //           new Date(data[i].created_on),
+  //           "dd/MM/yyyy"
+  //         );
+  //         data[i].modified_on = format(
+  //           new Date(data[i].modified_on),
+  //           "dd/MM/yyyy"
+  //         );
+  //         // data[i].startDate = format(new Date(data[i].startDate), 'dd/MM/yyyy')
+  //         // data[i].endDate = format(new Date(data[i].endDate), 'dd/MM/yyyy')
+  //       }
+  //       dispatch({
+  //         type: "programs",
+  //         programs: data,
+  //       });
+  //     });
+  // }, []);
 
   /*    Delete Programme    */
-  function handleDeleteProg() {
-    axios
-      .delete(process.env.REACT_APP_PROGRAM_SERVER + "/program/" + idDelete, {
-        headers,
-      })
-      .then((res) => {
-        handleCloseDelete();
-        axios
-          .get(process.env.REACT_APP_PROGRAM_SERVER + "/program/", { headers })
-          .then((response) => {
-            var data = response.data;
-            for (let i = 0; i < response.data.length; i++) {
-              data[i].created_on = format(
-                new Date(data[i].created_on),
-                "dd/MM/yyyy"
-              );
-              data[i].modified_on = format(
-                new Date(data[i].modified_on),
-                "dd/MM/yyyy"
-              );
-            }
-            dispatch({
-              type: "programs",
-              programs: data,
-            });
-          });
-      })
-      .catch((res) => {
-        window.addEventListener("scroll", handleScroll);
-        setErrTranche(res.response.data.error);
-        setOpenErrTranche(true);
-        setTimeout(() => {
-          setOpenErrTranche(false);
-          window.removeEventListener("scroll");
-        }, 5000);
-      });
-  }
+  // function handleDeleteProg() {
+  //   axios
+  //     .delete(process.env.REACT_APP_PROGRAM_SERVER + "/program/" + idDelete, {
+  //       headers,
+  //     })
+  //     .then((res) => {
+  //       handleCloseDelete();
+  //       axios
+  //         .get(process.env.REACT_APP_PROGRAM_SERVER + "/program/", { headers })
+  //         .then((response) => {
+  //           var data = response.data;
+  //           for (let i = 0; i < response.data.length; i++) {
+  //             data[i].created_on = format(
+  //               new Date(data[i].created_on),
+  //               "dd/MM/yyyy"
+  //             );
+  //             data[i].modified_on = format(
+  //               new Date(data[i].modified_on),
+  //               "dd/MM/yyyy"
+  //             );
+  //           }
+  //           dispatch({
+  //             type: "programs",
+  //             programs: data,
+  //           });
+  //         });
+  //     })
+  //     .catch((res) => {
+  //       window.addEventListener("scroll", handleScroll);
+  //       setErrTranche(res.response.data.error);
+  //       setOpenErrTranche(true);
+  //       setTimeout(() => {
+  //         setOpenErrTranche(false);
+  //         window.removeEventListener("scroll");
+  //       }, 5000);
+  //     });
+  // }
 
   /* SnackBar */
 
   const [openBar, setOpenBar] = useState(false);
-  
 
   const handleToCloseSnack = (event, reason) => {
     if ("clickaway" === reason) return;
@@ -263,7 +220,6 @@ export default function PointInteret(props) {
 
   // deplicate
   const [openBar3, setOpenBar3] = useState(false);
-  
 
   const handleToCloseSnack3 = (event, reason) => {
     if ("clickaway" === reason) return;
@@ -286,7 +242,7 @@ export default function PointInteret(props) {
 
   // deplicate
   const [openBar4, setOpenBar4] = useState(false);
-  
+
   const handleToCloseSnack4 = (event, reason) => {
     if ("clickaway" === reason) return;
     setOpenBar4(false);
@@ -403,45 +359,38 @@ export default function PointInteret(props) {
         }, 5000);
       });
   }
-
-  
-  const [menuBranch, setMenuBranch] = useState([]);
-  useEffect(() => {
-    axios
-      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "/api/params/", {
-        headers,
-      })
-      .then((response) => {
-        dispatch({ type: "dataParamsRC", dataParamsRC: response.data });
-        let list = [];
-        let iterable = response.data?.filter((value) => {
-          return value.name === "Branche";
-        })[0];
-        for (let k = 0; k < iterable?.indices?.length; k++) {
-          let val = iterable.indices[k]?.val + " - ";
-          let val2 =
-            iterable.reff[k]?.ref === undefined || null
-              ? ""
-              : iterable?.reff[k]?.ref;
-          list.push(val + val2);
-        }
-        // console.log(list);
-        setMenuBranch(list);
-        let i = 0;
-        let j = response.data.length;
-        let tempData = [];
-        for (i == 0; i < j; i++) {
-          tempData.push({
-            nom: response.data[i].nom,
-          });
-        }
-        dispatch({ type: "ParamsNomsRC", ParamsNomsRC: tempData });
-      });
-  }, []);
-
-  const dataParamsRC = useSelector((state) => state.ParamReducer.dataParamsRC);
-
-  
+  // useEffect(() => {
+  //   axios
+  //     .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "/api/params/", {
+  //       headers,
+  //     })
+  //     .then((response) => {
+  //       dispatch({ type: "dataParamsRC", dataParamsRC: response.data });
+  //       let list = [];
+  //       let iterable = response.data?.filter((value) => {
+  //         return value.name === "Branche";
+  //       })[0];
+  //       for (let k = 0; k < iterable?.indices?.length; k++) {
+  //         let val = iterable.indices[k]?.val + " - ";
+  //         let val2 =
+  //           iterable.reff[k]?.ref === undefined || null
+  //             ? ""
+  //             : iterable?.reff[k]?.ref;
+  //         list.push(val + val2);
+  //       }
+  //       // console.log(list);
+  //       setMenuBranch(list);
+  //       let i = 0;
+  //       let j = response.data.length;
+  //       let tempData = [];
+  //       for (i == 0; i < j; i++) {
+  //         tempData.push({
+  //           nom: response.data[i].nom,
+  //         });
+  //       }
+  //       dispatch({ type: "ParamsNomsRC", ParamsNomsRC: tempData });
+  //     });
+  // }, []);
 
   function handleChangeIdProgram(id) {
     dispatch({
@@ -450,7 +399,6 @@ export default function PointInteret(props) {
     });
     sessionStorage.setItem("idProgramme", id);
   }
-  
 
   const handleGetRowId = (e) => {
     return e._id;
@@ -465,89 +413,62 @@ export default function PointInteret(props) {
   };
 
   const columns: GridColDef[] = [
-    { field: "country", headerName: "¨Pays", flex: 1 },
-    { field: "insured", headerName: "Cédante", flex: 1 },
     {
-      field: "underwriting_year",
-      headerName: "Année de souscription",
-      flex: 1,
+      field: "name",
+      headerName: "Name",
+      flex: 2,
+      headerClassName: "header",
     },
-    { field: "name", headerName: "Nom", flex: 1 },
     {
-      field: "form",
-      headerName: "Forme",
+      field: "region",
+      headerName: "région",
       flex: 1,
-      renderCell: (params) => {
-        return (
-          <>
-            {params.row.form === "xs" ? "XS" : ""}
-            {params.row.form === "sl" ? "SL" : ""}
-            {params.row.form === "qs" ? "QS" : ""}
-          </>
-        );
-      },
+      headerClassName: "header",
     },
-    { field: "branch", headerName: "Branche", flex: 1 },
-    { field: "intermediary", headerName: "Intermédiaire", flex: 1 },
-    { field: "startDate", headerName: "Date d'effet", flex: 1 },
-    // { field: "endDate", headerName: "Date d'expiration", flex: 1 },
     {
-      field: "modified_on",
-      headerName: "Dernière mise a jour",
+      field: "country",
+      headerName: "¨Pays",
+      flex: 1,
+      headerClassName: "header",
+    },
+    {
+      field: "city",
+      headerName: "city",
+      flex: 1,
+      headerClassName: "header",
+    },
+    { field: "street", headerName: "Rue", flex: 2, headerClassName: "header" },
+    {
+      field: "point_created_by",
+      headerName: "Crée par",
+      flex: 1,
+      headerClassName: "header",
+    },
+    {
+      field: "point_created_on",
+      headerName: "Date de création",
       flex: 1,
       type: "date",
       sortComparator: dayInMonthComparator,
+      headerClassName: "header",
     },
-    {
-      field: "status",
-      headerName: "Statut",
-      flex: 1,
-      renderCell: (params) => {
-        return (
-          <>
-            {params.row.status === "draft" ? "En cours" : ""}
-            {params.row.status === "modelled" ? "Quoté" : ""}
-            {params.row.status === "final" ? "Finalisé" : ""}
-          </>
-        );
-      },
-    },
-
     {
       field: "actions",
       headerName: "Actions",
-      flex: 1.5,
-
+      flex: 1,
+      headerClassName: "header",
       renderCell: (params) => {
         return (
           <div>
-            <PreviewIcon
+            <VisibilityIcon
               onClick={() => {
-                history.push("/program");
-                handleChangeIdProgram(params.row._id);
+                history.push("/Product");
+                // handleChangeIdProgram(params.row._id);
+                setOpen(true);
               }}
-              style={{ color: "gray", cursor: "pointer" }}
+              style={{ color: "#556B2F", cursor: "pointer" }}
             />
-
-            <ContentCopyIcon
-              onClick={() => {
-                //handleDeplicateProgram(params.data._id)
-                setdeplicatedId(params.row._id);
-                setOpenDep(true);
-              }}
-              style={{ color: "#0044FF", cursor: "pointer" }}
-            />
-
-            <AutorenewIcon
-              onClick={() => {
-                setRenewId(params.row._id);
-                setOpenRen(true);
-                //handleRenewProgram(params.data._id)}
-              }}
-              style={{ color: "#e6b400", cursor: "pointer" }}
-            />
-
-            <ModeEditOutlineOutlinedIcon
+            {/* <ModeEditOutlineOutlinedIcon
               onClick={() => {
                 handleUpdatedData(params.row._id);
                 handleOpenUpdate();
@@ -555,9 +476,8 @@ export default function PointInteret(props) {
                 setExpDate(params.row.endDate);
               }}
               style={{ color: "#9cb885", cursor: "pointer" }}
-            />
-
-            <DeleteForeverIcon
+            /> */}
+            <DeleteIcon
               onClick={() => handleClickOpenDelete(params.row._id)}
               style={{ color: " #d95c5c", cursor: "pointer" }}
             />
@@ -566,98 +486,45 @@ export default function PointInteret(props) {
       },
     },
   ];
-  const columnsENG: GridColDef[] = [
-    { field: "country", headerName: "point of interest", flex: 1 },
-    { field: "insured", headerName: "Name", flex: 1 },
-    { field: "underwriting_year", headerName: "Checking date", flex: 1 },
-    { field: "name", headerName: "Event date", flex: 1 },
-    // {
-    //   field: "form",
-    //   headerName: "Form",
-    //   flex: 1,
-    //   renderCell: (params) => {
-    //     return (
-    //       <>
-    //         {params.row.form === "xs" ? "XS" : ""}
-    //         {params.row.form === "sl" ? "SL" : ""}
-    //         {params.row.form === "qs" ? "QS" : ""}
-    //       </>
-    //     );
-    //   },
-    // },
-    { field: "branch", headerName: "Localisation", flex: 1 },
-    {
-      field: "actions",
-      headerName: "Actions",
-      flex: 1,
-      renderCell: (params) => {
-        return (
-          <div>
-            <PreviewIcon
-              onClick={() => {
-                history.push("/program");
-                handleChangeIdProgram(params.row._id);
-              }}
-              style={{ color: "gray", cursor: "pointer" }}
-            />
-            <ModeEditOutlineOutlinedIcon
-              onClick={() => {
-                handleUpdatedData(params.row._id);
-                handleOpenUpdate();
-                handleUpdatedIdProgramm(params.row._id);
-                setExpDate(params.row.endDate);
-              }}
-              style={{ color: "#9cb885", cursor: "pointer" }}
-            />
-
-            <DeleteForeverIcon
-              onClick={() => handleClickOpenDelete(params.row._id)}
-              style={{ color: " #d95c5c", cursor: "pointer" }}
-            />
-          </div>
-        );
-      },
-    },
-  ];
-
-  
 
   return (
     <>
       <Box disableGutters component="main" width="98%" sx={{}}>
         <Card sx={{ borderRadius: "0px" }}>
-          <div className="border"></div>
           <br></br>
+          <br />
+          <br />
           <Container
             disableGutters
             maxWidth=""
             component="main"
             sx={{ padding: "20px" }}
           >
-            <div className="rowDirection">
+            {/* <div className="rowDirection">
               <div
                 style={{
                   marginLeft: "20px",
                 }}
                 className="backGroundIconCedant"
               >
-                <PinDropIcon className="paramsIconColorCedant" />
+                <PinDropIcon sx={{ color: "#556B2F"}} />
               </div>
               <Typography
                 color="text.primary"
                 style={{
                   fontWeight: "600",
                   marginLeft: "1%",
+                  color: "#556B2F",
                 }}
                 component="h1"
                 variant="h4"
               >
                 {sessionStorage.getItem("language") === "fr"
                   ? " Tableau Des Points d'interets  "
-                  : "Point d'interset Table"}
+                  : " Tableau Des Points d'interets  "}
               </Typography>
-            </div>
-            <Stack direction="row" justifyContent="flex-end" spacing={2}>
+            </div> */}
+            {/* <Stack direction="row" justifyContent="flex-end" spacing={2}>
               <Button
                 color="success"
                 variant="text"
@@ -671,7 +538,7 @@ export default function PointInteret(props) {
                   ? "Ajouter point d'interets"
                   : "Add Point of interset"}
               </Button>
-            </Stack>
+            </Stack> */}
 
             <Box sx={{ height: "100%", width: "100%", marginBottom: "3%" }}>
               <DataGrid
@@ -691,63 +558,29 @@ export default function PointInteret(props) {
                   },
                 }}
                 sx={{ height: "70vh" }}
-                rows={programs}
-                columns={
-                  sessionStorage.getItem("language") === "fr"
-                    ? columns
-                    : columnsENG
-                }
+                rows={[
+                  {
+                    id: 55555,
+                    name: "Stade de France",
+                    country: "France",
+                    city: "Paris",
+                    region: "Europe",
+                    street: "8 PORTE SAINT EUSTACHE",
+                    point_created_on: new Date(),
+                    point_created_by: "Albert ",
+                  },
+                ]}
+                columns={columns}
                 components={{
                   LoadingOverlay: LinearProgress,
                 }}
-                getRowId={handleGetRowId}
+                // getRowId={handleGetRowId}
                 experimentalFeatures={{ newEditingApi: true }}
               />
             </Box>
           </Container>
         </Card>
       </Box>
-
-      <Dialog
-        open={openErrTranche}
-        onClose={() => {
-          handleCloseErrTranche();
-        }}
-        maxWidth="sm"
-        fullWidth
-        style={{ boxShadow: "none" }}
-      >
-        <DialogTitle id="alert-dialog-title">
-          {sessionStorage.getItem("language") === "fr"
-            ? "Erreure est survenue"
-            : "Error has occurred"}
-        </DialogTitle>
-        <Box position="absolute" top={0} right={0}>
-          <IconButton
-            onClick={() => {
-              handleCloseErrTranche();
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </Box>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            {ErrTranche}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              handleCloseErrTranche();
-            }}
-            variant="contained"
-            style={styleCancelDelete}
-          >
-            {sessionStorage.getItem("language") === "fr" ? "Cacher" : "Hide"}
-          </Button>
-        </DialogActions>
-      </Dialog>
       <Modal
         open={open}
         onClose={handleClose}
@@ -755,579 +588,13 @@ export default function PointInteret(props) {
         aria-describedby="modal-modal-description"
         sx={{ height: "90%", top: "5%" }}
       >
-        <ModalProgram
+        <ModalPreview
           handleClose={handleClose}
-          // handleClickSnack2={handleClickSnack2}
           handleOpenErrTranche={handleOpenErrTranche}
           handleCloseErrTracnhe={handleCloseErrTranche}
           setErrTrancheMsg={setErrTrancheMsg}
         />
       </Modal>
-      <Modal
-        open={openDep}
-        onClose={handleCloseDep}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-        sx={{ height: "90%", top: "5%" }}
-      >
-        <ModalDeplicateProgram
-          handleClose={handleCloseDep}
-          id={deplicate_id}
-          handleClickSnack2={handleClickSnack2}
-          handleOpenErrTranche={handleOpenErrTranche}
-          handleCloseErrTracnhe={handleCloseErrTranche}
-          setErrTrancheMsg={setErrTrancheMsg}
-        />
-      </Modal>
-
-      <Modal
-        open={openRen}
-        onClose={handleCloseRen}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-        sx={{ height: "90%", top: "5%" }}
-      >
-        <ModalRenewProgram
-          handleClose={handleCloseRen}
-          id={renew_id}
-          handleClickSnack2={handleClickSnack2}
-          handleOpenErrTranche={handleOpenErrTranche}
-          handleCloseErrTracnhe={handleCloseErrTranche}
-          setErrTrancheMsg={setErrTrancheMsg}
-        />
-      </Modal>
-
-      {/* Update Modal */}
-      <Modal
-        open={openUpdate}
-        onClose={handleCloseUpdate}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-        sx={{ height: "90%", top: "5%" }}
-      >
-        <div>
-          <Box sx={style}>
-            <Typography
-              style={{
-                position: "absolute",
-                // color: "black",
-                marginLeft: "6%",
-                marginTop: "3%",
-                // color: "#08089C",
-                fontSize: 20,
-                p: 2,
-              }}
-              color="text.primary"
-            >
-              <ModeEditOutlineOutlinedIcon
-                style={{ color: "#08089C", marginTop: 2.5 }}
-              />
-              {sessionStorage.getItem("language") === "fr"
-                ? "  Mettre à jour le programme"
-                : "  Update program"}
-            </Typography>
-
-            <CloseIcon
-              onClick={handleCloseUpdate}
-              style={{
-                position: "absolute",
-                right: 16,
-                top: 4,
-                cursor: "pointer",
-                marginTop: 20,
-                color: "#08089C",
-              }}
-            />
-            <br />
-            <br />
-            <br />
-            <Divider variant="middle" style={{ color: "#08089C" }} />
-            <Box
-              component="form"
-              sx={{
-                p: 4,
-                background: "#f2f2f2",
-                "& > :not(style)": { m: 2, width: "44.2%" },
-              }}
-              noValidate
-              autoComplete="off"
-            >
-              <TextField
-                size="small"
-                focused
-                variant="filled"
-                color="success"
-                InputProps={{
-                  className: classes.input,
-                }}
-                InputLabelProps={{ style: { color: "black" } }}
-                //error={name.length === 0 ? true : false}
-                placeholder={
-                  sessionStorage.getItem("language") === "fr"
-                    ? "Obligatoire"
-                    : "Required"
-                }
-                label={
-                  sessionStorage.getItem("language") === "fr" ? "Nom" : "Name"
-                }
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-              <FormControl
-                focused
-                variant="filled"
-                color="success"
-                InputProps={{
-                  className: classes.input,
-                }}
-                fullWidth
-              >
-                <InputLabel id="demo-simple-select-label">
-                  {sessionStorage.getItem("language") === "fr"
-                    ? "Cédante"
-                    : "Cedant"}
-                </InputLabel>
-                <Select
-                  size="small"
-                  value={cedante}
-                  sx={{
-                    backgroundColor: "#F0F5FB",
-                    color: "#08089C",
-                  }}
-                  label={
-                    sessionStorage.getItem("language") === "fr"
-                      ? "Cédante"
-                      : "Cedant"
-                  }
-                  onChange={(e) => setCedante(e.target.value)}
-                  MenuProps={{ PaperProps: { sx: { maxHeight: 200 } } }}
-                >
-                  {dataParamsRC
-                    ?.filter((value) => {
-                      return value.name === "Cédant";
-                    })[0]
-                    ?.indices?.map((year) => (
-                      <MenuItem key={year} value={year?.val} style={{}}>
-                        {year?.val}
-                      </MenuItem>
-                    ))}
-                </Select>
-              </FormControl>
-              <FormControl
-                focused
-                variant="filled"
-                color="success"
-                InputProps={{
-                  className: classes.input,
-                }}
-                fullWidth
-              >
-                <InputLabel id="demo-simple-select-label">
-                  {sessionStorage.getItem("language") === "fr"
-                    ? "Pays"
-                    : "Country"}
-                </InputLabel>
-                <Select
-                  size="small"
-                  value={country}
-                  sx={{
-                    backgroundColor: "#F0F5FB",
-                    color: "#08089C",
-                  }}
-                  label={
-                    sessionStorage.getItem("language") === "fr"
-                      ? "Pays"
-                      : "Country"
-                  }
-                  onChange={(e) => setCountry(e.target.value)}
-                  MenuProps={{ PaperProps: { sx: { maxHeight: 200 } } }}
-                >
-                  {dataParamsRC
-                    ?.filter((value) => {
-                      return value.name === "Pays";
-                    })[0]
-                    ?.indices?.map((year) => (
-                      <MenuItem key={year} value={year?.val} style={{}}>
-                        {year?.val}
-                      </MenuItem>
-                    ))}
-                </Select>
-              </FormControl>
-              <TextField
-                size="small"
-                focused
-                variant="filled"
-                color="success"
-                InputProps={{
-                  className: classes.input,
-                }}
-                InputLabelProps={{ style: { color: "black" } }}
-                //error={form.length === 0 ? true : false}
-                label={
-                  sessionStorage.getItem("language") === "fr" ? "Forme" : "Form"
-                }
-                disabled={true}
-                value={form}
-                sx={{
-                  "& .MuiInputBase-input.Mui-disabled": {
-                    WebkitTextFillColor: "#000000",
-                  },
-                }}
-                onChange={(e) => setForm(e.target.value)}
-              />
-              <FormControl
-                focused
-                variant="filled"
-                color="success"
-                InputProps={{
-                  className: classes.input,
-                }}
-                fullWidth
-              >
-                <InputLabel id="demo-simple-select-label">
-                  {sessionStorage.getItem("language") === "fr"
-                    ? "Branche"
-                    : "Branch"}
-                </InputLabel>
-                <Select
-                  size="small"
-                  value={branch}
-                  sx={{
-                    backgroundColor: "#F0F5FB",
-                    color: "#08089C",
-                  }}
-                  label={
-                    sessionStorage.getItem("language") === "fr"
-                      ? "Branche"
-                      : "Branch"
-                  }
-                  onChange={(e) => setBranch(e.target.value)}
-                  MenuProps={{ PaperProps: { sx: { maxHeight: 200 } } }}
-                >
-                  {menuBranch?.map((year) => (
-                    <MenuItem key={year} value={year} style={{}}>
-                      {year}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <FormControl
-                focused
-                variant="filled"
-                color="success"
-                InputProps={{
-                  className: classes.input,
-                }}
-                fullWidth
-              >
-                <InputLabel
-                  id="demo-simple-select-label"
-                  style={{ color: "black" }}
-                >
-                  {sessionStorage.getItem("language") === "fr"
-                    ? "Intermédiaire"
-                    : "Intermediary"}
-                </InputLabel>
-                <Select
-                  size="small"
-                  value={intermediary}
-                  label="Underwrithing Year"
-                  sx={{
-                    backgroundColor: "#F0F5FB",
-                    color: "#08089C",
-                  }}
-                  onChange={(e) => setIntermediary(e.target.value)}
-                  MenuProps={{ PaperProps: { sx: { maxHeight: 200 } } }}
-                >
-                  {dataParamsRC
-                    ?.filter((value) => {
-                      return value.name === "intermediaire";
-                    })[0]
-                    ?.indices?.map((year) => (
-                      <MenuItem key={year} value={year?.val} style={{}}>
-                        {year?.val}
-                      </MenuItem>
-                    ))}
-                </Select>
-              </FormControl>
-              <FormControl
-                focused
-                variant="filled"
-                color="success"
-                InputProps={{
-                  className: classes.input,
-                }}
-                fullWidth
-              >
-                <InputLabel id="demo-simple-select-label">
-                  {sessionStorage.getItem("language") === "fr"
-                    ? "Année de souscription"
-                    : "Underwrithing Year"}
-                </InputLabel>
-                <Select
-                  size="small"
-                  value={underwritingYear}
-                  sx={{
-                    backgroundColor: "#F0F5FB",
-                    color: "#08089C",
-                  }}
-                  label={
-                    sessionStorage.getItem("language") === "fr"
-                      ? "Année de souscription "
-                      : "UW year"
-                  }
-                  onChange={(e) => setUnderwritingYear(e.target.value)}
-                  MenuProps={{ PaperProps: { sx: { maxHeight: 200 } } }}
-                >
-                  {years.map((year) => (
-                    <MenuItem key={year} value={year.annee} style={{}}>
-                      {year.annee}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
-            <Box
-              component="form"
-              sx={{
-                p: 2,
-                "& > :not(style)": { m: 1 },
-              }}
-              noValidate
-              autoComplete="off"
-            >
-              <Button
-                variant="contained"
-                color="success"
-                disabled={handleAdd()}
-                sx={styleValidate}
-                onClick={(event) => {
-                  handleUpdateProgram();
-                  handleCloseUpdate();
-                }}
-              >
-                {sessionStorage.getItem("language") === "fr"
-                  ? "Modifier "
-                  : "Update"}
-              </Button>
-              <Button
-                variant="contained"
-                style={{
-                  backgroundColor: "#FFFF",
-                  minWidth: "125px",
-                  color: "#08089C",
-                  borderRadius: "20px",
-                }}
-                onClick={handleCloseUpdate}
-              >
-                {sessionStorage.getItem("language") === "fr"
-                  ? "Annuler"
-                  : "Cancel"}
-              </Button>
-            </Box>
-          </Box>
-        </div>
-      </Modal>
-
-      {/* SnackBar */}
-      <div>
-        <Snackbar
-          open={openBar}
-          anchorOrigin={{
-            horizontal: "right",
-            vertical: "bottom",
-          }}
-          onClose={handleToCloseSnack}
-          autoHideDuration={4000}
-          action={
-            <React.Fragment>
-              <IconButton
-                size="small"
-                aria-label="close"
-                color="inherit"
-                onClick={handleToCloseSnack}
-              >
-                <CloseIcon fontSize="small" />
-              </IconButton>
-            </React.Fragment>
-          }
-        >
-          <Alert
-            onClose={handleToCloseSnack}
-            severity="success"
-            icon={<CheckCircleTwoToneIcon fontSize="inherit" />}
-          >
-            {sessionStorage.getItem("language") === "fr"
-              ? "Programme supprimé "
-              : "Program deleted"}
-          </Alert>
-        </Snackbar>
-      </div>
-
-      {/* SnackBar deplicated */}
-      <div>
-        <Snackbar
-          open={openBar3}
-          anchorOrigin={{
-            horizontal: "right",
-            vertical: "bottom",
-          }}
-          onClose={handleToCloseSnack3}
-          autoHideDuration={4000}
-          action={
-            <React.Fragment>
-              <IconButton
-                size="small"
-                aria-label="close"
-                color="inherit"
-                onClick={handleToCloseSnack3}
-              >
-                <CloseIcon fontSize="small" />
-              </IconButton>
-            </React.Fragment>
-          }
-        >
-          <Alert
-            onClose={handleToCloseSnack3}
-            severity="success"
-            icon={<CheckCircleTwoToneIcon fontSize="inherit" />}
-          >
-            {sessionStorage.getItem("language") === "fr"
-              ? "Programme dupliqué "
-              : "Program duplicated"}
-          </Alert>
-        </Snackbar>
-      </div>
-
-      {/* SnackBar Renew */}
-      <div>
-        <Snackbar
-          open={openBar4}
-          anchorOrigin={{
-            horizontal: "right",
-            vertical: "bottom",
-          }}
-          onClose={handleToCloseSnack4}
-          autoHideDuration={4000}
-          action={
-            <React.Fragment>
-              <IconButton
-                size="small"
-                aria-label="close"
-                color="inherit"
-                onClick={handleToCloseSnack4}
-              >
-                <CloseIcon fontSize="small" />
-              </IconButton>
-            </React.Fragment>
-          }
-        >
-          <Alert
-            onClose={handleToCloseSnack4}
-            severity="success"
-            icon={<CheckCircleTwoToneIcon fontSize="inherit" />}
-          >
-            {sessionStorage.getItem("language") === "fr"
-              ? "Programme renouvlé "
-              : "Program renewed"}
-          </Alert>
-        </Snackbar>
-      </div>
-
-      {/* SnackBar 2 */}
-      <div>
-        <Snackbar
-          open={openBar2}
-          anchorOrigin={{
-            horizontal: "right",
-            vertical: "bottom",
-          }}
-          onClose={handleToCloseSnack2}
-          autoHideDuration={4000}
-          action={
-            <React.Fragment>
-              <IconButton
-                size="small"
-                aria-label="close"
-                color="inherit"
-                onClick={handleToCloseSnack2}
-              >
-                <CloseIcon fontSize="small" />
-              </IconButton>
-            </React.Fragment>
-          }
-        >
-          <Alert
-            onClose={handleToCloseSnack2}
-            severity="success"
-            icon={<CheckCircleTwoToneIcon fontSize="inherit" />}
-          >
-            {sessionStorage.getItem("language") === "fr"
-              ? "Programme ajouté "
-              : "Program added"}
-          </Alert>
-        </Snackbar>
-
-        {/** Dialoog * */}
-        <Dialog
-          open={openDelete}
-          onClose={handleCloseDelete}
-          maxWidth="sm"
-          fullWidth
-          style={{ boxShadow: "none", p: 2 }}
-        >
-          <DialogTitle id="alert-dialog-title" sx={{ color: "#08089C" }}>
-            <HelpOutlineIcon sx={{ paddingTop: "0.75%", color: "#FFC107" }} />{" "}
-            {sessionStorage.getItem("language") === "fr"
-              ? " Confirmer l'action"
-              : " Confirm action"}
-          </DialogTitle>
-          <Box position="absolute" top={0} right={0}>
-            <IconButton onClick={handleCloseDelete}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              {sessionStorage.getItem("language") === "fr"
-                ? "Êtes-vous sûr de vouloir supprimer ce programme?"
-                : "Are you sure you want to delete this program?"}
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              onClick={handleCloseDelete}
-              variant="contained"
-              style={{
-                backgroundColor: "#FFFF",
-                minWidth: "125px",
-                color: "#08089C",
-              }}
-            >
-              {sessionStorage.getItem("language") === "fr"
-                ? "Annuler"
-                : "Cancel"}
-            </Button>
-            <Button
-              onClick={() => {
-                handleDeleteProg();
-              }}
-              variant="contained"
-              color="success"
-              autoFocus
-              style={styleValidateDelete}
-            >
-              {sessionStorage.getItem("language") === "fr"
-                ? "Confirmer"
-                : "Confirm"}
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </div>
     </>
   );
 }
-
-
-

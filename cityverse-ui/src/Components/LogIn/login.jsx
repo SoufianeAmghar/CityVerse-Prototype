@@ -50,7 +50,7 @@ const Login = (props) => {
        
         let array = parseJwt(data.data.Authorization);
         console.log('tessst', array )
-        history.push("/explore");
+        // history.push("/explore");
         setInprogress(false);
       })
       .catch((err) => {
@@ -58,6 +58,8 @@ const Login = (props) => {
         setError(true);
         setInprogress(false);
       });
+
+      history.push("/explore");
 
     function parseJwt(token) {
       var base64Url = token.split(".")[1];

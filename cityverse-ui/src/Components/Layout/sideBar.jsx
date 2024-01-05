@@ -54,6 +54,8 @@ import Badge from "@mui/material/Badge";
 import MapIcon from "@mui/icons-material/Map";
 import ExploreIcon from "@mui/icons-material/Explore";
 import StarIcon from "@mui/icons-material/Star";
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import { useDispatch,useSelector } from "react-redux";
 
 const drawerWidth = 250;
 
@@ -163,7 +165,7 @@ const Sidebar = ({ children }) => {
   const [open, setOpen] = React.useState(true);
   const [openItems, setOpenItems] = React.useState(false);
   const { isAuthenticated, setisAuthenticated } = useContext(UserLoginContext);
-
+  const imageProfile = useSelector((state) => state.FileUploadReducer?.imageProfile)
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -201,7 +203,7 @@ const Sidebar = ({ children }) => {
         setdata(value.data.data);
       })
       .catch((err) => {
-        deconnexion();
+        // deconnexion();
       });
   };
 
@@ -214,8 +216,8 @@ const Sidebar = ({ children }) => {
     setisAuthenticated(false);
     history.push("/");
   };
-  const [focused, setfocused] = useState(false);
-  const [focused1, setfocused1] = useState(true);
+  const [focused, setfocused] = useState(true);
+  const [focused1, setfocused1] = useState(false);
   const [focused2, setfocused2] = useState(false);
   const [focused3, setfocused3] = useState(false);
   const [focused4, setfocused4] = useState(false);
@@ -282,7 +284,7 @@ const Sidebar = ({ children }) => {
                         height: "100px",
                         borderRadius: "100%",
                       }}
-                      src="https://images.unsplash.com/photo-1628157588553-5eeea00af15c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80"
+                      src={imageProfile}
                       alt="webscript"
                     />
                   </div>
@@ -327,14 +329,14 @@ const Sidebar = ({ children }) => {
                     height: "30px",
                     borderRadius: "100%",
                   }}
-                  src="https://images.unsplash.com/photo-1628157588553-5eeea00af15c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80"
+                  src={imageProfile}
                   alt="webscript"
                 />
               </ListItem>
             </List>
           )}
 
-          <List style={{ paddingTop: "0px", paddingBottom: "70%" }}>
+          <List style={{ paddingTop: "0px", paddingBottom: "30%" }}>
             <ListItem
               style={{
                 fontFamily: "sans-serif",
@@ -379,6 +381,48 @@ const Sidebar = ({ children }) => {
             </ListItem>
             <ListItem
               style={{
+                fontFamily: "sans-serif",
+                padding: "20px",
+                color: "#1e1e82",
+                display: "flex",
+                flexDirection: "row",
+              }}
+              button
+              className={focused1 ? "active" : ""}
+              component={LinkDom}
+              to="/Profil"
+              onClick={(e) => {
+                setfocused(false);
+                setfocused1(true);
+                setfocused2(false);
+                setfocused3(false);
+                setfocused4(false);
+                setfocused5(false);
+                setfocused6(false);
+                setfocused7(false);
+                setfocused8(false);
+                setfocused9(false);
+                setfocused10(false);
+              }}
+            >
+              <ListItemIcon>
+                <AccountBoxIcon style={{ color: "#1e1e82" }} />
+              </ListItemIcon>
+              <ListItemText
+                sx={{
+                  color: "#00000",
+                  fontWeight: 150,
+                  fontFamily: "Georgia, serif, bold",
+                }}
+                primary={
+                  sessionStorage.getItem("language") === "fr"
+                    ? "Profil"
+                    : "Profil"
+                }
+              />
+            </ListItem>
+            <ListItem
+              style={{
                 fontFamily: "Georgia, serif",
                 padding: "20px",
                 color: "#1e1e82",
@@ -388,12 +432,54 @@ const Sidebar = ({ children }) => {
               button
               className={focused2 ? "active" : ""}
               component={LinkDom}
-              to="/events"
+              to="/PointInteret"
               onClick={(e) => {
                 setfocused(false);
                 setfocused1(false);
                 setfocused2(true);
                 setfocused3(false);
+                setfocused4(false);
+                setfocused5(false);
+                setfocused6(false);
+                setfocused7(false);
+                setfocused8(false);
+                setfocused9(false);
+                setfocused10(false);
+              }}
+            >
+              <ListItemIcon>
+                <PinDropIcon style={{ color: "#1e1e82" }} />
+              </ListItemIcon>
+              <ListItemText
+                sx={{
+                  color: "#00000",
+                  fontWeight: 150,
+                  fontFamily: "Avenir Medium, sans-serif , bold",
+                }}
+                primary={
+                  sessionStorage.getItem("language") === "fr"
+                    ? "Point d'intérêt"
+                    : "Point d'intérêt"
+                }
+              />
+            </ListItem>
+            <ListItem
+              style={{
+                fontFamily: "Georgia, serif",
+                padding: "20px",
+                color: "#1e1e82",
+                display: "flex",
+                flexDirection: "row",
+              }}
+              button
+              className={focused3 ? "active" : ""}
+              component={LinkDom}
+              to="/events"
+              onClick={(e) => {
+                setfocused(false);
+                setfocused1(false);
+                setfocused2(false);
+                setfocused3(true);
                 setfocused4(false);
                 setfocused5(false);
                 setfocused6(false);
