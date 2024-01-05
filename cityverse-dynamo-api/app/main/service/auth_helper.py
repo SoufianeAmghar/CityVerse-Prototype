@@ -90,31 +90,11 @@ class Auth:
                             'last_name': user['last_name'],
                             'first_name': user['first_name'],
                             'created_on': str(user['created_on']),
-                            'is_creator': user['is_creator'],
-                            'interest_points': None
+                            'is_creator': user['is_creator'] if 'is_creator' in user else None,
+                            'interest_points_id': user['interest_points_id'] if 'interest_points_id' in user else None
                         }
                     }
-                    if 'interest_points' in user and user['interest_points'] is not None:
-                        response_object['data']['interest_points'] = json.loads(
-                            json.dumps(user['interest_points'],
-                                       cls=DecimalEncoder)
-                        )
-                    # Interest points transformation
-                        response_object['data']['interest_points'] = [
-                            {
-                                'area_name': response_object['data']['interest_points'][i],
-                                'coordinates': [
-                                    (
-                                        float(
-                                            response_object['data']['interest_points'][i + 1][j]),
-                                        float(
-                                            response_object['data']['interest_points'][i + 1][j + 1])
-                                    )
-                                    for j in range(0, len(response_object['data']['interest_points'][i + 1]), 2)
-                                ]
-                            }
-                            for i in range(0, len(response_object['data']['interest_points']), 2)
-                        ]
+                    
 
                     return response_object, 200
             else:
@@ -205,8 +185,8 @@ class Auth:
                         'last_name': user.last_name,
                         'first_name': user.first_name,
                         'created_on': str(user.created_on),
-                        'is_creator': user.is_creator,
-                        'interest_points': user.interest_points if user.interest_points is not None else None
+                         **({'is_creator': user.is_creator} if user.is_creator is not None else {}),
+                         **({'interest_points_id': user.interest_points_id} if user.interest_points_id is not None else {})
                     }
                 }
                 return response_object, 200
