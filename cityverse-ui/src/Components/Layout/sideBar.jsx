@@ -54,8 +54,8 @@ import Badge from "@mui/material/Badge";
 import MapIcon from "@mui/icons-material/Map";
 import ExploreIcon from "@mui/icons-material/Explore";
 import StarIcon from "@mui/icons-material/Star";
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import { useDispatch,useSelector } from "react-redux";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import { useDispatch, useSelector } from "react-redux";
 
 const drawerWidth = 250;
 
@@ -165,7 +165,9 @@ const Sidebar = ({ children }) => {
   const [open, setOpen] = React.useState(true);
   const [openItems, setOpenItems] = React.useState(false);
   const { isAuthenticated, setisAuthenticated } = useContext(UserLoginContext);
-  const imageProfile = useSelector((state) => state.FileUploadReducer?.imageProfile)
+  const imageProfile = useSelector(
+    (state) => state.FileUploadReducer?.imageProfile
+  );
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -203,7 +205,7 @@ const Sidebar = ({ children }) => {
         setdata(value.data.data);
       })
       .catch((err) => {
-        // deconnexion();
+        deconnexion();
       });
   };
 
@@ -311,7 +313,7 @@ const Sidebar = ({ children }) => {
                           }}
                         >
                           {data?.first_name?.S} {data?.last_name?.S} {15}{" "}
-                          <StarIcon sx={{ color: "#FFD700" }} />
+                          <StarIcon sx={{ color: "#FFD700" }} />          
                         </Typography>
                       </>
                     )}

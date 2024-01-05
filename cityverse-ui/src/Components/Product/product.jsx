@@ -296,7 +296,7 @@ export default function Product() {
         <DialogActions>
           <Button
             onClick={() => {
-              itemData.push({ img: selectedNewImage, title: "new one" });
+              itemData.push({ img: selectedNewImage, title: "new one" , type: "image"});
               handleClosenewImage();
             }}
             variant="contained"

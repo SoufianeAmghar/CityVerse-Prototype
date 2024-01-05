@@ -17,13 +17,12 @@ const Sigup = (props) => {
 
   const sign_up = () => {
     const obj = {
-     // profile_image: "C:/Users/hp/Desktop/profile.png",
+      // profile_image: "C:/Users/hp/Desktop/profile.png",
       first_name: first_name,
       last_name: last_name,
       email: email,
       password: password,
       is_creator: is_creator === "CR" ? true : false,
-      interest_points: [],
     }
 
     axios

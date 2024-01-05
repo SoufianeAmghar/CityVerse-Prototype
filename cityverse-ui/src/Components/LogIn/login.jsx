@@ -49,8 +49,7 @@ const Login = (props) => {
         axios.defaults.headers.common['Authorization'] = `Bearer ${data.data.Authorization}`;
        
         let array = parseJwt(data.data.Authorization);
-        console.log('tessst', array )
-        // history.push("/explore");
+        history.push("/explore");
         setInprogress(false);
       })
       .catch((err) => {
@@ -59,7 +58,7 @@ const Login = (props) => {
         setInprogress(false);
       });
 
-      history.push("/explore");
+     
 
     function parseJwt(token) {
       var base64Url = token.split(".")[1];
