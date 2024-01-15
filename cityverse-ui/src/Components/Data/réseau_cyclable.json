@@ -1,0 +1,1895 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2880868628819204, 48.8577140321575],
+          [2.2883741536287743, 48.85798207908931],
+          [2.288620766205121, 48.85819722883392]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Bandes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "Avenue de New-York",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 66.50187778,
+        "longueur_du_troncon_en_km": 0.06650187778,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2017-07-31",
+        "geo_point_2d": { "lon": 2.288351817580311, "lat": 48.85795784378185 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2966213796924766, 48.86333660497889],
+          [2.29882776299722, 48.863810616901],
+          [2.2988691555657508, 48.8638168077084]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Couloirs de bus ouverts aux v\u00e9los",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "Avenue de New-York",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 173.34799038,
+        "longueur_du_troncon_en_km": 0.17334799038,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": "Marqu\u00e9",
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2017-06-30",
+        "geo_point_2d": { "lon": 2.297745035307352, "lat": 48.86357798275066 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.287715438308785, 48.85784814633968],
+          [2.2861942172860754, 48.85664153833231]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Couloirs de bus ouverts aux v\u00e9los",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "Avenue du Pr\u00e9sident Kennedy",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 174.52645703,
+        "longueur_du_troncon_en_km": 0.17452645703,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": "Marqu\u00e9",
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2017-07-31",
+        "geo_point_2d": { "lon": 2.2869548277974303, "lat": 48.857244842335994 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2950784854744515, 48.86005672455442],
+          [2.2951854603009547, 48.86014658764229],
+          [2.295281467303584, 48.86022523362427],
+          [2.2953809496796604, 48.86029943464774],
+          [2.295587812808651, 48.860443353820436]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Bandes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "QUAI BRANLY",
+        "arrdt": 7,
+        "bois": "Non",
+        "length": 57.00957395,
+        "longueur_du_troncon_en_km": 0.057009573949999996,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2008-12-31",
+        "geo_point_2d": { "lon": 2.295329073538303, "lat": 48.860255380684514 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.296567167984983, 48.863432957597524],
+          [2.2987735548771693, 48.86390697047777],
+          [2.298814947515812, 48.86391316130338]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Couloirs de bus ouverts aux v\u00e9los",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "Avenue de New-York",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 173.34799038,
+        "longueur_du_troncon_en_km": 0.17334799038,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": "Marqu\u00e9",
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2017-06-30",
+        "geo_point_2d": { "lon": 2.2976908254284396, "lat": 48.86367433585759 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2932774497300517, 48.85926018571091],
+          [2.293203990408817, 48.859272864082456],
+          [2.2931319920657605, 48.85929218380239],
+          [2.293062053825792, 48.85931798410416],
+          [2.292994757670942, 48.859350050293884],
+          [2.292930663597469, 48.859388115536916],
+          [2.292524133050708, 48.85964906724435],
+          [2.292023124352443, 48.85996929536997]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Bandes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "PONT D IENA",
+        "arrdt": 7,
+        "bois": "Non",
+        "length": 122.37564391,
+        "longueur_du_troncon_en_km": 0.12237564391,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": null,
+        "geo_point_2d": { "lon": 2.292636961723648, "lat": 48.85958448862893 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.298918703578513, 48.8575678822636],
+          [2.2989155694003744, 48.857580570996355],
+          [2.2989104728638923, 48.8575926064576],
+          [2.29890354158949, 48.85760368727195],
+          [2.298894949140561, 48.857613535968966],
+          [2.2988849106773377, 48.85762190593119],
+          [2.298873677569142, 48.85762858756959],
+          [2.2984132505859374, 48.85792267897758],
+          [2.2980483211683604, 48.858159609075386]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Autres itin\u00e9raires cyclables (ex : Aires pi\u00e9tonnes - Contre-sens cyclables)",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 30",
+        "sens_velo": "CONTRESENS",
+        "voie": "AVENUE ELISEE RECLUS",
+        "arrdt": 7,
+        "bois": "Non",
+        "length": 92.29225096,
+        "longueur_du_troncon_en_km": 0.09229225096,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": null,
+        "geo_point_2d": { "lon": 2.298493100126959, "lat": 48.85787176682368 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.295587812808651, 48.860443353820436],
+          [2.295738517443458, 48.860579875012085]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Bandes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "QUAI BRANLY",
+        "arrdt": 7,
+        "bois": "Non",
+        "length": 18.7804216,
+        "longueur_du_troncon_en_km": 0.0187804216,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": "Travers\u00e9e de carrefour",
+        "reseau": null,
+        "date_de_livraison": "2008-12-31",
+        "geo_point_2d": { "lon": 2.2956631651260544, "lat": 48.86051161441626 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.295738517443458, 48.860579875012085],
+          [2.2958703859223473, 48.8606691698416],
+          [2.296019440162944, 48.86076784604086],
+          [2.296118415106761, 48.860830099862866],
+          [2.2962190323536413, 48.86088966283365],
+          [2.2963344726485015, 48.860954169290935],
+          [2.296451012478987, 48.86101666739186],
+          [2.2967620779703948, 48.8611761163286],
+          [2.296889985255025, 48.86123599564519],
+          [2.2970190790018665, 48.86129327225946],
+          [2.2971509128429153, 48.861349196646046],
+          [2.297283616567727, 48.861403024334855],
+          [2.2974466592921567, 48.86146837377801],
+          [2.2976106091924775, 48.861531412733385],
+          [2.2978198621744887, 48.8616038359442],
+          [2.2980305949726665, 48.86167183314795],
+          [2.2983635744105495, 48.861768484937336],
+          [2.2987176197654455, 48.86186171578411],
+          [2.2989630902930194, 48.86192162780459],
+          [2.2992096211847826, 48.86197701507309],
+          [2.299388031621447, 48.86201062064077],
+          [2.299566925934082, 48.862041547053366],
+          [2.2999244938115, 48.862100459447866],
+          [2.3002002366798533, 48.86213622416107],
+          [2.3003902585292604, 48.86215633666898],
+          [2.3006288591486257, 48.86217911515736],
+          [2.300776325222851, 48.86219074624946],
+          [2.300923973240792, 48.862199778865296],
+          [2.3011671894165047, 48.862209875400794],
+          [2.3011702680842006, 48.86220928323123],
+          [2.3011734011822966, 48.86220917117816],
+          [2.301176514287251, 48.86220954190328],
+          [2.3011795334504366, 48.86221038660041],
+          [2.3011823869547197, 48.86221168520461],
+          [2.301185007018022, 48.86221340686888],
+          [2.301187331403419, 48.86221551069684],
+          [2.3011893048975116, 48.86221794671422]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Pistes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "QUAI BRANLY",
+        "arrdt": 7,
+        "bois": "Non",
+        "length": 449.96386715,
+        "longueur_du_troncon_en_km": 0.44996386715,
+        "position": null,
+        "circulation": null,
+        "piste": "Niveau trottoir",
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2008-12-31",
+        "geo_point_2d": { "lon": 2.298386908127576, "lat": 48.86164567105187 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.296567167984983, 48.863432957597524],
+          [2.2963951913574485, 48.86338583781213],
+          [2.2960432369901875, 48.86327549880458],
+          [2.2958473316426113, 48.863214682442575]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Couloirs de bus ouverts aux v\u00e9los",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "Avenue de New-York",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 58.13314758,
+        "longueur_du_troncon_en_km": 0.05813314758,
+        "position": "Lat\u00e9ral",
+        "circulation": "Non",
+        "piste": null,
+        "couloir_bus": "Marqu\u00e9",
+        "type_continuite": "Travers\u00e9e de carrefour",
+        "reseau": null,
+        "date_de_livraison": "2017-06-30",
+        "geo_point_2d": { "lon": 2.2962066148297, "lat": 48.86332599489061 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2907887254843295, 48.85995844271136],
+          [2.290791386047765, 48.85995759216543],
+          [2.2907938755735686, 48.85995632556074],
+          [2.2907961294916706, 48.85995467574882],
+          [2.290798089342887, 48.85995268552035],
+          [2.2907997042951553, 48.85995040649526],
+          [2.290800932461953, 48.85994789778394],
+          [2.2908017419886937, 48.85994522445406],
+          [2.2908021118789295, 48.85994245584297],
+          [2.290802032538931, 48.85993966375928],
+          [2.2908015060265146, 48.85993692062041],
+          [2.290800545997673, 48.85993429757432],
+          [2.2907991773523797, 48.85993186265415],
+          [2.2907974355887673, 48.85992967901368],
+          [2.290539370639555, 48.85971519297595],
+          [2.2899675192861464, 48.859240195830566],
+          [2.289275000025908, 48.8586709685752],
+          [2.288754197409626, 48.85824360673669],
+          [2.2883882179497044, 48.85793818779998],
+          [2.288342304958083, 48.85787410992151],
+          [2.2881417370807102, 48.857712859378985],
+          [2.2881172750435357, 48.857708430221194],
+          [2.2880868628819204, 48.8577140321575]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Pistes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "AVENUE DE NEW YORK",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 322.19556233,
+        "longueur_du_troncon_en_km": 0.32219556232999996,
+        "position": null,
+        "circulation": null,
+        "piste": "Niveau trottoir",
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2010-12-31",
+        "geo_point_2d": { "lon": 2.289457172767846, "lat": 48.858819363793664 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2921412889683133, 48.86105088823106],
+          [2.29373374719228, 48.86232346132864]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Couloirs de bus ouverts aux v\u00e9los",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "Avenue de New-York",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 183.50341574,
+        "longueur_du_troncon_en_km": 0.18350341574,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": "Marqu\u00e9",
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2017-06-30",
+        "geo_point_2d": { "lon": 2.2929375180802967, "lat": 48.86168717477985 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.290908514527, 48.85755716761481],
+          [2.2910448954793963, 48.857663951344186],
+          [2.291049219372174, 48.857666637622835],
+          [2.291053020270951, 48.85767002366924],
+          [2.2910561862267813, 48.85767400975321],
+          [2.2910586239918733, 48.8576784784715],
+          [2.2910602617660443, 48.85768329820567],
+          [2.291061051311468, 48.85768832699875],
+          [2.2910609693734405, 48.857693416736254],
+          [2.2910600183653056, 48.85769841750872],
+          [2.2910582262973747, 48.85770318202698],
+          [2.29105564595193, 48.85770756996034],
+          [2.2910573059869463, 48.85771484291274],
+          [2.291060113594611, 48.85772175441708],
+          [2.2910639957454797, 48.857728124696315],
+          [2.291068851459868, 48.857733788051384],
+          [2.2910745544344673, 48.85773859717123],
+          [2.291080956327653, 48.857742426964506],
+          [2.2913183974664215, 48.85790750361315],
+          [2.291486984822559, 48.85802419326635],
+          [2.292043357350226, 48.858407090720455],
+          [2.292406437254953, 48.8586624670092],
+          [2.292625100690693, 48.85881347814679],
+          [2.2930869322734577, 48.85913401861869],
+          [2.29344281299373, 48.85938097781463],
+          [2.2937105339577317, 48.859565622741314],
+          [2.2939879722795338, 48.85975631405673],
+          [2.2941882557445434, 48.859894283682706],
+          [2.294712048443309, 48.86025628695452],
+          [2.294940329523663, 48.86041401985459],
+          [2.2952734578434733, 48.86064396190033],
+          [2.295321801833607, 48.86065377433207]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Pistes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "QUAI BRANLY",
+        "arrdt": 7,
+        "bois": "Non",
+        "length": 474.65478508,
+        "longueur_du_troncon_en_km": 0.47465478508000003,
+        "position": null,
+        "circulation": null,
+        "piste": "Niveau trottoir",
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2008-12-31",
+        "geo_point_2d": { "lon": 2.293088107716898, "lat": 48.85913050929512 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2912182908341503, 48.86023966254812],
+          [2.291741717281122, 48.859904649317286],
+          [2.291844013804668, 48.85983926638027]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Bandes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "PONT D IENA",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 63.95174908,
+        "longueur_du_troncon_en_km": 0.06395174908,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": null,
+        "geo_point_2d": { "lon": 2.2915311350820917, "lat": 48.86003943751382 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.298763917323562, 48.863943646178164],
+          [2.2986904689622794, 48.863945579292064],
+          [2.2983852137669034, 48.8638734897035],
+          [2.298068290097377, 48.8638036952828],
+          [2.297471089957947, 48.86367554202366],
+          [2.296757555412809, 48.863522776780975],
+          [2.296378219618638, 48.86344020453157],
+          [2.296334589134523, 48.86342222539461]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Pistes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "AVENUE DE NEW YORK",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 187.87627277,
+        "longueur_du_troncon_en_km": 0.18787627277000002,
+        "position": null,
+        "circulation": null,
+        "piste": "Niveau trottoir",
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2010-12-31",
+        "geo_point_2d": { "lon": 2.2975478370418783, "lat": 48.863692671931105 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2962348565044937, 48.86338146764237],
+          [2.2959370180817835, 48.86329110275809],
+          [2.295360994496363, 48.86311403078647],
+          [2.295286279701371, 48.86309055216836],
+          [2.2952552545961695, 48.86306732988808]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Pistes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "AVENUE DE NEW YORK",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 80.18537901,
+        "longueur_du_troncon_en_km": 0.08018537901,
+        "position": null,
+        "circulation": null,
+        "piste": "Niveau trottoir",
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2010-12-31",
+        "geo_point_2d": { "lon": 2.2957419821513825, "lat": 48.86323067218526 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2880655457784664, 48.8577192376194],
+          [2.2878438544320643, 48.85781916623268]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Pistes cyclables",
+        "bidirectionnel": "Oui",
+        "statut": "VOIE 50",
+        "sens_velo": null,
+        "voie": "Avenue de New York",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 19.69894715,
+        "longueur_du_troncon_en_km": 0.01969894715,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": "Travers\u00e9e de carrefour",
+        "reseau": null,
+        "date_de_livraison": "2017-07-31",
+        "geo_point_2d": { "lon": 2.2879547001052654, "lat": 48.85776920192604 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2929488215290696, 48.85915069422869],
+          [2.2930228366260232, 48.85910440733636]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Bandes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "PONT D IENA",
+        "arrdt": 7,
+        "bois": "Non",
+        "length": 7.48202858,
+        "longueur_du_troncon_en_km": 0.007482028579999999,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2008-12-31",
+        "geo_point_2d": { "lon": 2.2929858290775464, "lat": 48.859127550782524 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2908781083634824, 48.85748164294908],
+          [2.2911381379704565, 48.857683250809664],
+          [2.2914842701885765, 48.85795300036236],
+          [2.2919252699736163, 48.85827447005902],
+          [2.294753288772956, 48.860218603351264],
+          [2.295100180880656, 48.860434806677404],
+          [2.2953395524679903, 48.86060159494182],
+          [2.295517707455258, 48.86072218050038]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Pistes cyclables",
+        "bidirectionnel": "Oui",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "Quai Branly",
+        "arrdt": 7,
+        "bois": "Non",
+        "length": 495.8757342,
+        "longueur_du_troncon_en_km": 0.49587573420000003,
+        "position": "Lat\u00e9ral",
+        "circulation": null,
+        "piste": "Niveau chauss\u00e9e",
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": "REVe",
+        "date_de_livraison": "2019-11-13",
+        "geo_point_2d": { "lon": 2.2931799452240615, "lat": 48.859127200767425 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2929923215860253, 48.862094973858675],
+          [2.29247853872384, 48.861687860975145],
+          [2.292020379146872, 48.86132591382213],
+          [2.291832421344721, 48.86117686350026]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Couloirs de bus ouverts aux v\u00e9los",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "AVENUE DE NEW YORK",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 132.90597579,
+        "longueur_du_troncon_en_km": 0.13290597579000002,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": "Marqu\u00e9",
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2017-06-30",
+        "geo_point_2d": { "lon": 2.29241242238385, "lat": 48.8616358542664 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2902627584150967, 48.86388975603265],
+          [2.289230052025677, 48.86361746777573],
+          [2.2880337780014424, 48.86329841150715]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Couloirs de bus ouverts aux v\u00e9los",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "AVENUE DU PRESIDENT WILSON",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 176.25213044,
+        "longueur_du_troncon_en_km": 0.17625213044000002,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": "Marqu\u00e9",
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2008-12-31",
+        "geo_point_2d": { "lon": 2.2891480592382414, "lat": 48.863594871783036 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.292023124352443, 48.85996929536997],
+          [2.2919585103024422, 48.86001059456385],
+          [2.2913954521792026, 48.86037238884171]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Bandes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "PONT D IENA",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 64.26325953,
+        "longueur_du_troncon_en_km": 0.06426325953,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": null,
+        "geo_point_2d": { "lon": 2.291709243728603, "lat": 48.86017077260966 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.285199814775705, 48.86312085016308],
+          [2.285224501279045, 48.86321946500541],
+          [2.2852328201329075, 48.863296081951376]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Pistes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": null,
+        "voie": "AVENUE GEORGES MANDEL",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 19.65540839,
+        "longueur_du_troncon_en_km": 0.01965540839,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": "Travers\u00e9e de carrefour",
+        "reseau": null,
+        "date_de_livraison": "2010-12-31",
+        "geo_point_2d": { "lon": 2.28521927407462, "lat": 48.86320793804748 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2903814342577116, 48.8600054261822],
+          [2.289028053635377, 48.85888923760425]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Couloirs de bus ouverts aux v\u00e9los",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "Avenue de New-York",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 158.94792522,
+        "longueur_du_troncon_en_km": 0.15894792522,
+        "position": "Lat\u00e9ral",
+        "circulation": "Non",
+        "piste": null,
+        "couloir_bus": "Marqu\u00e9",
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2017-06-30",
+        "geo_point_2d": { "lon": 2.289704743946544, "lat": 48.85944733189322 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2921412889683133, 48.86105088823106],
+          [2.2921866669666775, 48.8610407196363],
+          [2.292231732386206, 48.86106830762982],
+          [2.292389285389275, 48.861189740987506],
+          [2.2928292841602316, 48.86153978353707],
+          [2.2932908250950583, 48.86190593033616],
+          [2.293729776601031, 48.862254781344056],
+          [2.2937871930374065, 48.86229901988664],
+          [2.293846795911372, 48.86234026541041],
+          [2.293908429358503, 48.86237841005631],
+          [2.2940075127831903, 48.86243346812727],
+          [2.2941084898902537, 48.862484970943456],
+          [2.294302614535983, 48.8625690216731],
+          [2.29439538961499, 48.862604041768286],
+          [2.2945345363090537, 48.86264870549763],
+          [2.2947477643145273, 48.86271395742346],
+          [2.2953882357078195, 48.86291119404938],
+          [2.2961488968035595, 48.86314468726817],
+          [2.296256855999145, 48.86317732017467],
+          [2.2963558723366773, 48.863208713259034],
+          [2.2964086926061396, 48.86322478583479],
+          [2.296625491306832, 48.863291239791295],
+          [2.2966569564341324, 48.86330007464048],
+          [2.2966888906600764, 48.863307025468444],
+          [2.296964056462146, 48.8633661710156],
+          [2.2973597368395478, 48.86345164244882],
+          [2.2977814198604136, 48.86354248586624],
+          [2.298570832848275, 48.86371228634298],
+          [2.298609423970822, 48.863720814422756],
+          [2.298746213865576, 48.863743579958694],
+          [2.298756914790839, 48.8637471968935],
+          [2.2988254463935403, 48.863779573037306],
+          [2.298836522750955, 48.86378474312886],
+          [2.298848190165158, 48.8637883882607],
+          [2.2988602397650633, 48.86379044317735],
+          [2.2990015992912474, 48.863807322859245],
+          [2.2992744333315174, 48.86384279556326],
+          [2.2998909335010183, 48.86392418662869],
+          [2.3006631870671406, 48.86402497357703],
+          [2.300884050076427, 48.864053718431066],
+          [2.300910232336915, 48.864040878462895],
+          [2.3009181354380135, 48.86403757875051],
+          [2.300926419615063, 48.864035406305014],
+          [2.3009349249438786, 48.86403440306499],
+          [2.3009434872309895, 48.864034588397764],
+          [2.3011367047271793, 48.864060080235085],
+          [2.301232420642624, 48.86407252493704],
+          [2.3013553101239546, 48.864092330189585],
+          [2.301355399914962, 48.86409234330462]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Pistes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "AVENUE DE NEW YORK",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 783.78938355,
+        "longueur_du_troncon_en_km": 0.78378938355,
+        "position": null,
+        "circulation": null,
+        "piste": "Niveau trottoir",
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2010-12-31",
+        "geo_point_2d": { "lon": 2.2965648043630016, "lat": 48.86303257050682 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.293116107542598, 48.86219200055676],
+          [2.2929914135065936, 48.86209459166529]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Couloirs de bus ouverts aux v\u00e9los",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "AVENUE DE NEW YORK",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 14.17784634,
+        "longueur_du_troncon_en_km": 0.01417784634,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": "Marqu\u00e9",
+        "type_continuite": "Travers\u00e9e de carrefour",
+        "reseau": null,
+        "date_de_livraison": "2017-06-30",
+        "geo_point_2d": { "lon": 2.2930537605245958, "lat": 48.86214329611103 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.291844013804668, 48.85983926638027],
+          [2.292118366147213, 48.8596639128035],
+          [2.2927272599994986, 48.85927273685017],
+          [2.292728304196104, 48.859271723153356]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Bandes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "PONT D IENA",
+        "arrdt": 7,
+        "bois": "Non",
+        "length": 90.51281389,
+        "longueur_du_troncon_en_km": 0.09051281389,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": null,
+        "geo_point_2d": { "lon": 2.2922863900352417, "lat": 48.859555828277244 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2958473316426113, 48.863214682442575],
+          [2.2958205633888764, 48.86320637232188],
+          [2.2953141194173816, 48.86305229040754]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Couloirs de bus ouverts aux v\u00e9los",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "Avenue de New-York",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 43.08546288,
+        "longueur_du_troncon_en_km": 0.04308546288,
+        "position": "Lat\u00e9ral",
+        "circulation": "Non",
+        "piste": null,
+        "couloir_bus": "Marqu\u00e9",
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2017-06-30",
+        "geo_point_2d": { "lon": 2.2955807476947747, "lat": 48.86313341430745 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2918437860428322, 48.860815293511095],
+          [2.2921412889683133, 48.86105088823106]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Bandes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "AVENUE DE NEW YORK",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 34.09850045,
+        "longueur_du_troncon_en_km": 0.034098500450000006,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2017-06-30",
+        "geo_point_2d": { "lon": 2.291992537505573, "lat": 48.86093309087108 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2925553598236252, 48.858297248670254],
+          [2.292784070035799, 48.85845569548167],
+          [2.2931448444648685, 48.85870518128192],
+          [2.293465309813003, 48.85892765863111],
+          [2.2939824685793564, 48.85928557203994],
+          [2.2945522582232614, 48.85968020188816],
+          [2.2946692113807643, 48.85976020172462],
+          [2.2947774879215235, 48.85983365337261],
+          [2.2948846853247273, 48.859907099456834],
+          [2.295015342911063, 48.86000566860042],
+          [2.2950784854744515, 48.86005672455442]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Couloirs de bus ouverts aux v\u00e9los",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "QUAI BRANLY",
+        "arrdt": 7,
+        "bois": "Non",
+        "length": 269.38229752,
+        "longueur_du_troncon_en_km": 0.26938229752000004,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": "Marqu\u00e9",
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2008-12-31",
+        "geo_point_2d": { "lon": 2.2938198762375346, "lat": 48.859173025113456 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.297854909596421, 48.85828375094728],
+          [2.2975570388883537, 48.858474939639045],
+          [2.296972898908598, 48.858849080952]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Autres itin\u00e9raires cyclables (ex : Aires pi\u00e9tonnes - Contre-sens cyclables)",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 30",
+        "sens_velo": "CONTRESENS",
+        "voie": "AVENUE ELISEE RECLUS",
+        "arrdt": 7,
+        "bois": "Non",
+        "length": 90.21935054,
+        "longueur_du_troncon_en_km": 0.09021935053999999,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": null,
+        "geo_point_2d": { "lon": 2.297413964846865, "lat": 48.858566510454786 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2980483211683604, 48.858159609075386],
+          [2.297854909596421, 48.85828375094728]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Autres itin\u00e9raires cyclables (ex : Aires pi\u00e9tonnes - Contre-sens cyclables)",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 30",
+        "sens_velo": "CONTRESENS",
+        "voie": "AVENUE ELISEE RECLUS",
+        "arrdt": 7,
+        "bois": "Non",
+        "length": 19.79725046,
+        "longueur_du_troncon_en_km": 0.019797250460000002,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": null,
+        "geo_point_2d": { "lon": 2.2979516153823907, "lat": 48.85822168001133 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2969621712555295, 48.85903601174693],
+          [2.2969695361134215, 48.859041627415756],
+          [2.2973404844916128, 48.859293966048966]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Autres itin\u00e9raires cyclables (ex : Aires pi\u00e9tonnes - Contre-sens cyclables)",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 30",
+        "sens_velo": "CONTRESENS",
+        "voie": "AVENUE SILVESTRE DE SACY",
+        "arrdt": 7,
+        "bois": "Non",
+        "length": 39.91601703,
+        "longueur_du_troncon_en_km": 0.03991601703,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": null,
+        "geo_point_2d": { "lon": 2.2971511843914008, "lat": 48.859165188020484 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.281712353192777, 48.86351388588585],
+          [2.2823808928286793, 48.86343747279383],
+          [2.2832073627807516, 48.863344807260994],
+          [2.2839951109145784, 48.863255676256365],
+          [2.284819045929734, 48.86316354024686],
+          [2.2854352713987574, 48.863094450975034],
+          [2.286078702380795, 48.863021417085804]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Pistes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "AVENUE GEORGES MENDEL",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 324.98153393,
+        "longueur_du_troncon_en_km": 0.32498153393,
+        "position": null,
+        "circulation": null,
+        "piste": "Niveau chauss\u00e9e",
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2008-12-31",
+        "geo_point_2d": { "lon": 2.2838954919038765, "lat": 48.86326733524673 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.3018085366005083, 48.86251527472789],
+          [2.3016175441006044, 48.862513236685125],
+          [2.3015082964398164, 48.86248404470245],
+          [2.3014213959153382, 48.8624559345807],
+          [2.3013817977909317, 48.86245046830475],
+          [2.3007953619832393, 48.862417433239656],
+          [2.3001745167266856, 48.862358443850916],
+          [2.2997511261899204, 48.86230438582565],
+          [2.2992448533279233, 48.86221632936217],
+          [2.2987355644013143, 48.862103656691566],
+          [2.2986088074742357, 48.862072656062786],
+          [2.2979679992134834, 48.861899587559385],
+          [2.29744878813636, 48.861725103408894],
+          [2.297083870498569, 48.86158536235717],
+          [2.2967357710121727, 48.861434206384224],
+          [2.2963092863812484, 48.861226753055114],
+          [2.2959427295288948, 48.86102461515998],
+          [2.2956471852907367, 48.8608366685644],
+          [2.2954962161829755, 48.860737207187945]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Pistes cyclables",
+        "bidirectionnel": "Oui",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "Quai Branly",
+        "arrdt": 7,
+        "bois": "Non",
+        "length": 516.07572296,
+        "longueur_du_troncon_en_km": 0.51607572296,
+        "position": "Lat\u00e9ral",
+        "circulation": null,
+        "piste": "Niveau chauss\u00e9e",
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": "REVe",
+        "date_de_livraison": "2019-11-15",
+        "geo_point_2d": { "lon": 2.2985681038873644, "lat": 48.86190557596548 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.295517707455258, 48.86072218050038],
+          [2.2955718429642435, 48.86075882225626],
+          [2.2958738100829494, 48.86096405014404],
+          [2.2961959521004887, 48.861144410946245],
+          [2.296561304546145, 48.86132978421325],
+          [2.2968659009411434, 48.86147434648515],
+          [2.2974613336363796, 48.861714607868514],
+          [2.2978544949620665, 48.86184422036912],
+          [2.2985497312131162, 48.86203866055888],
+          [2.2989613287230664, 48.86213863404972],
+          [2.2994883125528256, 48.86224047051384],
+          [2.2998427579637366, 48.86229965354913],
+          [2.3002262621685934, 48.86234353839703],
+          [2.3007971945479135, 48.8623956562581],
+          [2.3011852291303656, 48.86242038312242],
+          [2.3014224455551267, 48.86243143158445],
+          [2.3015193518847847, 48.86246650082793],
+          [2.3016289912409658, 48.86249331540341],
+          [2.301810999725852, 48.86249482975573]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Pistes cyclables",
+        "bidirectionnel": "Oui",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "Quai Branly",
+        "arrdt": 7,
+        "bois": "Non",
+        "length": 514.90676633,
+        "longueur_du_troncon_en_km": 0.51490676633,
+        "position": "Lat\u00e9ral",
+        "circulation": null,
+        "piste": "Niveau chauss\u00e9e",
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": "REVe",
+        "date_de_livraison": "2019-11-15",
+        "geo_point_2d": { "lon": 2.2985792298111374, "lat": 48.86188943228139 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2911390139713212, 48.86024927923811],
+          [2.291156370449109, 48.86025161424433],
+          [2.291348527909316, 48.860376719269894],
+          [2.2913611260942957, 48.86043316628212]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Bandes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "PLACE DE VARSOVIE",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 27.45004601,
+        "longueur_du_troncon_en_km": 0.02745004601,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": "Travers\u00e9e de carrefour",
+        "reseau": null,
+        "date_de_livraison": "2010-12-31",
+        "geo_point_2d": { "lon": 2.2912658632909806, "lat": 48.86032773736054 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.288228831665456, 48.863035123537514],
+          [2.288370207357115, 48.863130960150045],
+          [2.288393763911714, 48.863146613551564],
+          [2.288419274897345, 48.86315882542513],
+          [2.2884462407742965, 48.863167356645675],
+          [2.2889438552765577, 48.86329783155501],
+          [2.289312188627218, 48.863396726724325],
+          [2.2899095651453525, 48.863555176101],
+          [2.290496086649619, 48.86371081867458]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Couloirs de bus ouverts aux v\u00e9los",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "AVENUE DU PRESIDENT WILSON",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 183.91126149,
+        "longueur_du_troncon_en_km": 0.18391126148999998,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": "Marqu\u00e9",
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2008-12-31",
+        "geo_point_2d": { "lon": 2.289349044792956, "lat": 48.86340289696711 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2861923825999186, 48.8631096858106],
+          [2.2849129208030985, 48.863254802689724],
+          [2.2837345337013515, 48.86338793074356],
+          [2.2826666270021776, 48.863508681451975],
+          [2.2817969259445006, 48.86360590076246]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Pistes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "AVENUE GEORGES MANDEL",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 327.15593637,
+        "longueur_du_troncon_en_km": 0.32715593637,
+        "position": null,
+        "circulation": null,
+        "piste": "Niveau chauss\u00e9e",
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2008-12-31",
+        "geo_point_2d": { "lon": 2.2839947208163243, "lat": 48.86335838407776 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2912778488867493, 48.857472144124166],
+          [2.2914033478407387, 48.857551412845666],
+          [2.2918292488314327, 48.857815922845916]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Bandes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "QUAI BRANLY",
+        "arrdt": 7,
+        "bois": "Non",
+        "length": 55.66068549,
+        "longueur_du_troncon_en_km": 0.05566068549,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2008-12-31",
+        "geo_point_2d": { "lon": 2.291553318126774, "lat": 48.857644401871866 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.288620766205121, 48.85819722883392],
+          [2.289841058456922, 48.85919585637845],
+          [2.2906570688594354, 48.859865065745275]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Couloirs de bus ouverts aux v\u00e9los",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "Avenue de New-York",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 238.14992262,
+        "longueur_du_troncon_en_km": 0.23814992262,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": "Marqu\u00e9",
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2017-07-31",
+        "geo_point_2d": { "lon": 2.2896391270601173, "lat": 48.85903089152602 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2954962161829755, 48.860737207187945],
+          [2.295394524290331, 48.86067021102392],
+          [2.2953203724394227, 48.86060647881007],
+          [2.2949958422192083, 48.86038993215043],
+          [2.2947341184840204, 48.860222773996576],
+          [2.2944424843635414, 48.860027360159236],
+          [2.293249811158743, 48.859206992926396],
+          [2.292281490259514, 48.85854546665362],
+          [2.291455023780834, 48.857955682650534],
+          [2.291086081756947, 48.857666047122095],
+          [2.2908590963523645, 48.85749085840806]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Pistes cyclables",
+        "bidirectionnel": "Oui",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "Quai Branly",
+        "arrdt": 7,
+        "bois": "Non",
+        "length": 496.25399641,
+        "longueur_du_troncon_en_km": 0.49625399641,
+        "position": "Lat\u00e9ral",
+        "circulation": null,
+        "piste": "Niveau chauss\u00e9e",
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": "REVe",
+        "date_de_livraison": "2019-11-13",
+        "geo_point_2d": { "lon": 2.2931616623164808, "lat": 48.85913682749664 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.296334589134523, 48.86342222539461],
+          [2.2962348565044937, 48.86338146764237]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Pistes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "AVENUE DE NEW YORK",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 8.60670591,
+        "longueur_du_troncon_en_km": 0.00860670591,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": "Travers\u00e9e de carrefour",
+        "reseau": null,
+        "date_de_livraison": "2010-12-31",
+        "geo_point_2d": { "lon": 2.2962847228195082, "lat": 48.86340184651848 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2950362637128303, 48.862973291784144],
+          [2.2945512086529702, 48.86282333558799],
+          [2.294441356626869, 48.86278948752919],
+          [2.294296908595205, 48.86274492014625],
+          [2.294094508052185, 48.86268228813988],
+          [2.2940552736492172, 48.86267024102483],
+          [2.2939973676230747, 48.862648632459276],
+          [2.2939564157039154, 48.862631259109584],
+          [2.293902162389882, 48.86260435507733],
+          [2.293801055994589, 48.86255548757661]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Couloirs de bus ouverts aux v\u00e9los",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "AVENUE DE NEW YORK",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 102.09700187,
+        "longueur_du_troncon_en_km": 0.10209700187,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": "Marqu\u00e9",
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2017-06-30",
+        "geo_point_2d": { "lon": 2.2944135325058155, "lat": 48.8627776056606 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.290876076829932, 48.86381148953066],
+          [2.2918454265911143, 48.86406969597305],
+          [2.2930585756915653, 48.864390782036544],
+          [2.293358695510251, 48.86447043370849]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Couloirs de bus ouverts aux v\u00e9los",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "AVENUE DU PRESIDENT WILSON",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 196.31888339,
+        "longueur_du_troncon_en_km": 0.19631888339,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": "Marqu\u00e9",
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2008-12-31",
+        "geo_point_2d": { "lon": 2.292117285434715, "lat": 48.86414134084313 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2952552545961695, 48.86306732988808],
+          [2.2950362637128303, 48.862973291784144]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Couloirs de bus ouverts aux v\u00e9los",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "AVENUE DE NEW YORK",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 19.16934775,
+        "longueur_du_troncon_en_km": 0.01916934775,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": "Marqu\u00e9",
+        "type_continuite": "Travers\u00e9e de carrefour",
+        "reseau": null,
+        "date_de_livraison": "2010-12-31",
+        "geo_point_2d": { "lon": 2.2951457591545, "lat": 48.86302031083611 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.288076169085645, 48.85773357810685],
+          [2.2878544776986, 48.857833506738565]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Pistes cyclables",
+        "bidirectionnel": "Oui",
+        "statut": "VOIE 50",
+        "sens_velo": null,
+        "voie": "Avenue de New York",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 19.69894715,
+        "longueur_du_troncon_en_km": 0.01969894715,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": "Travers\u00e9e de carrefour",
+        "reseau": null,
+        "date_de_livraison": "2017-07-31",
+        "geo_point_2d": { "lon": 2.2879653233921227, "lat": 48.85778354242271 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2907887254843295, 48.85995844271136],
+          [2.2907822067735846, 48.859963901832316],
+          [2.2911150577305093, 48.860238124739766],
+          [2.2911390139713212, 48.86024927923811]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Bandes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "AVENUE DE NEW YORK",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 41.99393519,
+        "longueur_du_troncon_en_km": 0.041993935190000005,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2010-12-31",
+        "geo_point_2d": { "lon": 2.290955769043223, "lat": 48.86010655101478 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.285239899838644, 48.863361280509196],
+          [2.285240163194238, 48.863367771371074],
+          [2.2852394155239644, 48.86337422440394],
+          [2.2852376749630565, 48.86338048308526],
+          [2.2852349837299624, 48.86338639560659],
+          [2.2852314071023088, 48.86339181855585],
+          [2.2852165631164776, 48.86340818354907],
+          [2.2851478069729856, 48.86346791615798],
+          [2.2851125280298823, 48.86346940700102],
+          [2.2850324429684123, 48.86353985240266],
+          [2.2847016212961226, 48.863645678226696],
+          [2.283930956873345, 48.86389287558902],
+          [2.2831037900031492, 48.86415828316169],
+          [2.282438761118628, 48.86437092547107]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Autres itin\u00e9raires cyclables (ex : Aires pi\u00e9tonnes - Contre-sens cyclables)",
+        "bidirectionnel": "Non",
+        "statut": "ZONE 30",
+        "sens_velo": "CONTRESENS",
+        "voie": "RUE GREUZE",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 237.87553921,
+        "longueur_du_troncon_en_km": 0.23787553921,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2010-12-31",
+        "geo_point_2d": { "lon": 2.283870216020099, "lat": 48.86390784995437 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2913611260942957, 48.86043316628212],
+          [2.2914037963121463, 48.86048095250614],
+          [2.291406207927212, 48.8604837296012],
+          [2.291688350375742, 48.86069339615406],
+          [2.2918342210160656, 48.86080770931952],
+          [2.2918437860428322, 48.860815293511095]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Bandes cyclables",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "AVENUE DE NEW YORK",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 55.41442983,
+        "longueur_du_troncon_en_km": 0.05541442983,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2017-06-30",
+        "geo_point_2d": { "lon": 2.2915993870024107, "lat": 48.86062735536657 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2960161471509797, 48.863153391019466],
+          [2.2966213796924766, 48.86333660497889]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Couloirs de bus ouverts aux v\u00e9los",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "Avenue de New-York",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 48.8531068,
+        "longueur_du_troncon_en_km": 0.0488531068,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": "Marqu\u00e9",
+        "type_continuite": "Travers\u00e9e de carrefour",
+        "reseau": null,
+        "date_de_livraison": "2017-06-30",
+        "geo_point_2d": { "lon": 2.296318763421728, "lat": 48.863244997999175 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.294084379929906, 48.86252095210598],
+          [2.29426544773747, 48.86259935528923],
+          [2.2944897749091866, 48.86267920306151],
+          [2.2960161471509797, 48.863153391019466]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Couloirs de bus ouverts aux v\u00e9los",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "Avenue de New-York",
+        "arrdt": 16,
+        "bois": "Non",
+        "length": 158.36416441,
+        "longueur_du_troncon_en_km": 0.15836416441,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": "Marqu\u00e9",
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2017-06-30",
+        "geo_point_2d": { "lon": 2.2950458833072696, "lat": 48.8628493108897 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.2918292488314327, 48.857815922845916],
+          [2.2920098079865436, 48.857929300493645],
+          [2.2921892162698896, 48.858044490629354],
+          [2.2923692872821007, 48.85816834015431],
+          [2.292378128886623, 48.858174465787485]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Couloirs de bus ouverts aux v\u00e9los",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "QUAI BRANLY",
+        "arrdt": 7,
+        "bois": "Non",
+        "length": 56.67982212,
+        "longueur_du_troncon_en_km": 0.056679822119999994,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": "Marqu\u00e9",
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2008-12-31",
+        "geo_point_2d": { "lon": 2.2921053960570603, "lat": 48.85799259909303 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.292378128886623, 48.858174465787485],
+          [2.2925553598236252, 48.858297248670254]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Couloirs de bus ouverts aux v\u00e9los",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 50",
+        "sens_velo": "SENS CIRCULATION GENERALE",
+        "voie": "QUAI BRANLY",
+        "arrdt": 7,
+        "bois": "Non",
+        "length": 18.85461832,
+        "longueur_du_troncon_en_km": 0.01885461832,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": "Marqu\u00e9",
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": "2008-12-31",
+        "geo_point_2d": { "lon": 2.2924667443551243, "lat": 48.85823585722887 }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          [2.296972898908598, 48.858849080952],
+          [2.296956950848613, 48.85885904605556],
+          [2.2969429641788985, 48.858871616535914],
+          [2.296931359516892, 48.858886414364335],
+          [2.29692248584654, 48.85890299452961],
+          [2.296916610023394, 48.8589208584208],
+          [2.296913908749537, 48.85893946882181],
+          [2.2969144632596667, 48.85895826606695],
+          [2.296918256878146, 48.85897668487161],
+          [2.296925175520485, 48.85899417133192],
+          [2.296935011124174, 48.85901019958217],
+          [2.2969474679056923, 48.85902428760902],
+          [2.2969621712555295, 48.85903601174693]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "typologie_simple": "Autres itin\u00e9raires cyclables (ex : Aires pi\u00e9tonnes - Contre-sens cyclables)",
+        "bidirectionnel": "Non",
+        "statut": "VOIE 30",
+        "sens_velo": "CONTRESENS",
+        "voie": "AVENUE SILVESTRE DE SACY",
+        "arrdt": 7,
+        "bois": "Non",
+        "length": 22.74052403,
+        "longueur_du_troncon_en_km": 0.02274052403,
+        "position": null,
+        "circulation": null,
+        "piste": null,
+        "couloir_bus": null,
+        "type_continuite": null,
+        "reseau": null,
+        "date_de_livraison": null,
+        "geo_point_2d": { "lon": 2.2969326824111755, "lat": 48.85894054621159 }
+      }
+    }
+  ]
+}
