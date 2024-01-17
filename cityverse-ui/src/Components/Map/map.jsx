@@ -136,6 +136,13 @@ export default function MapCart() {
     iconUrl: require("../../Asset/Market-icon.png"),
     shadowUrl: "https://unpkg.com/leaflet@1.6/dist/images/marker-shadow.png",
   });
+  const iconPin = L.icon({
+    iconSize: [45, 50],
+    iconAnchor: [10, 10],
+    popupAnchor: [2, -40],
+    iconUrl: require("../../Asset/pin.png"),
+    shadowUrl: "https://unpkg.com/leaflet@1.6/dist/images/marker-shadow.png",
+  });
 
   const svgIcon = L.divIcon({
     html: `
@@ -195,14 +202,46 @@ export default function MapCart() {
 
   const [map, setMap] = useState(null);
   const history = useHistory();
-  // var line = turf.lineString([
-  //   [2.275725, 48.8659835],
-  //   [2.275725, 48.865984],
-  //   [2.275725, 48.865983],
-  // ]);
+  function distance(lat1, lon1, lat2, lon2) {
+    /* Return float. Unit is the metter */
+    if (
+      parseFloat(lat1) != lat1 ||
+      parseFloat(lon1) != lon1 ||
+      parseFloat(lat2) != lat2 ||
+      parseFloat(lon1) != lon1
+    )
+      throw "Error params. Only float value accepted.";
 
-  // var pt = turf.point([50.5211728, 1.5980876]);
+    if (lat1 < 0 || lat1 > 90 || lat2 < 0 || lat2 > 90)
+      throw (
+        "Error params. The params lat1 and lat2 must be 0< ? <90. Here lat1 = " +
+        lat1 +
+        " and lat2 = " +
+        lat2
+      );
+    if (lon1 < -180 || lon1 > 180 || lon2 < -180 || lon2 > 180)
+      throw (
+        "Error params. The params lon1 and lon2 must be -180< ? <180. Here lon1 = " +
+        lon1 +
+        " and lon2 = " +
+        lon2
+      );
 
+    var a = Math.PI / 180;
+    lat1 = lat1 * a;
+    lat2 = lat2 * a;
+    lon1 = lon1 * a;
+    lon2 = lon2 * a;
+
+    var t1 = Math.sin(lat1) * Math.sin(lat2);
+    var t2 = Math.cos(lat1) * Math.cos(lat2);
+    var t3 = Math.cos(lon1 - lon2);
+    var t4 = t2 * t3;
+    var t5 = t1 + t4;
+    var rad_dist = Math.atan(-t5 / Math.sqrt(-t5 * t5 + 1)) + 2 * Math.atan(1);
+    console.log(rad_dist * 3437.74677 * 1.1508 * 1.6093470878864446 * 1000);
+    return rad_dist * 3437.74677 * 1.1508 * 1.6093470878864446 * 1000;
+  }
   function LocationMarker({ testCities }) {
     const [position, setPosition] = useState(null);
     const map = useMapEvents({
@@ -227,10 +266,11 @@ export default function MapCart() {
     const [position, setPosition] = useState(null);
     var point = L.geoJson(dataVéloGeo);
     var nearestIndex = leafletKnn(point);
+    var [distancebetween , setDistanceBetween ] = useState();
     const map = useMapEvents({
       click(e) {
         var nearestResult = nearestIndex.nearest(e.latlng, 1)[0];
-        nearestResult?.layer.bindPopup("I m the nearest").openPopup();
+        setDistanceBetween(distance(e.latlng.lat,e.latlng.lng,nearestResult.lat,nearestResult.lon));
         setPosition(nearestResult);
       },
       locationfound(e) {
@@ -242,7 +282,7 @@ export default function MapCart() {
     return position === null ? null : (
       <>
         <Marker position={position} icon={svgIcon}>
-          <Popup className="popupHome">I m the nearest</Popup>
+          <Popup className="popupHome">I m the nearest , distance : {distancebetween} m</Popup>
         </Marker>
       </>
     );
@@ -255,7 +295,6 @@ export default function MapCart() {
     const map = useMapEvents({
       click(e) {
         var nearestResult = nearestIndex.nearest(e.latlng, 1)[0];
-        nearestResult?.layer.bindPopup("I m the nearest Bike").openPopup();
         setPosition(nearestResult);
         setlocateMe(e?.latlng);
       },
@@ -283,10 +322,10 @@ export default function MapCart() {
 
     return position === null ? null : (
       <>
-        <CircleMarker center={position} radius={200}></CircleMarker>
-        {/* <Marker position={position} icon={iconHome}>
+        <Circle center={position} radius={200} > </Circle>
+        <Marker position={position} icon={iconPin}>
           <Popup className="popupHome">I'm here</Popup>
-        </Marker> */}
+        </Marker>
       </>
     );
   }
@@ -588,6 +627,7 @@ export default function MapCart() {
             scrollWheelZoom={true}
             style={{ height: "100vh", width: "100%", borderRadius: "2%" }}
           >
+             <LocateZone />
             <MarkerClusterGroup
               chunkedLoading
               iconCreateFunction={createClusterCustomIcon}
@@ -596,7 +636,7 @@ export default function MapCart() {
               {/* tOUR EIFFEL */}
               <ReseauCyclable />
               <TerrassesAutorisation />
-              <LocateZone />
+             
               <Marker position={[48.85837, 2.294481]} icon={iconMetaVerse}>
                 <Popup className="popupmeta">
                   <CardMetaVerse />

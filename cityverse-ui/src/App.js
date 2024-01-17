@@ -7,7 +7,7 @@ import FirstAuthRoute from "./Components/LogIn/FirstAuthRoute";
 import PrivateRoute from "./Components/LogIn/PrivateRoute";
 import { useCountdown } from "./Components/countdown/useCountdown";
 import ThemeConfig from "./theme/index";
-
+import { PlayGround } from "./Components/PlayGround/playGround";
 import Pop_Up from "./Components/Pop_Up/Pop_Up";
 const MapCart = lazy(() => import("./Components/Map/map"));
 const ForgetPassword = lazy(() => import("./Components/LogIn/forgetpassword"));
@@ -24,6 +24,11 @@ const PointInteret = lazy(() =>
 );
 const Profil = lazy(() => import('./Components/Profil/Profil'))
 const Product = lazy(() => import('./Components/Product/product'))
+// const PlayGround = lazy(() => import('./Components/PlayGround/playGround'))
+
+
+
+
 function App(props) {
  
   return (
@@ -91,6 +96,13 @@ function App(props) {
                   path="/product"
                   render={(props) => <Product {...props} />}
                 />
+                 <Route
+                  exact
+                  path="/playground"
+                  render={(props) => <PlayGround {...props} />}
+                />
+                
+                
                 {/* <Modal
                   open={open}
                   onClose={handleClose}
