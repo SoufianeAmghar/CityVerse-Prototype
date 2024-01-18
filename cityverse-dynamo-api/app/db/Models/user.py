@@ -1,10 +1,13 @@
-import datetime
+from datetime import datetime, timedelta
 import uuid
 import jwt
-from app.db.Models.black_list_token import BlacklistToken  # Ensure the correct import path
+# Ensure the correct import path
+from app.db.Models.black_list_token import BlacklistToken
 from app.db.dynamodb_document import Document
 from app.main import flask_bcrypt
 from app.main.config import key
+import logging
+
 
 class User(Document):
     __TABLE_NAME__ = "User"  # Specify the DynamoDB table name
@@ -20,13 +23,33 @@ class User(Document):
     created_on = None
     modified_on = None
 
+    @staticmethod
+    def calculate_hours_spent(user):
+        # Initialize last_login_time with a default value
+        last_login_time = datetime.utcnow()
+
+    # Calculate hours spent since the last login
+        try:
+            last_login_str = user.get('last_login', user['created_on'])
+            last_login_time = datetime.strptime(last_login_str, '%Y-%m-%dT%H:%M:%S.%f')
+            current_time = datetime.utcnow()
+            hours_spent_this_session = round((current_time - last_login_time).total_seconds() / 3600)
+            logging.info('Hours spent: %s', hours_spent_this_session)
+            hours_spent = user.get('hours_spent', 0) + hours_spent_this_session
+        except ValueError as e:
+            print(f"Error parsing date string: {e}")
+            # Handle the error or log it as needed
+
+        return hours_spent
+
     @property
     def password(self):
         raise AttributeError('password: write-only field')
 
     @password.setter
     def password(self, password):
-        self.password_hash = flask_bcrypt.generate_password_hash(password).decode('utf-8')
+        self.password_hash = flask_bcrypt.generate_password_hash(
+            password).decode('utf-8')
 
     def check_password(self, password):
         return flask_bcrypt.check_password_hash(self.password_hash, password)
@@ -34,10 +57,10 @@ class User(Document):
     @staticmethod
     def encode_auth_token(user_id, days=1, seconds=5, minutes=0):
         try:
-            unique_id = str(uuid.uuid4()) 
+            unique_id = str(uuid.uuid4())
             payload = {
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=days, seconds=seconds, minutes=minutes),
-                'iat': datetime.datetime.utcnow(),
+                'exp': datetime.utcnow() + timedelta(days=days, seconds=seconds, minutes=minutes),
+                'iat': datetime.utcnow(),
                 'sub': user_id,
                 'jti': unique_id
             }
@@ -45,7 +68,7 @@ class User(Document):
                 payload,
                 key,
                 algorithm='HS256'
-            )
+            ).decode('utf-8')
         except Exception as e:
             return e
 
@@ -54,8 +77,10 @@ class User(Document):
 
         try:
             payload = jwt.decode(auth_token, key, algorithms=['HS256'])
-            token_data = {'token': payload['sub'], 'exp': payload['exp'], 'jti': payload.get('jti')}
-            is_blacklisted_token = BlacklistToken.check_blacklist(token_data['jti'], table_name)
+            token_data = {
+                'token': payload['sub'], 'exp': payload['exp'], 'jti': payload.get('jti')}
+            is_blacklisted_token = BlacklistToken.check_blacklist(
+                token_data['jti'], table_name)
             if is_blacklisted_token:
                 return 'Token blacklisted. Please log in again.'
             else:
