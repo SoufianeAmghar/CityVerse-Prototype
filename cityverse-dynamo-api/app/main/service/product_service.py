@@ -1,5 +1,5 @@
 from app.db.dynamodb_document import Document
-from ..service.user_service import get_a_user,join_product
+from ..service.user_service import get_a_user
 from datetime import datetime
 import logging
 from app.main.util.strings import generate_id
@@ -26,7 +26,7 @@ def save_new_product(data, banner_image, profile_image):
         banner_image_url = None
         # Upload product banner image to S3
         if banner_image:
-            banner_image_url = document.upload_profile_image_to_s3(
+            banner_image_url = document.upload_image_to_s3(
                 banner_image)
             if banner_image_url is None:
                 return {
@@ -37,7 +37,7 @@ def save_new_product(data, banner_image, profile_image):
         profile_image_url = None
 
         if profile_image:
-            profile_image_url = document.upload_profile_image_to_s3(
+            profile_image_url = document.upload_image_to_s3(
                 profile_image)
             if profile_image_url is None:
                 return {
@@ -63,17 +63,10 @@ def save_new_product(data, banner_image, profile_image):
 
         # Save the product item to the DynamoDB table
         document.save(item=product_item)
-        user = get_a_user(data['created_by'])
-      
-        if user:
-            resp = join_product(data['created_by'], product_item['id'])
-            message = 'Product successfully created.' + resp[0]['message']
-        else:
-            message = 'Product successfully created. User not found.'
 
         return {
             'status': 'success',
-            'message': message,
+            'message': 'Product successfully created.',
         }, 201
 
 def get_all_products():
@@ -95,12 +88,12 @@ def get_a_product(product_id):
         return product
 
 def update_product(product_id, data):
-        document = Document(__TABLE_NAME__='Product', __BUCKET_NAME__='your-s3-bucket-name',
+        document = Document(__TABLE_NAME__='Product', __BUCKET_NAME__='cityverse-profilepics',
                             __S3_OBJECT_PREFIX__='product-images/')
         banner_image_url = None
 
         if data.get('banner_image'):
-            banner_image_url = document.upload_profile_image_to_s3(
+            banner_image_url = document.upload_image_to_s3(
                 data['banner_image'])
             if banner_image_url is None:
                 return {
@@ -136,7 +129,7 @@ def delete_product(self, product_id):
         document = Document(__TABLE_NAME__='Product')
 
         # Delete a product by its unique identifier
-        product = self.get_product_by_id(product_id)
+        product = get_a_product(product_id)
         if product:
             document.delete_item(Key={'id': product_id})
             return True
@@ -157,27 +150,88 @@ def get_product_by_name(name):
             return True
         else:
             return False
+        
+def get_all_posts():
+    document = Document(__TABLE_NAME__='Post')
 
-def create_post(self, product_id, post_data):
-        document = Document(__TABLE_NAME__='Product')
+        # Query all posts
+    posts = document.get_all()
 
-        product = self.get_product_by_id(product_id)
+    return posts
+
+def get_a_post(post_id):
+
+    document = Document(__TABLE_NAME__='Post')
+
+    post = document.get_item(post_id)
+
+    if post is None:
+            logging.warning(f"Post with ID {post_id} not found.")
+
+    return post
+     
+     
+
+def create_post(product_id, data,image_files,video_files):
+        document = Document(__TABLE_NAME__='Post', __BUCKET_NAME__='cityverse-videos',
+                            __S3_OBJECT_PREFIX__='media-posts/')
+
+        image_urls = []
+
+        video_urls = []
+
+        if image_files:
+             for img_file in image_files:
+                  img_url = document.upload_image_to_s3(img_file)
+                  if img_url is not None:
+            # Append the image URL to the list
+                    image_urls.append(img_url)
+                  else:
+                      return {
+                'status': 'fail',
+                'message': 'Failed to upload an image to S3.',
+            }, 500
+        
+        if video_files:
+             for vid_file in video_files:
+                  vid_url = document.upload_video_to_s3(vid_file)
+                  if vid_url is not None:
+            # Append the image URL to the list
+                    video_urls.append(vid_url)
+                  else:
+                      return {
+                'status': 'fail',
+                'message': 'Failed to upload an image to S3.',
+            }, 500
+
+        product = get_a_product(product_id)
+
+        # Reactions handling       
+
+      #  reactions_list = data.get('reactions', [])
+
+       #  reactions_data = [{'reaction': reaction, 'count': 0} for reaction in reactions_list] 
 
         if product:
-            post_id = generate_id()
-            post_data['id'] = post_id
-            post_data['created_on'] = datetime.utcnow().isoformat()
-            post_data['modified_on'] = datetime.utcnow().isoformat()
 
-            product['posts'].append(post_data)
+            post_item = {
+            'id': generate_id(),
+            'created_on': datetime.utcnow().isoformat(),
+            'modified_on': datetime.utcnow().isoformat(),
+            'links': image_urls + video_urls,
+            'description': data.get('description', []),
+            'created_by': data['created_by'],
+            'modified_by': data['modified_by'],
+            'reactions': data.get('reactions', [])
+        }
+
 
             # Save the updated product with the new post
-            document.save(item=product)
+            document.save(item=post_item)
 
             return {
                 'status': 'success',
                 'message': 'Post successfully created.',
-                'post_id': post_id
             }, 201
         else:
             return {
@@ -185,47 +239,39 @@ def create_post(self, product_id, post_data):
                 'message': 'Product not found.',
             }, 404
 
-def edit_post(self, product_id, post_id, post_data):
-        document = Document(__TABLE_NAME__='Product')
+def edit_post(post_id, post_data):
+        document = Document(__TABLE_NAME__='Post')
 
-        product = self.get_product_by_id(product_id)
+        post = get_a_post(post_id)
 
-        if product:
-            for post in product['posts']:
-                if post['id'] == post_id:
-                    post.update(post_data)
-                    post['modified_on'] = datetime.utcnow().isoformat()
+        if post:
+            post.update({
+                'modified_on': datetime.utcnow().isoformat(),
+                'description': post_data['description']
+            })
 
-                    # Save the updated product with the updated post
-                    document.save(item=product)
+            # Save the updated product item
+            document.save(item=post)
 
-                    return {
+            return {
                         'status': 'success',
                         'message': 'Post successfully updated.',
                     }, 201
 
+           
+        else:
             return {
                 'status': 'fail',
                 'message': 'Post not found.',
             }, 404
-        else:
-            return {
-                'status': 'fail',
-                'message': 'Product not found.',
-            }, 404
 
-def delete_post(self, product_id, post_id):
+def delete_post(post_id):
         document = Document(__TABLE_NAME__='Product')
 
-        product = self.get_product_by_id(product_id)
+        post = get_a_post(post_id)
 
-        if product:
-            product['posts'] = [
-                post for post in product['posts'] if post['id'] != post_id]
-
-            # Save the updated product without the deleted post
-            document.save(item=product)
-
+        if post:
+            document.delete_item(Key={'id': post_id})
             return {
                 'status': 'success',
                 'message': 'Post successfully deleted.',
@@ -233,13 +279,13 @@ def delete_post(self, product_id, post_id):
         else:
             return {
                 'status': 'fail',
-                'message': 'Product not found.',
+                'message': 'Post not found.',
             }, 404
 
-def add_coordinate(self, product_id, coordinate_data):
+def add_coordinate(product_id, coordinate_data):
         document = Document(__TABLE_NAME__='Product')
 
-        product = self.get_product_by_id(product_id)
+        product = get_a_product(product_id)
 
         if product:
             coordinate_id = generate_id()
@@ -261,10 +307,10 @@ def add_coordinate(self, product_id, coordinate_data):
                 'message': 'Product not found.',
             }, 404
 
-def update_coordinate(self, product_id, coordinate_id, coordinate_data):
+def update_coordinate(product_id, coordinate_id, coordinate_data):
         document = Document(__TABLE_NAME__='Product')
 
-        product = self.get_product_by_id(product_id)
+        product = get_a_product(product_id)
 
         if product:
             for coordinate in product['coordinate']:
@@ -288,3 +334,24 @@ def update_coordinate(self, product_id, coordinate_id, coordinate_data):
                 'status': 'fail',
                 'message': 'Product not found.',
             }, 404
+        
+def toggle_reaction(post_id,data):
+     document = Document(__TABLE_NAME__='Post')
+
+     post = get_a_post(post_id)
+
+     if post:
+          if data['increment'] == True:
+            document.save_incremental(post_id,data)
+          else:
+               document.save_decremental(post_id,data)
+
+          return {
+                        'status': 'success',
+                        'message': 'Reaction count successfully updated.',
+                    }, 201
+     return {
+                'status': 'fail',
+                'message': 'Post not found.',
+            }, 404
+

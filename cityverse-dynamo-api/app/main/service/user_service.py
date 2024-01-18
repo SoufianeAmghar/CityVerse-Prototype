@@ -26,7 +26,7 @@ def save_new_user(data):
     profile_image_url = None
     # Upload user image to S3
     if data.get('profile_image'):
-        profile_image_url = document.upload_profile_image_to_s3(
+        profile_image_url = document.upload_image_to_s3(
             data['profile_image'])
     # if profile_image_url is None:
     #     return {
@@ -44,9 +44,9 @@ def save_new_user(data):
         'created_on': datetime.utcnow().isoformat(),
         'modified_on': datetime.utcnow().isoformat(),
         'is_creator': data['is_creator'],
+        'score': 0,
         'profile_image': profile_image_url if profile_image_url else "https://cityverse-profilepics.s3.us-east-2.amazonaws.com/profile-images/blank-profile-picture.webp",
-        # Use [] as a default value if interest_points is None
-        'interest_points_id': data.get('interest_points_id', [])
+         
     }
 
     # Save the user item to the DynamoDB table
@@ -84,7 +84,7 @@ def update_user(user_id, data, profile_image):
     profile_image_url = None
 
     if profile_image:
-        profile_image_url = document.upload_profile_image_to_s3(profile_image)
+        profile_image_url = document.upload_image_to_s3(profile_image)
         if profile_image_url is None:
             return {
                 'status': 'fail',
@@ -118,50 +118,32 @@ def update_user(user_id, data, profile_image):
         'message': 'User successfully updated.',
     }, 201
 
-
-def join_product(user_id, product_id):
-    document = Document(__TABLE_NAME__='User')
-    user = get_a_user(user_id)
-    user['modified_on'] = datetime.utcnow().isoformat()
-    converted_user = document.convert_dynamodb_item_to_string(user)
-    converted_user['interest_points_id'].append(product_id)
-    document.save(item=converted_user)
-
-    return {
-        'status': 'success',
-        'message': 'User joined with the product.',
-    }, 201
-
-
-def unjoin_product(user_id, product_id):
-    document = Document(__TABLE_NAME__='User')
-    user = get_a_user(user_id)
-    if user:
-        user["interest_points_id"].remove(product_id)
-
-    document.save(item=user)
-
-    return {
-        'status': 'success',
-        'message': 'User joined with the product.',
-    }, 201
-
-
-def unjoin_products(user_id, product_ids):
+def update_login_time_and_score(user_id,hours_spent,last_login):
     document = Document(__TABLE_NAME__='User')
     user = get_a_user(user_id)
 
     if user:
-        for product_id in product_ids:
-            if product_id in user.get("interest_points_id", []):
-                user["interest_points_id"].remove(product_id)
+        if hours_spent > 0:
+            user['hours_spent'] = int(hours_spent)
+        if last_login:
+            user['last_login'] = last_login
+        user['id'] = str(user_id)
+        user.update({
+                'score': calculate_user_score(user),
+                'modified_on': datetime.utcnow().isoformat()
+            })
+    
+        document.save(item=user)
 
-    document.save(item=user)
+        return {
+        'status': 'success',
+        'message': 'User successfully updated.',
+    }, 201
 
     return {
-        'status': 'success',
-        'message': 'User unsubscribed from the product(s).',
-    }, 200
+        'status': 'fail',
+        'message': 'No user with the provided ID found.',
+    }, 409
 
 
 def delete_user(user_id):
@@ -170,7 +152,6 @@ def delete_user(user_id):
     # Delete a user by their unique identifier
     user = get_a_user(user_id)
     if user:
-        unjoin_products(user_id, user["interest_points_id"])
         document.delete_item(Key={'user_id': user_id})
         return True
     else:
@@ -197,6 +178,146 @@ def update_password(user_id, new_password):
         'status': 'fail',
         'message': 'No user with the provided ID found.',
     }, 409
+
+def update_user_description(user_id, data):
+    document = Document(__TABLE_NAME__='User')
+
+    user = get_a_user(user_id)
+    if user:
+        user['description'] = data.get('description')
+        user['modified_on'] = datetime.utcnow().isoformat()
+
+        document.put_item(Item='User')
+        return {
+            'status': 'success',
+            'message': 'Description updated successfully.',
+        }, 200
+
+    return {
+        'status': 'fail',
+        'message': 'No user with the provided ID found.',
+    }, 409
+
+def update_user_banner(user_id, banner_file):
+    document = Document(__TABLE_NAME__='User')
+    user = get_a_user(user_id)
+    if user:
+      if banner_file:
+        user['banner_image'] = document.upload_image_to_s3(banner_file)
+        user['modified_on'] = datetime.utcnow().isoformat()
+
+        document.put_item(Item='User')
+        return {
+            'status': 'success',
+            'message': 'Description updated successfully.',
+        }, 200
+
+    return {
+        'status': 'fail',
+        'message': 'No user with the provided ID found.',
+    }, 409
+
+def add_user_place(user_id,place_id):
+    document = Document(__TABLE_NAME__='User')
+    user = get_a_user(user_id)
+
+    if user:
+        user['places'] = user.get('places', []) + [place_id]
+        user['total_places_joined'] += 1
+        user['modified_on'] = datetime.utcnow().isoformat()
+
+        document.put_item(Item='User')
+        return {
+            'status': 'success',
+            'message': 'User place added successfully.',
+        }, 200
+
+    return {
+        'status': 'fail',
+        'message': 'No user with the provided ID found.',
+    }, 409
+
+def remove_user_place(user_id,place_id):
+    document = Document(__TABLE_NAME__='User')
+    user = get_a_user(user_id)
+
+    if user:
+        user['places'] = user.get('places', []) - [place_id]
+        user['total_places_joined'] -= 1
+        user['modified_on'] = datetime.utcnow().isoformat()
+
+        document.put_item(Item='User')
+        return {
+            'status': 'success',
+            'message': 'User place added successfully.',
+        }, 200
+
+    return {
+        'status': 'fail',
+        'message': 'No user with the provided ID found.',
+    }, 409
+
+def add_user_event(user_id,event_id):
+    document = Document(__TABLE_NAME__='User')
+    user = get_a_user(user_id)
+
+    if user:
+        user['events'] = user.get('events', []) + [event_id]
+        user['total_events_joined'] += 1
+        user['modified_on'] = datetime.utcnow().isoformat()
+
+        document.put_item(Item='User')
+        return {
+            'status': 'success',
+            'message': 'User event removed successfully.',
+        }, 200
+
+    return {
+        'status': 'fail',
+        'message': 'No user with the provided ID found.',
+    }, 409
+
+def remove_user_event(user_id,event_id):
+    document = Document(__TABLE_NAME__='User')
+    user = get_a_user(user_id)
+
+    if user:
+        user['events'] = user.get('events', []) - [event_id]
+        user['total_events_joined'] -= 1
+        user['modified_on'] = datetime.utcnow().isoformat()
+
+        document.put_item(Item='User')
+        return {
+            'status': 'success',
+            'message': 'User event removed successfully.',
+        }, 200
+
+    return {
+        'status': 'fail',
+        'message': 'No user with the provided ID found.',
+    }, 409
+
+
+def calculate_user_score(user_data):
+
+    hours_spent = user_data.get('hours_spent', 0)
+    products_created = user_data.get('products_created', 0)
+    events_joined = user_data.get('events_joined', 0)
+
+    # Weightage for each factor (you can adjust these based on your preferences)
+    weightage_hours_spent = 2
+    weightage_products_created = 10
+    weightage_events_joined = 4
+
+    # Calculate composite score
+    user_score = (
+        weightage_hours_spent * hours_spent +
+        weightage_products_created * products_created +
+        weightage_events_joined * events_joined
+    )
+
+    return user_score
+
 
 
 def get_user_by_email(email):
