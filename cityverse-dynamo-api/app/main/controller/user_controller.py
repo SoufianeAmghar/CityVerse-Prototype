@@ -4,23 +4,21 @@ from flask_restplus import Resource
 
 from app.main.util.decorator import token_required
 from ..util.dto import UserDto
-from ..service.user_service import join_product, save_new_user, get_all_users, get_a_user, delete_user, unjoin_product, update_user, update_password, get_user_by_email
+from ..service.user_service import save_new_user, get_all_users, get_a_user, delete_user, update_user, update_user_description, update_user_banner, update_password, get_user_by_email, add_user_event, add_user_place
 
 api = UserDto.api
 _user = UserDto.user
 
+
 @api.route('/')
 class UserList(Resource):
     @api.doc('list_of_registered_users')
-   
     def get(self):
         """List all registered users"""
         return get_all_users()
 
     @api.expect(_user, validate=True)
-    @api.response(201, 'User successfully created.')
-    
-    @api.doc('create a new user')
+
     def post(self):
         """Creates a new User"""
         data = request.json
@@ -32,7 +30,6 @@ class UserList(Resource):
 @api.response(404, 'User not found.')
 class User(Resource):
     @api.doc('get a user')
-    
     def get(self, public_id):
         """Get a user given its identifier"""
         user = get_a_user(public_id)
@@ -42,64 +39,83 @@ class User(Resource):
             return user
 
     @api.doc('Delete User')
-    
     def delete(self, public_id):
         """Delete a user given its identifier"""
         return delete_user(public_id)
-    
+
     @api.response(201, 'User successfully updated.')
     @api.doc('update user')
-    def put(self,public_id):
+    def put(self, public_id):
         """Update a User"""
         json_data_str = request.form.get('json')
         data = json.loads(json_data_str) if json_data_str else {}
         image_file = request.files.get('profile_image')
-        return update_user(public_id,data,profile_image=image_file)
-    
-    @api.response(201, 'User successfully joined a product.')
-    @api.doc('join product')
-    def post(self, public_id):
-        """Join a product"""
-        data = request.json
-        product_id = data.get('product_id')
-
-        if not product_id:
-            return {
-                'status': 'fail',
-                'message': 'Product ID is required for joining.',
-            }, 400
-
-        return join_product(public_id, product_id)
-    
-    @api.response(201, 'User successfully removed a product.')
-    @api.doc('unjoin product')
-    def delete(self, public_id):
-        """Unjoin a product"""
-        data = request.json
-        product_id = data.get('product_id')
-
-        if not product_id:
-            return {
-                'status': 'fail',
-                'message': 'Product ID is required for joining.',
-            }, 400
-
-        return unjoin_product(public_id, product_id)
+        return update_user(public_id, data, profile_image=image_file)
 
 
 @api.route('/change-password')
 class UserPassword(Resource):
-    
+
     @api.doc('Reset password')
     def put(self):
         return update_password(request)
 
+
 @api.route('/search')
 class UserMail(Resource):
-    
+
     @api.doc('get a user by email')
     @api.response(201, 'User Found')
     def post(self):
         """Get a user given its email"""
         data = request.json
         return get_user_by_email(data.get('email'))
+    
+
+@api.route('/description')
+class UserDescriptionResource(Resource):
+    @api.response(201, 'User Description successfully updated.')
+    @api.doc('update user description')
+    def put(self, public_id):
+        """Update a User's description"""
+        data = request.json
+        return update_user_description(public_id, data)
+
+
+@api.route('/banner')
+class UserBannerResource(Resource):
+    @api.response(201, 'User Banner successfully changed.')
+    @api.doc('update user banner')
+    def put(self, public_id):
+        """Update a User's banner"""
+        banner_file = request.files.get('banner_image')
+        return update_user_banner(public_id, banner_file)
+
+
+@api.route('/places/<place_id>')
+@api.param('place_id', 'The Place identifier')
+class UserPlaceResource(Resource):
+    @api.response(201, 'User Place successfully added.')
+    @api.doc('update user place')
+    def put(self, public_id, place_id):
+        return add_user_place(public_id, place_id)
+
+
+@api.route('/events/<event_id>')
+@api.param('event_id', 'The Event identifier')
+class UserEventResource(Resource):
+    @api.response(201, 'User Event successfully added.')
+    @api.doc('update user event')
+    def put(self, public_id, event_id):
+        """Update a User's event"""
+        return add_user_event(public_id, event_id)
+
+
+# @api.route('/<public_id>/badges/<badge_id>')
+# class UserBadgeResource(Resource):
+#     @api.response(201, 'User Banner successfully changed.')
+#     @api.doc('update user badge')
+#     def put(self, public_id, badge_id):
+#         """Update a User's badge"""
+#         data = request.json
+#         return update_user_event_count(public_id, badge_id)
