@@ -1,12 +1,13 @@
 
 from boto3.dynamodb.conditions import Key
 import boto3
+from datetime import datetime
 from ...db.Models.user import User
 import logging
 import json
 from decimal import Decimal
 from ..service.blacklist_service import save_token
-from ..service.user_service import save_new_user
+from ..service.user_service import save_new_user, update_login_time_and_score
 
 dynamodb = boto3.resource('dynamodb')
 table_name = 'User'
@@ -79,11 +80,15 @@ class Auth:
 
             if user and user['id'] and user['password'] == data.get('password'):
                 auth_token = User.encode_auth_token(user['id'])
+                hours_spent = User.calculate_hours_spent(user)
+
+                update_login_time_and_score(user['id'],hours_spent,str(datetime.utcnow()))
+
                 if auth_token:
                     response_object = {
                         'status': 'success',
                         'message': 'Successfully logged in.',
-                        'Authorization': auth_token.decode(),
+                        'Authorization': str(auth_token),
                         'data': {
                             'id': user['id'],
                             'email': user['email'],
@@ -91,7 +96,7 @@ class Auth:
                             'first_name': user['first_name'],
                             'created_on': str(user['created_on']),
                             'is_creator': user['is_creator'] if 'is_creator' in user else None,
-                            'interest_points_id': user['interest_points_id'] if 'interest_points_id' in user else None
+                            'score': float(user['score']) if 'score' in user else None
                         }
                     }
                     
@@ -111,6 +116,7 @@ class Auth:
                 'message': 'Try again'
             }
             return response_object, 500
+        
 
     @staticmethod
     def verify_token(new_request):
@@ -122,6 +128,7 @@ class Auth:
 
         if auth_token:
             check_token = User.decode_auth_token(auth_token, table_name)
+
 
             if check_token['token']:
                 return True
@@ -186,7 +193,6 @@ class Auth:
                         'first_name': user.first_name,
                         'created_on': str(user.created_on),
                          **({'is_creator': user.is_creator} if user.is_creator is not None else {}),
-                         **({'interest_points_id': user.interest_points_id} if user.interest_points_id is not None else {})
                     }
                 }
                 return response_object, 200
