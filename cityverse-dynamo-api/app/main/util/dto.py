@@ -3,16 +3,21 @@ from flask_restx import Namespace, fields
 class UserDto:
     api = Namespace('user', description='user related operations')
     user = api.model('user', {
-        'profile_image': fields.String(description='URL or file path for the user profile image'),
-        'first_name': fields.String(required=True, description='User first name'),
-        'last_name': fields.String(required=True, description='User last name'),
-        'email': fields.String(required=True, description='User email address'),
-        'password': fields.String(required=True, description='User password'),
+        'id': fields.String(description='User Identifier'),
+        'banner_image': fields.String(description='URL or file path for the user banner image'),
         'created_on': fields.String(description='Created on'),
-        'modified_on': fields.String(description='Modified on'),
+        'email': fields.String(required=True, description='User email address'),
+        'first_name': fields.String(required=True, description='User first name'),
+        'hours_spent': fields.Float(description='Hours spent by the user'),
         'is_creator': fields.Boolean(description='Content creator or not'),
-        'interest_points_id': fields.List(fields.String, description='Points of interest IDs linked to another product DTO', allow_null=True),
-        'id': fields.String(description='User Identifier')
+        'last_name': fields.String(required=True, description='User last name'),
+        'modified_on': fields.String(description='Modified on'),
+        'password': fields.String(required=True, description='User password'),
+        'profile_image': fields.String(description='URL or file path for the user profile image'),
+        'score': fields.Integer(description='User score'),
+        'total_events_joined': fields.Integer(description='Total events joined by the user'),
+        'total_places_joined': fields.Integer(description='Total places joined by the user'),
+        'total_products_created': fields.Integer(description='Total products created by the user')
     })
 
     page_user = api.model('flow page', {
@@ -49,12 +54,13 @@ class ProductDto:
 
     post = api.model('post', {
         'id': fields.String(description='Post identifier'),
+        'product_id': fields.String(description='Product identifier'),
         'created_on': fields.String(description='Post created on'),
         'modified_on': fields.String(description='Post modified on'),
         'created_by': fields.String(description='User ID who created the post'),
         'links': fields.List(fields.String, description='List of links'),
         'description': fields.String(description='Post description'),
-        'reactions': fields.List(fields.String(enum=list(reaction_emojis.keys())), description='Array of reactions'),
+        'reactions': fields.Raw(description='Map of reactions as numbers'),  # Use Raw to represent a map
         'reaction_emojis': fields.String(description='Dictionary mapping reactions to emojis')
     })
 
@@ -64,10 +70,10 @@ class ProductDto:
         'coordinate': fields.List(fields.Nested(coordinate), description='List of coordinates'),
         'created_by': fields.String(description='User ID who created the product'),
         'created_on': fields.String(description='Product created on'),
+        'goal': fields.Integer(description='17 SDG number'),
         'modified_by': fields.String(description='User ID who modified the product'),
         'modified_on': fields.String(description='Product modified on'),
         'name': fields.String(description='Product name'),
-        'posts': fields.List(fields.Nested(post), description='List of posts'),
         'profile_image': fields.String(description='URL or file path for the product profile image'),
         'type': fields.String(description='Product type (e.g., product, profile)')
     })
@@ -77,6 +83,65 @@ class ProductDto:
         'size': fields.Integer,
         'total': fields.Integer,
         'content': fields.List(fields.Nested(product)),
+    })
+
+class PlaceDto:
+    api = Namespace('place', description='place related operations')
+    place = api.model('place', {
+        'id': fields.String(description='Place Identifier'),
+        'user_id': fields.String(description='User Identifier'),
+        'goal': fields.Integer(description='17 SDG number'),
+        'name': fields.String(description='Place Name'),
+        'coordinate': fields.String(description='Place coordinates'),
+        'created_on': fields.String(description='Created on'),
+        'modified_on': fields.String(description='Modified on')
+    })
+
+    page_place = api.model('flow page', {
+        'page': fields.Integer,
+        'size': fields.Integer,
+        'total': fields.Integer,
+        'content': fields.List(fields.Nested(place)),
+    })
+
+class EventDto:
+    api = Namespace('event', description='event related operations')
+    event = api.model('event', {
+        'id': fields.String(description='Event Identifier'),
+        'user_id': fields.String(description='User Identifier'),
+        'goal': fields.Integer(description='17 SDG number'),
+        'name': fields.String(description='Event Name'),
+        'coordinate': fields.String(description='Event coordinates'),
+        'date': fields.String(description='Event date'),
+        'description': fields.String(description='Event description'),
+        'created_on': fields.String(description='Created on'),
+        'modified_on': fields.String(description='Modified on')
+    })
+
+    page_event = api.model('flow page', {
+        'page': fields.Integer,
+        'size': fields.Integer,
+        'total': fields.Integer,
+        'content': fields.List(fields.Nested(event)),
+    })
+
+class BadgeDto:
+    api = Namespace('badge', description='badge related operations')
+    badge = api.model('badge', {
+        'id': fields.String(description='Badge Identifier'),
+        'user_id': fields.String(description='User Identifier'),
+        'name': fields.String(description='Badge Name'),
+        'coordinate': fields.String(description='Badge coordinates'),
+        'description': fields.String(description='Badge description'),
+        'created_on': fields.String(description='Created on'),
+        'modified_on': fields.String(description='Modified on')
+    })
+
+    page_badge = api.model('flow page', {
+        'page': fields.Integer,
+        'size': fields.Integer,
+        'total': fields.Integer,
+        'content': fields.List(fields.Nested(badge)),
     })
 
 
