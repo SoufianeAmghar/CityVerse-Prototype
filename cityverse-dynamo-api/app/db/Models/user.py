@@ -24,14 +24,26 @@ class User(Document):
     modified_on = None
 
     @staticmethod
-    def calculate_hours_spent(user):
-        # Initialize last_login_time with a default value
-        last_login_time = datetime.utcnow()
+    def parse_datetime(date_str):
+        formats = ['%Y-%m-%dT%H:%M:%S.%f', '%Y-%m-%d %H:%M:%S.%f']
+    
+        for format_str in formats:
+          try:
+            return datetime.strptime(date_str, format_str)
+          except ValueError:
+            pass
 
-    # Calculate hours spent since the last login
+
+        raise ValueError("Unsupported date-time format")
+
+    @staticmethod
+    def calculate_hours_spent(user):
+       
+        last_login_time = datetime.utcnow()
+        hours_spent = 0
         try:
             last_login_str = user.get('last_login', user['created_on'])
-            last_login_time = datetime.strptime(last_login_str, '%Y-%m-%dT%H:%M:%S.%f')
+            last_login_time = User.parse_datetime(last_login_str)
             current_time = datetime.utcnow()
             hours_spent_this_session = round((current_time - last_login_time).total_seconds() / 3600)
             logging.info('Hours spent: %s', hours_spent_this_session)
