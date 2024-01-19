@@ -82,24 +82,15 @@ class Auth:
                 auth_token = User.encode_auth_token(user['id'])
                 hours_spent = User.calculate_hours_spent(user)
 
-                update_login_time_and_score(user['id'],hours_spent,str(datetime.utcnow()))
+                update_login_time_and_score(
+                    user['id'], hours_spent, str(datetime.utcnow()))
 
                 if auth_token:
                     response_object = {
                         'status': 'success',
                         'message': 'Successfully logged in.',
                         'Authorization': str(auth_token),
-                        'data': {
-                            'id': user['id'],
-                            'email': user['email'],
-                            'last_name': user['last_name'],
-                            'first_name': user['first_name'],
-                            'created_on': str(user['created_on']),
-                            'is_creator': user['is_creator'] if 'is_creator' in user else None,
-                            'score': float(user['score']) if 'score' in user else None
-                        }
                     }
-                    
 
                     return response_object, 200
             else:
@@ -116,7 +107,6 @@ class Auth:
                 'message': 'Try again'
             }
             return response_object, 500
-        
 
     @staticmethod
     def verify_token(new_request):
@@ -128,7 +118,6 @@ class Auth:
 
         if auth_token:
             check_token = User.decode_auth_token(auth_token, table_name)
-
 
             if check_token['token']:
                 return True
@@ -192,7 +181,13 @@ class Auth:
                         'last_name': user.last_name,
                         'first_name': user.first_name,
                         'created_on': str(user.created_on),
-                         **({'is_creator': user.is_creator} if user.is_creator is not None else {}),
+                        **({'is_creator': user.is_creator} if user.is_creator is not None else {}),
+                        **({'score': user.score} if user.score is not None else {}),
+                        **({'total_products_created': user.total_products_created} if user.total_products_created is not None else {}),
+                        **({'total_events_joined': user.total_events_joined} if user.total_events_joined is not None else {}),
+                        **({'total_places_joined': user.total_places_joined} if user.total_places_joined is not None else {})
+
+
                     }
                 }
                 return response_object, 200
