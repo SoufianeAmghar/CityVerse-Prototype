@@ -34,6 +34,25 @@ class AuthDto:
         'password': fields.String(required=True, description='The user password '),
     })
 
+class GoalDto:
+    api = Namespace('goal', description='goal related operations')
+    
+    goal_details = api.model('goal_details', {
+        'goal': fields.Integer(required=True, description='The goal number'),
+        'title': fields.String(required=True, description='The goal title'),
+        'short': fields.String(required=True, description='The short name for the goal'),
+        'colorInfo': fields.Nested(api.model('color_info', {
+            'hex': fields.String(required=True, description='Hex color code'),
+            'rgb': fields.List(fields.Integer, required=True, description='RGB color code')
+        }), required=True, description='Color information'),
+        'keywords': fields.Nested(api.model('keywords', {
+            'tags': fields.List(fields.String, required=True, description='List of tags'),
+            'descriptions': fields.List(fields.String, required=True, description='List of descriptions'),
+            'groups': fields.List(fields.String, required=True, description='List of groups')
+        }), required=True, description='Keywords information'),
+        'icon_url': fields.String(required=True, description='URL of the goal icon')
+    })
+
 class ProductDto:
     api = Namespace('product', description='product related operations')
     coordinate = api.model('coordinate', {

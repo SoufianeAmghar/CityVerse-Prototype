@@ -7,6 +7,7 @@ from .main.controller.product_controller import api as product_ns
 from .main.controller.place_controller import api as place_ns
 from .main.controller.event_controller import api as event_ns
 from .main.controller.badge_controller import api as badge_ns
+from .main.controller.goal_controller import api as goal_ns
 
 
 
@@ -24,3 +25,4 @@ api.add_namespace(user_ns, path='/user')
 api.add_namespace(place_ns, path='/place')
 api.add_namespace(event_ns, path='/event')
 api.add_namespace(badge_ns, path='/badge')
+api.add_namespace(goal_ns, path='/goal')
