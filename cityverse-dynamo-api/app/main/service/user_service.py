@@ -48,7 +48,7 @@ def save_new_user(data):
         'total_products_created': 0,
         'total_events_joined': 0,
         'total_places_joined': 0,
-        'profile_image': profile_image_url if profile_image_url else "https://cityverse-profilepics.s3.us-east-2.amazonaws.com/profile-images/blank-profile-picture.webp",
+        'profile_image': profile_image_url if profile_image_url else "https://cityverse-profilepics.s3.us-east-2.amazonaws.com/profile-images/blank-profile-picture.webp"
          
     }
 
