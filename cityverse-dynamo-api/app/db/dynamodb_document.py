@@ -4,6 +4,7 @@ import logging
 import bcrypt
 from app.main.util.strings import generate_id
 from pathlib import Path
+from boto3.dynamodb.conditions import Key
 import json
 
 # Set up logging configuration
@@ -128,6 +129,18 @@ class Document:
             IndexName=index,
             KeyConditionExpression=condition,
             ExpressionAttributeValues=value
+        )
+
+        items = response.get('Items', [])
+
+        return items if items else None
+
+    def query_by_index_contains(self, str_index, values):
+        dynamodb = boto3.resource('dynamodb')
+        table = dynamodb.Table(self.__TABLE_NAME__)
+
+        response = table.scan(
+            FilterExpression=Key(str_index).contains(values)
         )
 
         items = response.get('Items', [])

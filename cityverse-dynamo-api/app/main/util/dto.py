@@ -104,23 +104,27 @@ class ProductDto:
         'content': fields.List(fields.Nested(product)),
     })
 
-class PlaceDto:
-    api = Namespace('place', description='place related operations')
-    place = api.model('place', {
-        'id': fields.String(description='Place Identifier'),
+class AssociationDto:
+    api = Namespace('association', description='association related operations')
+    association = api.model('association', {
+        'id': fields.String(description='Association Identifier'),
         'user_id': fields.String(description='User Identifier'),
-        'goal': fields.Integer(description='17 SDG number'),
-        'name': fields.String(description='Place Name'),
-        'coordinate': fields.String(description='Place coordinates'),
+        'name': fields.String(description='Association Name'),
+        'sdg': fields.List(fields.Integer,description='17 SDG number'),
+        'description': fields.String(description='Association Description'),
+        'siege': fields.String(description='siege information'),
+        'links': fields.List(fields.String, description='List of links'),
+        'banner_image': fields.String(description='URL or file path for the product banner image'),
+        'profile_image': fields.String(description='URL or file path for the product profile image'),
         'created_on': fields.String(description='Created on'),
         'modified_on': fields.String(description='Modified on')
     })
 
-    page_place = api.model('flow page', {
+    page_association = api.model('flow page', {
         'page': fields.Integer,
         'size': fields.Integer,
         'total': fields.Integer,
-        'content': fields.List(fields.Nested(place)),
+        'content': fields.List(fields.Nested(association)),
     })
 
 class EventDto:
