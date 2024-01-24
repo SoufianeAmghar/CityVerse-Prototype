@@ -66,7 +66,7 @@ class Place(Resource):
 @api.route('/search')
 class PlaceList(Resource):
     @api.doc('list_of_associations')
-    def get(self):
+    def post(self):
         """List associations by SGD"""
         data = request.json
         return get_associations_by_sdg(data)  
