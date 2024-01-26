@@ -133,7 +133,7 @@ class AssociationDto:
         'name': fields.String(description='Association Name'),
         'sdg': fields.List(fields.Nested(sdg), description='List of SDGs'),
         'description': fields.String(description='Association Description'),
-        'activity': fields.String(description='Association activities'),
+        'activity': fields.List(fields.String,description='Association activities'),
         'siege': fields.String(description='siege information'),
         'links': fields.List(fields.String, description='List of links'),
         'banner_image': fields.String(description='URL or file path for the product banner image'),
