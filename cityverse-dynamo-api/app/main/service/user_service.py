@@ -232,7 +232,7 @@ def add_user_place(user_id,place_id):
         document.put_item(Item='User')
         return {
             'status': 'success',
-            'message': 'User place added successfully.',
+            'message': 'User Association added successfully.',
         }, 200
 
     return {
@@ -252,7 +252,7 @@ def remove_user_place(user_id,place_id):
         document.put_item(Item='User')
         return {
             'status': 'success',
-            'message': 'User place added successfully.',
+            'message': 'User Association removed successfully.',
         }, 200
 
     return {

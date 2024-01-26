@@ -10,7 +10,8 @@ from ..service.association_service import (
     delete_association,
     get_a_association,
     get_all_associations,
-    get_associations_by_sdg
+    get_associations_by_sdg,
+    check_siege_exists
 )
 
 api = AssociationDto.api
@@ -28,7 +29,7 @@ class PlaceList(Resource):
     @api.response(201, 'Association successfully created.')
     @api.doc('create a new association')
     def post(self):
-        """Creates a new Place"""
+        """Creates a new Place""" 
         json_data_str = request.form.get('json')
         data = json.loads(json_data_str) if json_data_str else {}
         banner_file = request.files.get('banner_image')
@@ -70,4 +71,12 @@ class PlaceList(Resource):
         """List associations by SGD"""
         data = request.json
         return get_associations_by_sdg(data)  
+    
+@api.route('/verify-siege')
+class PlaceVerifySiege(Resource):
+    @api.doc('verify_siege')
+    def post(self):
+        """Verify siege"""
+        data = request.json
+        return check_siege_exists(data)
 
