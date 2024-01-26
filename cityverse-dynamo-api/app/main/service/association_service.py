@@ -94,7 +94,7 @@ def check_siege_exists(data):
 
 
 def create_association(data,banner_image,profile_image):
-    document = Document(__TABLE_NAME__='Place')
+    document = Document(__TABLE_NAME__='Association')
 
     banner_image_url = None
     # Upload product banner image to S3
