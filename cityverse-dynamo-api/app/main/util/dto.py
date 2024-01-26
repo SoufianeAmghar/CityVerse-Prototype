@@ -106,11 +106,32 @@ class ProductDto:
 
 class AssociationDto:
     api = Namespace('association', description='association related operations')
+    
+    color_info = api.model('color_info', {
+        'hex': fields.String,
+        'rgb': fields.List(fields.Integer),
+    })
+
+    keywords = api.model('keywords', {
+        'descriptions': fields.List(fields.String),
+        'groups': fields.List(fields.String),
+        'tags': fields.List(fields.String),
+    })
+
+    sdg = api.model('sdg', {
+        'colorInfo': fields.Nested(color_info),
+        'goal': fields.Integer,
+        'icon_url': fields.String,
+        'keywords': fields.Nested(keywords),
+        'short': fields.String,
+        'title': fields.String,
+    })
+
     association = api.model('association', {
         'id': fields.String(description='Association Identifier'),
-        'user_id': fields.String(description='User Identifier'),
+        'created_by': fields.String(description='User Identifier'),
         'name': fields.String(description='Association Name'),
-        'sdg': fields.List(fields.Integer,description='17 SDG number'),
+        'sdg': fields.List(fields.Nested(sdg), description='List of SDGs'),
         'description': fields.String(description='Association Description'),
         'activity': fields.String(description='Association activities'),
         'siege': fields.String(description='siege information'),
