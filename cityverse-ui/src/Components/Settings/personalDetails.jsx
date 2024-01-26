@@ -58,7 +58,7 @@ export default function PersonalDetails() {
 
   useEffect(() => {
     axios
-      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "/auth/info", {
+      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "auth/info", {
         headers,
       })
       .then((value) => {

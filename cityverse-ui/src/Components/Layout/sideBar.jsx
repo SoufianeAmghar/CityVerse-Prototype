@@ -193,16 +193,19 @@ const Sidebar = ({ children }) => {
   // const useremail = sessionStorage.getItem("email");
   const [data, setdata] = useState([]);
   const headers = {
-    Authorization: sessionStorage.getItem("acces_token").toString(),
+    Authorization: sessionStorage.getItem("acces_token")?.toString(),
   };
 
   const call_api_get_user_info = () => {
     axios
-      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "/auth/info", {
+      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "auth/info", {
         headers,
       })
       .then((value) => {
         setdata(value.data.data);
+        console.log( value.data?.data.id.S)
+        sessionStorage.setItem("user_Id", value.data?.data.id.S);
+       
       })
       .catch((err) => {
         deconnexion();
@@ -312,7 +315,7 @@ const Sidebar = ({ children }) => {
                             alignItems: "center",
                           }}
                         >
-                          {data?.first_name?.S} {data?.last_name?.S} {15}{" "}
+                          {data?.first_name?.S} {data?.last_name?.S} {data?.score?.N}{" "}
                           <StarIcon sx={{ color: "#FFD700" }} />          
                         </Typography>
                       </>

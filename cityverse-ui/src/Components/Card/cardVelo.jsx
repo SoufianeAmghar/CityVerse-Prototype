@@ -10,7 +10,7 @@ import Stack from '@mui/material/Stack';
 
 
 
- function CardVelo(item) {
+export default function CardVelo(item) {
   return (
     <Card variant="outlined">
       <CardContent>
@@ -55,4 +55,3 @@ import Stack from '@mui/material/Stack';
   );
 }
 
-export default React.memo(CardVelo);

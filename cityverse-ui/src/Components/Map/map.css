@@ -41,3 +41,40 @@
   display: "flex";
   z-index: 1;
 }
+/* legend */
+.info {
+  padding: 6px 8px;
+  font: 14px/16px Arial, Helvetica, sans-serif;
+  background: white;
+  border-radius: 5px;
+}
+
+
+.edit-location-button {
+  position: absolute;
+  top: 11%;
+  right: 2%;
+  border-radius: 100%;
+  z-index: 10000;
+  background-color: transparent;
+}
+
+.filterscrollBar  ::-webkit-scrollbar-thumb {
+  background: rgb(161, 160, 160);
+  /* border-radius: 10px; */
+  display: block;
+}
+
+.border{
+  border-top: 4px solid rgb(17, 255, 0);
+  width: 100%;
+}
+
+.edit-pin-location-button {
+  position: absolute;
+  top: 2%;
+  right: 2%;
+  border-radius: 10%;
+  z-index: 10000;
+  background-color: white;
+}

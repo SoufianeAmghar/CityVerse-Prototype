@@ -37,17 +37,15 @@ const Login = (props) => {
     let options = {
       password: passwordValue,
       email: loginValue,
-    };
-   
+    }; 
     axios
       .post(
-        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "/auth/login",
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "auth/login",
         options
       )
       .then((data) => {     
         sessionStorage.setItem("acces_token", data.data.Authorization);
         axios.defaults.headers.common['Authorization'] = `Bearer ${data.data.Authorization}`;
-       
         let array = parseJwt(data.data.Authorization);
         history.push("/explore");
         setInprogress(false);
