@@ -1,5 +1,5 @@
 from app.db.dynamodb_document import Document
-from ..service.user_service import get_a_user
+from ..service.user_service import add_user_place, remove_user_place
 from boto3.dynamodb.conditions import Key
 from datetime import datetime
 import logging
@@ -56,10 +56,10 @@ def get_associations_by_sdg(numbers):
     else:
         return {'status': 'info', 'message': 'No associations with the specified SDG numbers exist'},201
     
-def check_siege_exists(siege):
+def validate_siege(siege):
     geolocator = Nominatim(user_agent="CityVerseProto")  # replace with your app name
-    logging.info("Checking siege exists")
-    logging.info(siege)
+    # logging.info("Checking siege exists")
+    # logging.info(siege)
     location = geolocator.geocode(siege)
 
     # logging.info("Location location: %s" % location)
@@ -69,8 +69,28 @@ def check_siege_exists(siege):
     if location and location.raw.get('osm_type') == 'node':  
         return location.address
     else:
-        return False
+        return None
 
+
+def check_siege_exists(data):
+    geolocator = Nominatim(user_agent="CityVerseProto") 
+    location = geolocator.geocode(data['siege'])
+    logging.info("Location location: %s" % location)
+    logging.info("location raw: %s" % location.raw)
+    if location and location.raw.get('osm_type') == 'node': 
+        return {
+            'status': 'success',
+            'message': 'Siege exists.'
+
+        } , 201
+    else:
+        return {
+            'status': 'failed',
+            'message': 'Siege does not exist.'
+
+        } , 404
+
+    
 
 
 def create_association(data,banner_image,profile_image):
@@ -100,14 +120,8 @@ def create_association(data,banner_image,profile_image):
         
     siege = data.get('siege', '')
 
-    valid_siege =  check_siege_exists(siege)
-
-    if valid_siege == False:
-        return {
-            'status': 'failed',
-            'message': 'Siege does not exist.'
-
-        } , 404
+    valid_siege =  validate_siege(siege)
+        
         
 
     association_item = {
@@ -115,6 +129,7 @@ def create_association(data,banner_image,profile_image):
         'created_on': datetime.utcnow().isoformat(),
         'modified_on': datetime.utcnow().isoformat(),
         'user_id': data['created_by'],
+        'activity': data['activity'],
         'modified_by': data['modified_by'],
         'name': data['name'],
         'sdg': [1, 2, 3],
@@ -125,12 +140,21 @@ def create_association(data,banner_image,profile_image):
         'profile_image': profile_image_url
     }
 
-    document.save(item=association_item)
+    try:
+        document.save(item=association_item)
+        add_user_place(user_id=data['created_by'], place_id=association_item['id'])
 
-    return {
-        'status': 'success',
-        'message': 'Association successfully created.',
-    }, 201
+        return {
+            'status': 'success',
+            'message': 'Association successfully created.',
+        }, 201
+    except Exception as e:
+        return {
+            'status': 'fail',
+            'message': f'Failed to create association: {str(e)}',
+            'user_place_error': e.details if hasattr(e, 'details') else None,
+        }, 500
+
 
 
 def delete_association(association_id):
@@ -139,11 +163,19 @@ def delete_association(association_id):
     place = get_a_association(association_id)
 
     if place:
-        document.delete_item(Key={'id': association_id})
-        return {
-            'status': 'success',
-            'message': 'Association successfully deleted.',
-        }, 200
+        try:
+            document.delete_item(Key={'id': association_id})
+            remove_user_place(place['created_by'], association_id)
+            return {
+                'status': 'success',
+                'message': 'Association successfully deleted.',
+            }, 200
+        except Exception as e:
+            return {
+                'status': 'fail',
+                'message': f'Failed to delete association: {str(e)}',
+                'user_place_error': e.details if hasattr(e, 'details') else None,
+            }, 500
     else:
         return {
             'status': 'fail',
