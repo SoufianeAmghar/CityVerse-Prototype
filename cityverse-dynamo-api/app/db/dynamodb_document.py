@@ -1,3 +1,4 @@
+from decimal import Decimal
 import boto3
 from botocore.exceptions import NoCredentialsError
 import logging
@@ -173,6 +174,19 @@ class Document:
         else:
             self._id = None
         return self
+    
+    def convert_decimals_to_float(self, data):
+        for key, value in data.items():
+            if isinstance(value, Decimal):
+                data[key] = float(value)
+            elif isinstance(value, dict):
+                self.convert_decimals_to_float(value)
+            elif isinstance(value, list):
+                for i, item in enumerate(value):
+                    if isinstance(item, dict):
+                        self.convert_decimals_to_float(item)
+                    elif isinstance(item, Decimal):
+                        value[i] = float(item)
 
     def get_all(self, dynamodb_client=None):
         if not dynamodb_client:
@@ -182,7 +196,12 @@ class Document:
 
         response = table.scan()
 
-        return response.get('Items', [])
+        items= response.get('Items', [])
+
+        for item in items:
+            self.convert_decimals_to_float(item)
+
+        return items
 
     @classmethod
     def drop(cls, dynamodb_client=None):
