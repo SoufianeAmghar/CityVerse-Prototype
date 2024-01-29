@@ -129,12 +129,13 @@ class AssociationDto:
 
     association = api.model('association', {
         'id': fields.String(description='Association Identifier'),
-        'created_by': fields.String(description='User Identifier'),
-        'name': fields.String(description='Association Name'),
+        'created_by': fields.String(description='User Identifier',required=True),
+        'name': fields.String(description='Association Name',required=True),
         'sdg': fields.List(fields.Nested(sdg), description='List of SDGs'),
         'description': fields.String(description='Association Description'),
-        'activity': fields.List(fields.String,description='Association activities'),
-        'siege': fields.String(description='siege information'),
+        'activity': fields.List(fields.String,description='Association activities',required=True),
+        'rna': fields.String(description='Association RNA number',required=True),
+        'siege': fields.String(description='siege information',required=True),
         'links': fields.List(fields.String, description='List of links'),
         'banner_image': fields.String(description='URL or file path for the product banner image'),
         'profile_image': fields.String(description='URL or file path for the product profile image'),
