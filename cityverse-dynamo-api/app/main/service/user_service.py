@@ -220,21 +220,20 @@ def update_user_banner(user_id, banner_file):
         'message': 'No user with the provided ID found.',
     }, 409
 
-def add_user_place(user_id,place_id):
+def add_user_place(user_id, place_id):
     document = Document(__TABLE_NAME__='User')
     user = get_a_user(user_id)
 
     if user:
         user['places'] = user.get('places', []) + [place_id]
-        user['total_places_joined'] += 1
+        user['total_places_joined'] = int(user.get('total_places_joined', 0)) + 1
         user['modified_on'] = datetime.utcnow().isoformat()
 
-        document.put_item(Item='User')
+        document.save(item=user)  # Use 'Item' instead of 'User'
         return {
             'status': 'success',
             'message': 'User Association added successfully.',
         }, 200
-
     return {
         'status': 'fail',
         'message': 'No user with the provided ID found.',
@@ -245,11 +244,11 @@ def remove_user_place(user_id,place_id):
     user = get_a_user(user_id)
 
     if user:
-        user['places'] = user.get('places', []) - [place_id]
-        user['total_places_joined'] -= 1
+        user['places'] = user.get('places', []) + [place_id]
+        user['total_places_joined'] = int(user.get('total_places_joined', 0)) - 1
         user['modified_on'] = datetime.utcnow().isoformat()
 
-        document.put_item(Item='User')
+        document.save(item=user)
         return {
             'status': 'success',
             'message': 'User Association removed successfully.',
@@ -269,7 +268,7 @@ def add_user_event(user_id,event_id):
         user['total_events_joined'] += 1
         user['modified_on'] = datetime.utcnow().isoformat()
 
-        document.put_item(Item='User')
+        document.save(item=user)
         return {
             'status': 'success',
             'message': 'User event removed successfully.',
@@ -289,7 +288,7 @@ def remove_user_event(user_id,event_id):
         user['total_events_joined'] -= 1
         user['modified_on'] = datetime.utcnow().isoformat()
 
-        document.put_item(Item='User')
+        document.save(item=user)
         return {
             'status': 'success',
             'message': 'User event removed successfully.',

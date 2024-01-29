@@ -58,18 +58,12 @@ def get_associations_by_sdg(numbers):
     
 def validate_siege(siege):
     geolocator = Nominatim(user_agent="CityVerseProto")  # replace with your app name
-    # logging.info("Checking siege exists")
-    # logging.info(siege)
     location = geolocator.geocode(siege)
-
-    # logging.info("Location location: %s" % location)
-
-    # logging.info("location raw: %s" % location.raw)
 
     if location and location.raw.get('osm_type') == 'node':  
         return location.address
     else:
-        return None
+        return str(location) if location else None
 
 
 def check_siege_exists(data):
@@ -150,8 +144,7 @@ def create_association(data,banner_image,profile_image):
     except Exception as e:
         return {
             'status': 'fail',
-            'message': f'Failed to create association: {str(e)}',
-            'user_place_error': e.details if hasattr(e, 'details') else None,
+            'message': f'Failed to create association: {str(e)}'
         }, 500
 
 
