@@ -11,7 +11,8 @@ from ..service.association_service import (
     get_a_association,
     get_all_associations,
     get_associations_by_sdg,
-    check_siege_exists
+    check_siege_exists,
+    verify_rna_number
 )
 
 api = AssociationDto.api
@@ -79,4 +80,12 @@ class PlaceVerifySiege(Resource):
         """Verify siege"""
         data = request.json
         return check_siege_exists(data)
+    
+@api.route('/verify-rna')
+class PlaceVerifySiege(Resource):
+    @api.doc('verify_rna')
+    def post(self):
+        """Verify siege"""
+        data = request.json
+        return verify_rna_number(data)
 
