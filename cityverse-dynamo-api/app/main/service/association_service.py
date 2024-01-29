@@ -53,38 +53,42 @@ def get_associations_by_sdg(numbers):
     associations = document.query_by_index_contains('sdg-index', numbers)
 
     if associations:
-        return {'status': 'success', 'associations': associations},200
+        return {'status': 'success', 'associations': associations}, 200
     else:
-        return {'status': 'info', 'message': 'No associations with the specified SDG numbers exist'},201
-    
+        return {'status': 'info', 'message': 'No associations with the specified SDG numbers exist'}, 201
+
+
 def validate_siege(siege):
-    geolocator = Nominatim(user_agent="CityVerseProto")  # replace with your app name
+    # replace with your app name
+    geolocator = Nominatim(user_agent="CityVerseProto")
     location = geolocator.geocode(siege)
 
-    if location and location.raw.get('osm_type') == 'node':  
+    if location and location.raw.get('osm_type') == 'node':
         return location.address
     else:
         return str(location) if location else None
 
 
 def check_siege_exists(data):
-    geolocator = Nominatim(user_agent="CityVerseProto") 
+    geolocator = Nominatim(user_agent="CityVerseProto")
     location = geolocator.geocode(data['siege'])
     logging.info("Location location: %s" % location)
     logging.info("location raw: %s" % location.raw)
-    if location and location.raw.get('osm_type') == 'node': 
-        return {
-            'status': 'success',
-            'message': 'Siege exists.'
-
-        } , 201
+    if location and location.raw.get('osm_type') == 'node':
+        {
+            "status": "success",
+            "message": "Siege exists.",
+            "lat": location.latitude,
+            "long": location.longitude
+        }, 201
     else:
         return {
             'status': 'failed',
             'message': 'Siege does not exist.'
 
-        } , 404
-    
+        }, 404
+
+
 def verify_rna_number(rna_number):
     endpoint = f'https://entreprise.api.gouv.fr/v4/djepva/api-association/associations/{rna_number}'
 
@@ -115,10 +119,7 @@ def verify_rna_number(rna_number):
         }, 500
 
 
-    
-
-
-def create_association(data,banner_image,profile_image):
+def create_association(data, banner_image, profile_image):
     document = Document(__TABLE_NAME__='Association')
 
     banner_image_url = None
@@ -142,12 +143,10 @@ def create_association(data,banner_image,profile_image):
                 'status': 'fail',
                 'message': 'Failed to upload profile image to S3.',
             }, 500
-        
+
     siege = data.get('siege', '')
 
-    valid_siege =  validate_siege(siege)
-        
-        
+    valid_siege = validate_siege(siege)
 
     association_item = {
         'id': generate_id(),
@@ -160,6 +159,7 @@ def create_association(data,banner_image,profile_image):
         'rna': data['rna'],
         'description': data['description'],
         'siege': valid_siege,
+        'siege_coordinates': data['siege_coordinates'],
         'links': data['social_links'],
         'banner_image': banner_image_url,
         'profile_image': profile_image_url
@@ -167,7 +167,8 @@ def create_association(data,banner_image,profile_image):
 
     try:
         document.save(item=association_item)
-        add_user_place(user_id=data['created_by'], place_id=association_item['id'])
+        add_user_place(user_id=data['created_by'],
+                       place_id=association_item['id'])
 
         return {
             'status': 'success',
@@ -178,7 +179,6 @@ def create_association(data,banner_image,profile_image):
             'status': 'fail',
             'message': f'Failed to create association: {str(e)}'
         }, 500
-
 
 
 def delete_association(association_id):
@@ -236,4 +236,3 @@ def edit_association(association_id, data):
             'status': 'fail',
             'message': 'Place not found.',
         }, 401
-

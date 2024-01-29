@@ -136,6 +136,7 @@ class AssociationDto:
         'activity': fields.List(fields.String,description='Association activities',required=True),
         'rna': fields.String(description='Association RNA number',required=True),
         'siege': fields.String(description='siege information',required=True),
+        'siege_coordinates': fields.String(description='siege coordinates'),
         'links': fields.List(fields.String, description='List of links'),
         'banner_image': fields.String(description='URL or file path for the product banner image'),
         'profile_image': fields.String(description='URL or file path for the product profile image'),
