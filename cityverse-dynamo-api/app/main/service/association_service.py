@@ -75,7 +75,7 @@ def check_siege_exists(data):
     logging.info("Location location: %s" % location)
     logging.info("location raw: %s" % location.raw)
     if location and location.raw.get('osm_type') == 'node':
-        {
+       return {
             "status": "success",
             "message": "Siege exists.",
             "lat": location.latitude,
@@ -90,7 +90,7 @@ def check_siege_exists(data):
 
 
 def verify_rna_number(rna_number):
-    endpoint = f'https://entreprise.api.gouv.fr/v4/djepva/api-association/associations/{rna_number}'
+    endpoint = f'https://staging.entreprise.api.gouv.fr/v4/djepva/api-association/associations/{rna_number}'
 
     try:
         response = requests.get(endpoint)
