@@ -45,7 +45,8 @@ class Place(Resource):
     @api.doc('get a association')
     def get(self, association_id):
         """Get a association given its identifier"""
-        association = get_a_association(association_id)  # Implement get_a_association function in your service module
+        data = request.json
+        association = get_a_association(association_id,data) 
         if not association:
             api.abort(404)
         else:

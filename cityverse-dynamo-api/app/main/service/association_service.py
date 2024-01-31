@@ -23,28 +23,19 @@ def get_all_associations():
     return associations
 
 
-def get_a_association(association_id):
+def get_a_association(association_id,data):
     document = Document(__TABLE_NAME__='Association')
 
-    association = document.get_item(association_id)
+    name = data['name']
+
+    association = document.get_item(association_id,name)
+
 
     if association is None:
-        logging.warning(f"Product with ID {association_id} not found.")
+        logging.warning(f"Association with ID {association_id} not found.")
 
     return association
 
-
-def get_association_by_name(name):
-    document = Document(__TABLE_NAME__='Association')
-
-    association = document.query(
-        condition='nom = :nom',
-        value={':nom': name}
-    )
-    if association:
-        return True
-    else:
-        return False
 
 
 def get_associations_by_sdg(numbers):

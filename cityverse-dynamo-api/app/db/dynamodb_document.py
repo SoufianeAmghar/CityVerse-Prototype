@@ -99,13 +99,19 @@ class Document:
             self._id = None
         return self
 
-    def get_item(self, id):
+    def get_item(self, id, name=None):
         dynamodb_client = boto3.client('dynamodb')
+
+        key_condition = {'id': {'S': str(id)}}
+
+    # Add sort key to key condition if it exists
+        if name is not None:
+            key_condition['name'] = {'S': str(name)}
 
         try:
             response = dynamodb_client.get_item(
                 TableName=self.__TABLE_NAME__,
-                Key={'id': {'S': id}}  # Pass the primary key as a dictionary
+                Key=key_condition
             )
 
             item = response.get('Item')
@@ -174,7 +180,7 @@ class Document:
         else:
             self._id = None
         return self
-    
+
     def convert_decimals_to_float(self, data):
         for key, value in data.items():
             if isinstance(value, Decimal):
@@ -196,7 +202,7 @@ class Document:
 
         response = table.scan()
 
-        items= response.get('Items', [])
+        items = response.get('Items', [])
 
         for item in items:
             self.convert_decimals_to_float(item)
