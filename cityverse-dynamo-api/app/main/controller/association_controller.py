@@ -52,10 +52,12 @@ class Place(Resource):
         else:
             return association
 
-    @api.doc('Delete Place')
+    @api.doc('Delete Association')
     def delete(self, association_id):
         """Delete a association given its identifier"""
-        return delete_association(association_id)  
+        data = request.json
+        
+        return delete_association(association_id,data)  
 
     @api.response(201, 'Place successfully updated.')
     @api.doc('update association')

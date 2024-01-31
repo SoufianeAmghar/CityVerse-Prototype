@@ -154,15 +154,18 @@ class Document:
 
         return items if items else None
 
-    def delete(self, dynamodb_client=None):
-        if not dynamodb_client:
-            dynamodb_client = boto3.client('dynamodb')
+    def delete(self,id, name=None):
+        dynamodb = boto3.resource('dynamodb')
 
-        if self._id:
-            table = dynamodb_client.Table(self.__TABLE_NAME__)
-            response = table.delete_item(Key={'_id': self._id})
+        if id:
+            table = dynamodb.Table(self.__TABLE_NAME__)
+            key_condition = {'id': id}
+        if name:
+            key_condition['name'] = name
 
-        return self
+        logging.info(key_condition)
+        
+        table.delete_item(Key=key_condition)
 
     def to_dict(self):
         # Customize this method to convert your object attributes to a dictionary

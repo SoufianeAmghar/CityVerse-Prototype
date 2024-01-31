@@ -172,30 +172,38 @@ def create_association(data, banner_image, profile_image):
         }, 500
 
 
-def delete_association(association_id):
+def delete_association(association_id, data):
     document = Document(__TABLE_NAME__='Association')
 
-    place = get_a_association(association_id)
+    try:
+        # Your existing code to get the association
+        place = get_a_association(association_id, data)
 
-    if place:
-        try:
-            document.delete_item(Key={'id': association_id})
-            remove_user_place(place['created_by'], association_id)
+        if place:
+            # Your existing code to remove user place
+            remove_user_place(place['user_id'], association_id)
+
+            # Your existing code to perform deletion
+            document.delete(association_id, data.get('name'))
+
             return {
                 'status': 'success',
                 'message': 'Association successfully deleted.',
             }, 200
-        except Exception as e:
+        else:
             return {
                 'status': 'fail',
-                'message': f'Failed to delete association: {str(e)}',
-                'user_place_error': e.details if hasattr(e, 'details') else None,
-            }, 500
-    else:
+                'message': 'Association not found.',
+            }, 404
+
+    except Exception as e:
+        # Handle any exceptions or errors here
+        logging.error(f"Error: {e}")
         return {
             'status': 'fail',
-            'message': 'Association not found.',
-        }, 404
+            'message': f'Failed to delete association: {str(e)}',
+            'user_place_error': e.details if hasattr(e, 'details') else None,
+        }, 500
 
 
 def edit_association(association_id, data):
