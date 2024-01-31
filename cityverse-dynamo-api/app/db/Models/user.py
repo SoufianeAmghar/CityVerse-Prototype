@@ -46,7 +46,7 @@ class User(Document):
             last_login_time = User.parse_datetime(last_login_str)
             current_time = datetime.utcnow()
             hours_spent_this_session = round((current_time - last_login_time).total_seconds() / 3600)
-            logging.info('Hours spent: %s', hours_spent_this_session)
+           # logging.info('Hours spent: %s', hours_spent_this_session)
             hours_spent = user.get('hours_spent', 0) + hours_spent_this_session
         except ValueError as e:
             print(f"Error parsing date string: {e}")

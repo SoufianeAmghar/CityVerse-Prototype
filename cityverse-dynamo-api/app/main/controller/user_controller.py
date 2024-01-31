@@ -5,9 +5,15 @@ from flask_restplus import Resource
 from app.main.util.decorator import token_required
 from ..util.dto import UserDto
 from ..service.user_service import save_new_user, get_all_users, get_a_user, delete_user, update_user, update_user_description, update_user_banner, update_password, get_user_by_email, add_user_event, add_user_place
+import logging
 
 api = UserDto.api
 _user = UserDto.user
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 
 
 @api.route('/')
@@ -50,6 +56,7 @@ class User(Resource):
         json_data_str = request.form.get('json')
         data = json.loads(json_data_str) if json_data_str else {}
         image_file = request.files.get('profile_image')
+        logging.info(image_file)
         return update_user(public_id, data, profile_image=image_file)
 
 
