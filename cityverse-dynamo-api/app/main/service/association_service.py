@@ -111,24 +111,42 @@ def verify_rna_number(rna_number):
 
 
 def create_association(data, banner_image, profile_image):
+    # Check if 'rna' is empty or None
+    if data.get('rna') is None or not data['rna'].strip():
+        return {
+            'status': 'fail',
+            'message': 'RNA cannot be None or empty.',
+        }, 404
+
+    # Check if 'activity' is None or empty
+    if data.get('activity') is None or not data['activity'].strip():
+        return {
+            'status': 'fail',
+            'message': 'Activity cannot be None or empty.',
+        }, 404
+
+    # Check if 'name' is None or empty
+    if data.get('name') is None or not data['name'].strip():
+        return {
+            'status': 'fail',
+            'message': 'Name cannot be None or empty.',
+        }, 404
+
     document = Document(__TABLE_NAME__='Association')
 
     banner_image_url = None
     # Upload product banner image to S3
     if banner_image:
-        banner_image_url = document.upload_image_to_s3(
-            banner_image)
+        banner_image_url = document.upload_image_to_s3(banner_image)
         if banner_image_url is None:
             return {
                 'status': 'fail',
-                'message': 'Failed to upload profile image to S3.',
+                'message': 'Failed to upload banner image to S3.',
             }, 500
 
     profile_image_url = None
-
     if profile_image:
-        profile_image_url = document.upload_image_to_s3(
-            profile_image)
+        profile_image_url = document.upload_image_to_s3(profile_image)
         if profile_image_url is None:
             return {
                 'status': 'fail',
@@ -136,7 +154,6 @@ def create_association(data, banner_image, profile_image):
             }, 500
 
     siege = data.get('siege', '')
-
     valid_siege = validate_siege(siege)
 
     association_item = {
