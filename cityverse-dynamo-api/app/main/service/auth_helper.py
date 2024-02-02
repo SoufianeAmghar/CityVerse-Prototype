@@ -101,7 +101,7 @@ class Auth:
                 return response_object, 401
 
         except Exception as e:
-            logging.error(e)
+            logging.error(f"An error occurred: {e}", exc_info=True)
             response_object = {
                 'status': 'fail',
                 'message': 'Try again'
