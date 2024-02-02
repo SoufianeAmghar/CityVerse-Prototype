@@ -111,6 +111,9 @@ def verify_rna_number(rna_number):
 
 
 def create_association(data, banner_image, profile_image):
+
+    document = Document(__TABLE_NAME__='Association', __BUCKET_NAME__='cityverse-profilepics',
+                            __S3_OBJECT_PREFIX__='product-images/')
     # Check if 'rna' is empty or None
     if data.get('rna') is None or not data['rna'].strip():
         return {
@@ -131,8 +134,6 @@ def create_association(data, banner_image, profile_image):
             'status': 'fail',
             'message': 'Name cannot be None or empty.',
         }, 404
-
-    document = Document(__TABLE_NAME__='Association')
 
     banner_image_url = None
     # Upload product banner image to S3
