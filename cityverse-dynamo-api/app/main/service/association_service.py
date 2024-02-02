@@ -122,7 +122,6 @@ def create_association(data, banner_image, profile_image):
         }, 404
 
     # Check if 'activity' is None or empty
-    if data.get('activity') is None or not len(data['activity']) == 0:
     if data.get('activity') is None or len(data['activity']) ==0:
         return {
             'status': 'fail',
