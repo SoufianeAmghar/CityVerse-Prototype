@@ -186,11 +186,10 @@ class Auth:
                         **({'total_products_created': user.total_products_created} if user.total_products_created is not None else {}),
                         **({'total_events_joined': user.total_events_joined} if user.total_events_joined is not None else {}),
                         **({'total_places_joined': user.total_places_joined} if user.total_places_joined is not None else {}),
-                        **({'profile_image': user.profile_image} if user.profile_image is not None else {})
-                        ** ({'address': user.address} if user.address is not None else {}),
-                        **({'address_coordinates': user.address_coordinates} if user.address_coordinates is not None else {})
-
-
+                        **({'address': user.address} if user.address is not None else {}),
+                        **({'address_coordinates': user.address_coordinates} if user.address_coordinates is not None else {}),
+                        **({'profile_image': user.profile_image} if user.profile_image is not None else {}),
+                       
 
                     }
                 }
