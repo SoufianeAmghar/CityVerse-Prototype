@@ -3,6 +3,7 @@ from datetime import datetime
 import logging
 from app.main.util.strings import generate_id
 from geopy.geocoders import Nominatim
+from decimal import Decimal
 
 # Set up logging configuration
 logging.basicConfig(
@@ -49,7 +50,7 @@ def save_new_user(data):
         'total_products_created': 0,
         'total_events_joined': 0,
         'total_places_joined': 0,
-        'address': None,
+        'address': '',
         'address_coordinates' : [],
         'profile_image': profile_image_url if profile_image_url else "https://cityverse-profilepics.s3.us-east-2.amazonaws.com/profile-images/blank-profile-picture.webp",
         
@@ -90,11 +91,13 @@ def validate_home_address(address):
     location = geolocator.geocode(address)
 
     if location and location.raw.get('osm_type') == 'node':
+        latitude = Decimal(str(location.latitude))
+        longitude = Decimal(str(location.longitude))
         return {
             'address': location.address,
             'coordinates': {
-                'latitude': location.latitude,
-                'longitude': location.longitude
+                'latitude': latitude,
+                'longitude': longitude
             }
         }
     else:

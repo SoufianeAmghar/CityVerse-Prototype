@@ -19,8 +19,8 @@ class UserDto:
         'total_events_joined': fields.Integer(description='Total events joined by the user'),
         'total_places_joined': fields.Integer(description='Total places joined by the user'),
         'total_products_created': fields.Integer(description='Total products created by the user'),
-        'address': fields.String(description='User address', default=None),
-        'address_coordinates': fields.String(description='Coordinates of the user address', default=None)
+        'address': fields.String(description='User address'),
+        'address_coordinates': fields.List(fields.String, description='Coordinates of the user address'),
     })
 
     page_user = api.model('flow page', {

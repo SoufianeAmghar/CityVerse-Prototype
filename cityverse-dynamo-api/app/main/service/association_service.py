@@ -64,7 +64,6 @@ def check_siege_exists(data):
     geolocator = Nominatim(user_agent="CityVerseProto")
     location = geolocator.geocode(data['siege'])
     logging.info("Location location: %s" % location)
-    logging.info("location raw: %s" % location.raw)
     if location and location.raw.get('osm_type') == 'node':
        return {
             "status": "success",
