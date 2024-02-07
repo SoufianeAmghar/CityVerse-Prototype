@@ -2,6 +2,7 @@ from app.db.dynamodb_document import Document
 from datetime import datetime
 import logging
 from app.main.util.strings import generate_id
+from geopy.geocoders import Nominatim
 
 # Set up logging configuration
 logging.basicConfig(
@@ -80,6 +81,24 @@ def get_a_user(user_id):
 
     return user
 
+def validate_home_address(address):
+    geolocator = Nominatim(user_agent="CityVerseProto")
+    location = geolocator.geocode(address)
+
+    if location and location.raw.get('osm_type') == 'node':
+        return {
+            'address': location.address,
+            'coordinates': {
+                'latitude': location.latitude,
+                'longitude': location.longitude
+            }
+        }
+    else:
+        return {
+            'address': str(location) if location else None,
+            'coordinates': None
+        }
+
 
 def update_user(user_id, data, profile_image):
     document = Document(__TABLE_NAME__='User', __BUCKET_NAME__='cityverse-profilepics',
@@ -95,7 +114,14 @@ def update_user(user_id, data, profile_image):
             }, 500
     user = get_a_user(user_id)
 
+    
+
     if user:
+        if 'address' in data:
+            address_data = validate_home_address(data['address'])
+            if address_data:
+                user['address'] = address_data['address']
+                user['address_coordinates'] = address_data['coordinates']
         if 'email' in data:
             user['email'] = data.get('email')
         if 'last_name' in data:
@@ -110,6 +136,8 @@ def update_user(user_id, data, profile_image):
             user['created_on'] = data.get('created_on')
         if profile_image_url:
             user['profile_image'] = str(profile_image_url)
+        
+
     user['id'] = str(user_id)
     user['modified_on'] = datetime.utcnow().isoformat()
 

@@ -1,5 +1,6 @@
 from flask_restx import Namespace, fields
 
+
 class UserDto:
     api = Namespace('user', description='user related operations')
     user = api.model('user', {
@@ -17,7 +18,9 @@ class UserDto:
         'score': fields.Integer(description='User score'),
         'total_events_joined': fields.Integer(description='Total events joined by the user'),
         'total_places_joined': fields.Integer(description='Total places joined by the user'),
-        'total_products_created': fields.Integer(description='Total products created by the user')
+        'total_products_created': fields.Integer(description='Total products created by the user'),
+        'address': fields.String(description='User address', default=None),
+        'address_coordinates': fields.String(description='Coordinates of the user address', default=None)
     })
 
     page_user = api.model('flow page', {
@@ -27,6 +30,7 @@ class UserDto:
         'content': fields.List(fields.Nested(user)),
     })
 
+
 class AuthDto:
     api = Namespace('auth', description='authentication related operations')
     user_auth = api.model('auth_details', {
@@ -34,9 +38,10 @@ class AuthDto:
         'password': fields.String(required=True, description='The user password '),
     })
 
+
 class GoalDto:
     api = Namespace('goal', description='goal related operations')
-    
+
     goal_details = api.model('goal_details', {
         'goal': fields.Integer(required=True, description='The goal number'),
         'title': fields.String(required=True, description='The goal title'),
@@ -52,6 +57,7 @@ class GoalDto:
         }), required=True, description='Keywords information'),
         'icon_url': fields.String(required=True, description='URL of the goal icon')
     })
+
 
 class ProductDto:
     api = Namespace('product', description='product related operations')
@@ -79,7 +85,8 @@ class ProductDto:
         'created_by': fields.String(description='User ID who created the post'),
         'links': fields.List(fields.String, description='List of links'),
         'description': fields.String(description='Post description'),
-        'reactions': fields.Raw(description='Map of reactions as numbers'),  # Use Raw to represent a map
+        # Use Raw to represent a map
+        'reactions': fields.Raw(description='Map of reactions as numbers'),
         'reaction_emojis': fields.String(description='Dictionary mapping reactions to emojis')
     })
 
@@ -104,9 +111,11 @@ class ProductDto:
         'content': fields.List(fields.Nested(product)),
     })
 
+
 class AssociationDto:
-    api = Namespace('association', description='association related operations')
-    
+    api = Namespace(
+        'association', description='association related operations')
+
     color_info = api.model('color_info', {
         'hex': fields.String,
         'rgb': fields.List(fields.Integer),
@@ -129,14 +138,14 @@ class AssociationDto:
 
     association = api.model('association', {
         'id': fields.String(description='Association Identifier'),
-        'created_by': fields.String(description='User Identifier',required=True),
-        'name': fields.String(description='Association Name',required=True),
+        'created_by': fields.String(description='User Identifier', required=True),
+        'name': fields.String(description='Association Name', required=True),
         'sdg': fields.List(fields.Nested(sdg), description='List of SDGs'),
         'description': fields.String(description='Association Description'),
-        'activity': fields.List(fields.String,description='Association activities',required=True),
-        'rna': fields.String(description='Association RNA number',required=True),
-        'siege': fields.String(description='siege information',required=True),
-        'siege_coordinates': fields.List(fields.String,description='siege coordinates'),
+        'activity': fields.List(fields.String, description='Association activities', required=True),
+        'rna': fields.String(description='Association RNA number', required=True),
+        'siege': fields.String(description='siege information', required=True),
+        'siege_coordinates': fields.List(fields.String, description='siege coordinates'),
         'links': fields.List(fields.String, description='List of links'),
         'banner_image': fields.String(description='URL or file path for the product banner image'),
         'profile_image': fields.String(description='URL or file path for the product profile image'),
@@ -150,6 +159,7 @@ class AssociationDto:
         'total': fields.Integer,
         'content': fields.List(fields.Nested(association)),
     })
+
 
 class EventDto:
     api = Namespace('event', description='event related operations')
@@ -172,6 +182,7 @@ class EventDto:
         'content': fields.List(fields.Nested(event)),
     })
 
+
 class BadgeDto:
     api = Namespace('badge', description='badge related operations')
     badge = api.model('badge', {
@@ -190,5 +201,3 @@ class BadgeDto:
         'total': fields.Integer,
         'content': fields.List(fields.Nested(badge)),
     })
-
-
