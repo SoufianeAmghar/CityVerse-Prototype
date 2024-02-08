@@ -46,10 +46,10 @@ def save_new_user(data):
         'created_on': datetime.utcnow().isoformat(),
         'modified_on': datetime.utcnow().isoformat(),
         'is_creator': data['is_creator'],
-        'score': 0,
-        'total_products_created': 0,
-        'total_events_joined': 0,
-        'total_places_joined': 0,
+        'score': {'N': '0'},  # Specify as a number using {'N': '0'}
+        'total_products_created': {'N': '0'},  # Specify as a number using {'N': '0'}
+        'total_events_joined': {'N': '0'},  # Specify as a number using {'N': '0'}
+        'total_places_joined': {'N': '0'},  # Specify as a number using {'N': '0'}
         'address': '',
         'address_coordinates' : [],
         'banner_image': "",
@@ -225,6 +225,8 @@ def update_user_description(user_id, data):
 
     user = get_a_user(user_id)
     if user:
+        if not user.get('description') and data.get('description'):
+            user['score'] = int(user.get('score', 0)) + 20
         user['description'] = data.get('description')
         user['modified_on'] = datetime.utcnow().isoformat()
 
@@ -245,6 +247,9 @@ def update_user_banner(user_id, banner_file):
     user = get_a_user(user_id)
     if user:
       if banner_file:
+        if not user.get('banner_image') and banner_file:
+            user['score'] = int(user.get('score',0)) + 20
+
         user['banner_image'] = document.upload_image_to_s3(banner_file)
         user['modified_on'] = datetime.utcnow().isoformat()
 
@@ -271,6 +276,15 @@ def update_user_social(user_id, data):
                 'tiktok':  social_links.get('tiktok', ''),
                 'facebook':  social_links.get('facebook', '')
             }
+            previous_social_links = user.get('social_links', {})
+
+            for platform, link in social_links.items():
+                previous_link = previous_social_links.get(platform, '')  # Get the previous link for the platform
+                if link and not previous_link:
+                    user['score'] = int(user.get('score', 0)) + 5
+
+
+        
             user['social_links'] = social_links_format
             user['modified_on'] = datetime.utcnow().isoformat()
             document.save(item=user)
