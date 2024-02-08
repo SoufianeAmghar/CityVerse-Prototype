@@ -189,7 +189,10 @@ class Auth:
                         **({'address': user.address} if user.address is not None else {}),
                         **({'address_coordinates': user.address_coordinates} if user.address_coordinates is not None else {}),
                         **({'profile_image': user.profile_image} if user.profile_image is not None else {}),
-                       
+                        **({'banner_image': user.banner_image} if user.banner_image is not None else {}),
+                        **({'description': user.description} if user.description is not None else {}),
+                        **({'social_links': user.social_links} if user.social_links is not None else {})
+
 
                     }
                 }

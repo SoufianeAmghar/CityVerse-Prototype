@@ -15,12 +15,15 @@ class UserDto:
         'modified_on': fields.String(description='Modified on'),
         'password': fields.String(required=True, description='User password'),
         'profile_image': fields.String(description='URL or file path for the user profile image'),
+        'banner_image': fields.String(description='URL or file path for the user banner image'),
+        'description': fields.String(description='User description'),
+        'social_links': fields.List(fields.String, description='List of links'),
         'score': fields.Integer(description='User score'),
         'total_events_joined': fields.Integer(description='Total events joined by the user'),
         'total_places_joined': fields.Integer(description='Total places joined by the user'),
         'total_products_created': fields.Integer(description='Total products created by the user'),
         'address': fields.String(description='User address'),
-        'address_coordinates': fields.List(fields.String, description='Coordinates of the user address'),
+        'address_coordinates': fields.List(fields.String, description='Coordinates of the user address')
     })
 
     page_user = api.model('flow page', {

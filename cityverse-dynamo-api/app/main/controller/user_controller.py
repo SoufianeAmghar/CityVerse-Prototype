@@ -4,7 +4,7 @@ from flask_restplus import Resource
 
 from app.main.util.decorator import token_required
 from ..util.dto import UserDto
-from ..service.user_service import save_new_user, get_all_users, get_a_user, delete_user, update_user, update_user_description, update_user_banner, update_password, get_user_by_email, add_user_event, add_user_place
+from ..service.user_service import save_new_user, get_all_users, get_a_user, delete_user, update_user, update_user_description, update_user_banner, update_password, get_user_by_email, add_user_event, add_user_place, update_user_social
 import logging
 
 api = UserDto.api
@@ -79,7 +79,9 @@ class UserMail(Resource):
         return get_user_by_email(data.get('email'))
     
 
-@api.route('/description')
+@api.route('/description/<public_id>')
+@api.param('public_id', 'The User identifier')
+@api.response(404, 'User not found.')
 class UserDescriptionResource(Resource):
     @api.response(201, 'User Description successfully updated.')
     @api.doc('update user description')
@@ -89,7 +91,9 @@ class UserDescriptionResource(Resource):
         return update_user_description(public_id, data)
 
 
-@api.route('/banner')
+@api.route('/banner/<public_id>')
+@api.param('public_id', 'The User identifier')
+@api.response(404, 'User not found.')
 class UserBannerResource(Resource):
     @api.response(201, 'User Banner successfully changed.')
     @api.doc('update user banner')
@@ -97,6 +101,17 @@ class UserBannerResource(Resource):
         """Update a User's banner"""
         banner_file = request.files.get('banner_image')
         return update_user_banner(public_id, banner_file)
+    
+@api.route('/social/<public_id>')
+@api.param('public_id', 'The User identifier')
+@api.response(404, 'User not found.')
+class UserSocialResource(Resource):
+    @api.response(201, 'User social links successfully changed.')
+    @api.doc('update user social links')
+    def put(self, public_id):
+        """Update a User's banner"""
+        data = request.json
+        return update_user_social(public_id, data)
 
 
 @api.route('/places/<place_id>')

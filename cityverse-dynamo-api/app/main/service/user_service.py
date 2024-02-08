@@ -52,6 +52,9 @@ def save_new_user(data):
         'total_places_joined': 0,
         'address': '',
         'address_coordinates' : [],
+        'banner_image': "",
+        'description': '',
+        'social_links': [],
         'profile_image': profile_image_url if profile_image_url else "https://cityverse-profilepics.s3.us-east-2.amazonaws.com/profile-images/blank-profile-picture.webp",
         
 
@@ -225,7 +228,7 @@ def update_user_description(user_id, data):
         user['description'] = data.get('description')
         user['modified_on'] = datetime.utcnow().isoformat()
 
-        document.put_item(Item='User')
+        document.save(item=user)
         return {
             'status': 'success',
             'message': 'Description updated successfully.',
@@ -237,23 +240,54 @@ def update_user_description(user_id, data):
     }, 409
 
 def update_user_banner(user_id, banner_file):
-    document = Document(__TABLE_NAME__='User')
+    document = Document(__TABLE_NAME__='User', __BUCKET_NAME__='cityverse-profilepics',
+                        __S3_OBJECT_PREFIX__='profile-images/')
     user = get_a_user(user_id)
     if user:
       if banner_file:
         user['banner_image'] = document.upload_image_to_s3(banner_file)
         user['modified_on'] = datetime.utcnow().isoformat()
 
-        document.put_item(Item='User')
+        document.save(item=user)
         return {
             'status': 'success',
-            'message': 'Description updated successfully.',
+            'message': 'Banner image updated successfully.',
         }, 200
 
     return {
         'status': 'fail',
         'message': 'No user with the provided ID found.',
     }, 409
+
+def update_user_social(user_id, data):
+    document = Document(__TABLE_NAME__='User')
+    user = get_a_user(user_id)
+    social_links = data.get('social_links', {})
+    if user:
+        if social_links:
+            social_links_format = {
+                'twitter': social_links.get('twitter', ''),
+                'instagram':  social_links.get('instagram', ''),
+                'tiktok':  social_links.get('tiktok', ''),
+                'facebook':  social_links.get('facebook', '')
+            }
+            user['social_links'] = social_links_format
+            user['modified_on'] = datetime.utcnow().isoformat()
+            document.save(item=user)
+            return {
+                'status': 'success',
+                'message': 'Social links updated successfully.',
+            }, 200
+        else:
+            return {
+                'status': 'fail',
+                'message': 'Social links data not provided.',
+            }, 400
+    else:
+        return {
+            'status': 'fail',
+            'message': 'No user with the provided ID found.',
+        }, 404
 
 def add_user_place(user_id, place_id):
     document = Document(__TABLE_NAME__='User')
