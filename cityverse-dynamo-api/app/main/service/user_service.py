@@ -129,6 +129,9 @@ def update_user(user_id, data, profile_image):
 
     if user:
         if 'address' in data:
+            if 'address' not in user and user.get('address') != '':
+                user['score'] = int(user.get('score', 0)) + 20
+
             address_data = validate_home_address(data['address'])
             if address_data:
                 user['address'] = address_data['address']
@@ -226,7 +229,7 @@ def update_user_description(user_id, data):
 
     user = get_a_user(user_id)
     if user:
-        if not user.get('description') and data.get('description'):
+        if 'description' in user and user.get('description')!='' and data.get('description'):
             user['score'] = int(user.get('score', 0)) + 20
         user['description'] = data.get('description')
         user['modified_on'] = datetime.utcnow().isoformat()
@@ -247,7 +250,7 @@ def update_user_sdg(user_id, data):
 
     user = get_a_user(user_id)
     if user:
-        if not user.get('sdg') and data.get('sdg'):
+        if 'sdg' in user and user.get('sdg') != '' and data.get('sdg'):
             user['score'] = int(user.get('score', 0)) + 20
         user['sdg'] = data.get('sdg')
         user['modified_on'] = datetime.utcnow().isoformat()
@@ -292,7 +295,7 @@ def update_user_profile(user_id, profile_file):
     user = get_a_user(user_id)
     if user:
       if profile_file:
-        if not user.get('profile_image') and profile_file:
+        if 'profile_image' in user and user.get('profile_image') != '' and profile_file:
             user['score'] = int(user.get('score',0)) + 20
 
         user['profile_image'] = document.upload_image_to_s3(profile_file)
