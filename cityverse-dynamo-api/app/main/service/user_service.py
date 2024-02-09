@@ -447,7 +447,7 @@ def calculate_user_score(user_data):
         weightage_hours_spent * hours_spent +
         weightage_products_created * products_created +
         weightage_events_joined * events_joined
-    )
+    ) + user_data.get('user_score')
 
     return user_score
 
