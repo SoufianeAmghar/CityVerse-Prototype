@@ -172,6 +172,9 @@ class Auth:
                 id = resp['token']
                 user.load(dynamodb_client=boto3.client(
                     'dynamodb'), query={'id': {'S': id}})
+                
+                # for attr, value in user.__dict__.items():
+                #     logging.info(f'{attr}: {value}')
                 # TODO CHANGE THIS
                 response_object = {
                     'status': 'success',

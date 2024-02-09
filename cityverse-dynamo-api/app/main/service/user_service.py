@@ -229,7 +229,7 @@ def update_user_description(user_id, data):
 
     user = get_a_user(user_id)
     if user:
-        if 'description' in user and user.get('description')!='' and data.get('description'):
+        if 'description' in user and user.get('description')=='' and data.get('description'):
             user['score'] = int(user.get('score', 0)) + 20
         user['description'] = data.get('description')
         user['modified_on'] = datetime.utcnow().isoformat()
@@ -250,7 +250,7 @@ def update_user_sdg(user_id, data):
 
     user = get_a_user(user_id)
     if user:
-        if 'sdg' in user and user.get('sdg') != '' and data.get('sdg'):
+        if 'sdg' in user and user.get('sdg') == [] and data.get('sdg'):
             user['score'] = int(user.get('score', 0)) + 20
         user['sdg'] = data.get('sdg')
         user['modified_on'] = datetime.utcnow().isoformat()
@@ -272,7 +272,7 @@ def update_user_banner(user_id, banner_file):
     user = get_a_user(user_id)
     if user:
       if banner_file:
-        if 'banner_image' in user and user.get('banner_image') != '' and banner_file:
+        if 'banner_image' in user and user.get('banner_image') == '' and banner_file:
             user['score'] = int(user.get('score',0)) + 20
 
         user['banner_image'] = document.upload_image_to_s3(banner_file)
@@ -295,7 +295,7 @@ def update_user_profile(user_id, profile_file):
     user = get_a_user(user_id)
     if user:
       if profile_file:
-        if 'profile_image' in user and user.get('profile_image') != '' and profile_file:
+        if 'profile_image' in user and user.get('profile_image') == '' and profile_file:
             user['score'] = int(user.get('score',0)) + 20
 
         user['profile_image'] = document.upload_image_to_s3(profile_file)
