@@ -19,9 +19,19 @@ class User(Document):
     password_hash = None
     first_name = None
     last_name = None
-
     created_on = None
     modified_on = None
+    is_creator = None
+    score = None
+    total_products_created = None
+    total_events_joined = None
+    total_places_joined = None
+    address = None
+    address_coordinates = None
+    profile_image = None
+    banner_image = None
+    description = None
+    social_links = None
 
     @staticmethod
     def parse_datetime(date_str):
