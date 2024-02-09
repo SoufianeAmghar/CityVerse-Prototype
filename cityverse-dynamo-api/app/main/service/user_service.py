@@ -269,7 +269,7 @@ def update_user_banner(user_id, banner_file):
     user = get_a_user(user_id)
     if user:
       if banner_file:
-        if not user.get('banner_image') and banner_file:
+        if 'banner_image' in user and user.get('banner_image') != '' and banner_file:
             user['score'] = int(user.get('score',0)) + 20
 
         user['banner_image'] = document.upload_image_to_s3(banner_file)
