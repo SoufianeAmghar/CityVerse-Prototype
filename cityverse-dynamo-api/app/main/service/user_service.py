@@ -55,6 +55,7 @@ def save_new_user(data):
         'banner_image': "",
         'description': '',
         'social_links': [],
+        'sdg': [],
         'profile_image': profile_image_url if profile_image_url else "https://cityverse-profilepics.s3.us-east-2.amazonaws.com/profile-images/blank-profile-picture.webp",
         
 
@@ -234,6 +235,27 @@ def update_user_description(user_id, data):
         return {
             'status': 'success',
             'message': 'Description updated successfully.',
+        }, 200
+
+    return {
+        'status': 'fail',
+        'message': 'No user with the provided ID found.',
+    }, 409
+
+def update_user_sdg(user_id, data):
+    document = Document(__TABLE_NAME__='User')
+
+    user = get_a_user(user_id)
+    if user:
+        if not user.get('sdg') and data.get('sdg'):
+            user['score'] = int(user.get('score', 0)) + 20
+        user['sdg'] = data.get('sdg')
+        user['modified_on'] = datetime.utcnow().isoformat()
+
+        document.save(item=user)
+        return {
+            'status': 'success',
+            'message': 'SDG updated successfully.',
         }, 200
 
     return {

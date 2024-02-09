@@ -4,7 +4,7 @@ from flask_restplus import Resource
 
 from app.main.util.decorator import token_required
 from ..util.dto import UserDto
-from ..service.user_service import save_new_user, get_all_users, get_a_user, delete_user, update_user, update_user_description, update_user_banner, update_password, get_user_by_email, add_user_event, add_user_place, update_user_social
+from ..service.user_service import save_new_user, get_all_users, get_a_user, delete_user, update_user, update_user_description, update_user_banner, update_password, get_user_by_email, add_user_event, add_user_place, update_user_social, update_user_sdg
 import logging
 
 api = UserDto.api
@@ -112,6 +112,17 @@ class UserSocialResource(Resource):
         """Update a User's banner"""
         data = request.json
         return update_user_social(public_id, data)
+    
+@api.route('/sdg/<public_id>')
+@api.param('public_id', 'The User identifier')
+@api.response(404, 'User not found.')
+class UserSocialResource(Resource):
+    @api.response(201, 'User sdgs successfully changed.')
+    @api.doc('update user sdg')
+    def put(self, public_id):
+        """Update a User's banner"""
+        data = request.json
+        return update_user_sdg(public_id, data)
 
 
 @api.route('/places/<place_id>')
