@@ -4,7 +4,7 @@ from flask_restplus import Resource
 
 from app.main.util.decorator import token_required
 from ..util.dto import UserDto
-from ..service.user_service import save_new_user, get_all_users, get_a_user, delete_user, update_user, update_user_description, update_user_banner, update_password, get_user_by_email, add_user_event, add_user_place, update_user_social, update_user_sdg
+from ..service.user_service import save_new_user, get_all_users, get_a_user, delete_user, update_user, update_user_description, update_user_banner, update_password, get_user_by_email, add_user_event, add_user_place, update_user_social, update_user_sdg, update_user_profile
 import logging
 
 api = UserDto.api
@@ -56,7 +56,6 @@ class User(Resource):
         json_data_str = request.form.get('json')
         data = json.loads(json_data_str) if json_data_str else {}
         image_file = request.files.get('profile_image')
-        logging.info(image_file)
         return update_user(public_id, data, profile_image=image_file)
 
 
@@ -89,6 +88,17 @@ class UserDescriptionResource(Resource):
         """Update a User's description"""
         data = request.json
         return update_user_description(public_id, data)
+    
+@api.route('/profile/<public_id>')
+@api.param('public_id', 'The User identifier')
+@api.response(404, 'User not found.')
+class UserProfileResource(Resource):
+    @api.response(201, 'User profile successfully changed.')
+    @api.doc('update user profile')
+    def put(self, public_id):
+        """Update a User's banner"""
+        profile_file = request.files.get('profile_image')
+        return update_user_profile(public_id, profile_file)
 
 
 @api.route('/banner/<public_id>')

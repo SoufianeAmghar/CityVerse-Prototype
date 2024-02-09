@@ -46,10 +46,10 @@ def save_new_user(data):
         'created_on': datetime.utcnow().isoformat(),
         'modified_on': datetime.utcnow().isoformat(),
         'is_creator': data['is_creator'],
-        'score': {'N': '0'},  # Specify as a number using {'N': '0'}
-        'total_products_created': {'N': '0'},  # Specify as a number using {'N': '0'}
-        'total_events_joined': {'N': '0'},  # Specify as a number using {'N': '0'}
-        'total_places_joined': {'N': '0'},  # Specify as a number using {'N': '0'}
+        'score': int(0),  
+        'total_products_created': int(0),  
+        'total_events_joined': int(0),  
+        'total_places_joined': int(0), 
         'address': '',
         'address_coordinates' : [],
         'banner_image': "",
@@ -279,6 +279,29 @@ def update_user_banner(user_id, banner_file):
         return {
             'status': 'success',
             'message': 'Banner image updated successfully.',
+        }, 200
+
+    return {
+        'status': 'fail',
+        'message': 'No user with the provided ID found.',
+    }, 409
+
+def update_user_profile(user_id, profile_file):
+    document = Document(__TABLE_NAME__='User', __BUCKET_NAME__='cityverse-profilepics',
+                        __S3_OBJECT_PREFIX__='profile-images/')
+    user = get_a_user(user_id)
+    if user:
+      if profile_file:
+        if not user.get('profile_image') and profile_file:
+            user['score'] = int(user.get('score',0)) + 20
+
+        user['profile_image'] = document.upload_image_to_s3(profile_file)
+        user['modified_on'] = datetime.utcnow().isoformat()
+
+        document.save(item=user)
+        return {
+            'status': 'success',
+            'message': 'Profile image updated successfully.',
         }, 200
 
     return {

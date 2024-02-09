@@ -5,7 +5,6 @@ class UserDto:
     api = Namespace('user', description='user related operations')
     user = api.model('user', {
         'id': fields.String(description='User Identifier'),
-        'banner_image': fields.String(description='URL or file path for the user banner image'),
         'created_on': fields.String(description='Created on'),
         'email': fields.String(required=True, description='User email address'),
         'first_name': fields.String(required=True, description='User first name'),
