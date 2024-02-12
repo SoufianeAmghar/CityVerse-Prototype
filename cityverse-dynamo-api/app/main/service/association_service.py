@@ -5,7 +5,7 @@ from datetime import datetime
 import logging
 from app.main.util.strings import generate_id
 from geopy.geocoders import Nominatim
-import requests
+import re
 
 # Set up logging configuration
 logging.basicConfig(
@@ -80,33 +80,22 @@ def check_siege_exists(data):
 
 
 def verify_rna_number(rna_number):
-    endpoint = f'https://staging.entreprise.api.gouv.fr/v4/djepva/api-association/associations/{rna_number}'
-
-    try:
-        response = requests.get(endpoint)
-        response_data = response.json()
-
-        if response.status_code == 200:
-            # The RNA number is valid, and you can use response_data for further processing
-            return {
-                'status': 'success',
-                'message': 'RNA number is valid.',
-                'data': response_data
-            }, 200
-        else:
-            # The RNA number is not valid or there was an issue with the API
-            return {
-                'status': 'fail',
-                'message': f'Failed to verify RNA number. API returned status code {response.status_code}.',
-                'data': response_data
-            }, 500
-
-    except Exception as e:
-        # Handle other exceptions if needed
+    # Check if rna_number is a string and matches the required format
+    if isinstance(rna_number, str) and re.match(r'^W\d{9}$', rna_number):
+        return {
+            'status': 'success',
+            'message': 'RNA number is valid.'
+        }, 200
+    elif isinstance(rna_number, str) and re.match(r'^w\d{9}$', rna_number):
+        return {
+            'status': 'warning',
+            'message': 'RNA number starts with lowercase "w". Please use capital "W" instead.'
+        }, 200
+    else:
         return {
             'status': 'fail',
-            'message': f'Failed to verify RNA number: {str(e)}',
-        }, 500
+            'message': 'Invalid RNA number format.'
+        }, 400
 
 
 def create_association(data, banner_image, profile_image):
