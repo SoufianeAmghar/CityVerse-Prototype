@@ -194,7 +194,9 @@ class Auth:
                         **({'profile_image': user.profile_image} if user.profile_image is not None else {}),
                         **({'banner_image': user.banner_image} if user.banner_image is not None else {}),
                         **({'description': user.description} if user.description is not None else {}),
-                        **({'social_links': user.social_links} if user.social_links is not None else {})
+                        **({'social_links': user.social_links} if user.social_links is not None else {}),
+                        **({'sdg': user.sdg} if user.sdg is not None else {})
+
 
 
                     }
