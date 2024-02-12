@@ -434,8 +434,8 @@ def remove_user_event(user_id,event_id):
 def calculate_user_score(user_data):
 
     hours_spent = user_data.get('hours_spent', 0)
-    products_created = user_data.get('products_created', 0)
-    events_joined = user_data.get('events_joined', 0)
+    products_created = int(user_data.get('products_created', 0))
+    events_joined = int(user_data.get('events_joined', 0))
 
     # Weightage for each factor (you can adjust these based on your preferences)
     weightage_hours_spent = 2
@@ -447,7 +447,7 @@ def calculate_user_score(user_data):
         weightage_hours_spent * hours_spent +
         weightage_products_created * products_created +
         weightage_events_joined * events_joined
-    ) + user_data.get('score')
+    ) + int(user_data.get('score'))
 
     return user_score
 
