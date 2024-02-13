@@ -7,6 +7,7 @@ import logging
 import json
 from decimal import Decimal
 from ..service.blacklist_service import save_token
+from app.db.dynamodb_document import Document
 from ..service.user_service import save_new_user, update_login_time_and_score
 
 dynamodb = boto3.resource('dynamodb')
@@ -164,6 +165,7 @@ class Auth:
     def get_logged_in_user(new_request):
         # get the auth token
         auth_token = new_request.headers.get('Authorization')
+        document = Document(__TABLE_NAME__='User')
         table = 'Blacklist'
         if auth_token:
             resp = User.decode_auth_token(auth_token, table)
@@ -185,7 +187,7 @@ class Auth:
                         'first_name': user.first_name,
                         'created_on': str(user.created_on),
                         **({'is_creator': user.is_creator} if user.is_creator is not None else {}),
-                        **({'score': user.score} if user.score is not None else {}),
+                        **({'score': document.convert_dynamodb_item_to_string(item=user.score)} if user.score is not None else {}),
                         **({'total_products_created': user.total_products_created} if user.total_products_created is not None else {}),
                         **({'total_events_joined': user.total_events_joined} if user.total_events_joined is not None else {}),
                         **({'total_places_joined': user.total_places_joined} if user.total_places_joined is not None else {}),
@@ -195,7 +197,7 @@ class Auth:
                         **({'banner_image': user.banner_image} if user.banner_image is not None else {}),
                         **({'description': user.description} if user.description is not None else {}),
                         **({'social_links': user.social_links} if user.social_links is not None else {}),
-                        **({'sdg': user.sdg} if user.sdg is not None else {})
+                        **({'sdg': document.convert_dynamodb_item_to_string(item=user.sdg)} if user.sdg is not None else {})
 
 
 

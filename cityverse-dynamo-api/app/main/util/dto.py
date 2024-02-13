@@ -3,6 +3,25 @@ from flask_restx import Namespace, fields
 
 class UserDto:
     api = Namespace('user', description='user related operations')
+    color_info = api.model('color_info', {
+        'hex': fields.String,
+        'rgb': fields.List(fields.Integer),
+    })
+
+    keywords = api.model('keywords', {
+        'descriptions': fields.List(fields.String),
+        'groups': fields.List(fields.String),
+        'tags': fields.List(fields.String),
+    })
+
+    sdg = api.model('sdg', {
+        'colorInfo': fields.Nested(color_info),
+        'goal': fields.Integer,
+        'icon_url': fields.String,
+        'keywords': fields.Nested(keywords),
+        'short': fields.String,
+        'title': fields.String,
+    })
     user = api.model('user', {
         'id': fields.String(description='User Identifier'),
         'created_on': fields.String(description='Created on'),
@@ -14,6 +33,7 @@ class UserDto:
         'modified_on': fields.String(description='Modified on'),
         'password': fields.String(required=True, description='User password'),
         'profile_image': fields.String(description='URL or file path for the user profile image'),
+        'sdg': fields.List(fields.Nested(sdg), description='List of SDGs'),
         'banner_image': fields.String(description='URL or file path for the user banner image'),
         'description': fields.String(description='User description'),
         'social_links': fields.List(fields.String, description='List of links'),
