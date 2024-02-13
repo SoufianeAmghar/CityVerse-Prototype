@@ -46,20 +46,20 @@ def save_new_user(data):
         'created_on': datetime.utcnow().isoformat(),
         'modified_on': datetime.utcnow().isoformat(),
         'is_creator': data['is_creator'],
-        'score': int(0),  
-        'total_products_created': int(0),  
-        'total_events_joined': int(0),  
-        'total_places_joined': int(0), 
+        'score': int(0),
+        'total_products_created': int(0),
+        'total_events_joined': int(0),
+        'total_places_joined': int(0),
         'address': '',
-        'address_coordinates' : [],
+        'address_coordinates': [],
         'banner_image': "",
         'description': '',
         'social_links': [],
         'sdg': [],
         'profile_image': profile_image_url if profile_image_url else "https://cityverse-profilepics.s3.us-east-2.amazonaws.com/profile-images/blank-profile-picture.webp",
-        
 
-         
+
+
     }
 
     # Save the user item to the DynamoDB table
@@ -89,6 +89,7 @@ def get_a_user(user_id):
         logging.warning(f"User with ID {user_id} not found.")
 
     return user
+
 
 def validate_home_address(address):
     geolocator = Nominatim(user_agent="CityVerseProto")
@@ -125,8 +126,6 @@ def update_user(user_id, data, profile_image):
             }, 500
     user = get_a_user(user_id)
 
-    
-
     if user:
         if 'address' in data:
             if 'address' not in user and user.get('address') != '':
@@ -150,7 +149,6 @@ def update_user(user_id, data, profile_image):
             user['created_on'] = data.get('created_on')
         if profile_image_url:
             user['profile_image'] = str(profile_image_url)
-        
 
     user['id'] = str(user_id)
     user['modified_on'] = datetime.utcnow().isoformat()
@@ -163,7 +161,8 @@ def update_user(user_id, data, profile_image):
         'message': 'User successfully updated.',
     }, 201
 
-def update_login_time_and_score(user_id,hours_spent,last_login):
+
+def update_login_time_and_score(user_id, hours_spent, last_login):
     document = Document(__TABLE_NAME__='User')
     user = get_a_user(user_id)
 
@@ -174,16 +173,16 @@ def update_login_time_and_score(user_id,hours_spent,last_login):
             user['last_login'] = last_login
         user['id'] = str(user_id)
         user.update({
-                'score': calculate_user_score(user),
-                'modified_on': datetime.utcnow().isoformat()
-            })
-    
+            'score': calculate_user_score(user),
+            'modified_on': datetime.utcnow().isoformat()
+        })
+
         document.save(item=user)
 
         return {
-        'status': 'success',
-        'message': 'User successfully updated.',
-    }, 201
+            'status': 'success',
+            'message': 'User successfully updated.',
+        }, 201
 
     return {
         'status': 'fail',
@@ -224,12 +223,13 @@ def update_password(user_id, new_password):
         'message': 'No user with the provided ID found.',
     }, 409
 
+
 def update_user_description(user_id, data):
     document = Document(__TABLE_NAME__='User')
 
     user = get_a_user(user_id)
     if user:
-        if 'description' in user and user.get('description')=='' and data.get('description'):
+        if 'description' in user and user.get('description') == '' and data.get('description'):
             user['score'] = int(user.get('score', 0)) + 20
         user['description'] = data.get('description')
         user['modified_on'] = datetime.utcnow().isoformat()
@@ -244,6 +244,7 @@ def update_user_description(user_id, data):
         'status': 'fail',
         'message': 'No user with the provided ID found.',
     }, 409
+
 
 def update_user_sdg(user_id, data):
     document = Document(__TABLE_NAME__='User')
@@ -266,51 +267,54 @@ def update_user_sdg(user_id, data):
         'message': 'No user with the provided ID found.',
     }, 409
 
+
 def update_user_banner(user_id, banner_file):
     document = Document(__TABLE_NAME__='User', __BUCKET_NAME__='cityverse-profilepics',
                         __S3_OBJECT_PREFIX__='profile-images/')
     user = get_a_user(user_id)
     if user:
-      if banner_file:
-        if 'banner_image' in user and user.get('banner_image') == '' and banner_file:
-            user['score'] = int(user.get('score',0)) + 20
+        if banner_file:
+            if 'banner_image' in user and user.get('banner_image') == '' and banner_file:
+                user['score'] = int(user.get('score', 0)) + 20
 
-        user['banner_image'] = document.upload_image_to_s3(banner_file)
-        user['modified_on'] = datetime.utcnow().isoformat()
+            user['banner_image'] = document.upload_image_to_s3(banner_file)
+            user['modified_on'] = datetime.utcnow().isoformat()
 
-        document.save(item=user)
-        return {
-            'status': 'success',
-            'message': 'Banner image updated successfully.',
-        }, 200
+            document.save(item=user)
+            return {
+                'status': 'success',
+                'message': 'Banner image updated successfully.',
+            }, 200
 
     return {
         'status': 'fail',
         'message': 'No user with the provided ID found.',
     }, 409
+
 
 def update_user_profile(user_id, profile_file):
     document = Document(__TABLE_NAME__='User', __BUCKET_NAME__='cityverse-profilepics',
                         __S3_OBJECT_PREFIX__='profile-images/')
     user = get_a_user(user_id)
     if user:
-      if profile_file:
-        if 'profile_image' in user and user.get('profile_image') == '' and profile_file:
-            user['score'] = int(user.get('score',0)) + 20
+        if profile_file:
+            if 'profile_image' in user and user.get('profile_image') == '' and profile_file:
+                user['score'] = int(user.get('score', 0)) + 20
 
-        user['profile_image'] = document.upload_image_to_s3(profile_file)
-        user['modified_on'] = datetime.utcnow().isoformat()
+            user['profile_image'] = document.upload_image_to_s3(profile_file)
+            user['modified_on'] = datetime.utcnow().isoformat()
 
-        document.save(item=user)
-        return {
-            'status': 'success',
-            'message': 'Profile image updated successfully.',
-        }, 200
+            document.save(item=user)
+            return {
+                'status': 'success',
+                'message': 'Profile image updated successfully.',
+            }, 200
 
     return {
         'status': 'fail',
         'message': 'No user with the provided ID found.',
     }, 409
+
 
 def update_user_social(user_id, data):
     document = Document(__TABLE_NAME__='User')
@@ -326,13 +330,18 @@ def update_user_social(user_id, data):
             }
             previous_social_links = user.get('social_links', {})
 
-            for platform, link in social_links.items():
-                previous_link = previous_social_links.get(platform, '')  # Get the previous link for the platform
-                if link and not previous_link:
-                    user['score'] = int(user.get('score', 0)) + 5
+            if previous_social_links:
 
+                for platform, link in social_links.items():
+                    # Get the previous link for the platform
+                    previous_link = previous_social_links.get(platform, '')
+                    if link and not previous_link:
+                        user['score'] = int(user.get('score', 0)) + 5
+            else:  # If previous_social_links is empty
+                for platform, link in social_links_format.items():
+                    if link:  # Check if the link is not empty
+                        user['score'] = int(user.get('score', 0)) + 5
 
-        
             user['social_links'] = social_links_format
             user['modified_on'] = datetime.utcnow().isoformat()
             document.save(item=user)
@@ -351,13 +360,15 @@ def update_user_social(user_id, data):
             'message': 'No user with the provided ID found.',
         }, 404
 
+
 def add_user_place(user_id, place_id):
     document = Document(__TABLE_NAME__='User')
     user = get_a_user(user_id)
 
     if user:
         user['places'] = user.get('places', []) + [place_id]
-        user['total_places_joined'] = int(user.get('total_places_joined', 0)) + 1
+        user['total_places_joined'] = int(
+            user.get('total_places_joined', 0)) + 1
         user['modified_on'] = datetime.utcnow().isoformat()
 
         document.save(item=user)  # Use 'Item' instead of 'User'
@@ -370,13 +381,15 @@ def add_user_place(user_id, place_id):
         'message': 'No user with the provided ID found.',
     }, 409
 
-def remove_user_place(user_id,place_id):
+
+def remove_user_place(user_id, place_id):
     document = Document(__TABLE_NAME__='User')
     user = get_a_user(user_id)
 
     if user:
         user['places'] = user.get('places', []) + [place_id]
-        user['total_places_joined'] = int(user.get('total_places_joined', 0)) - 1
+        user['total_places_joined'] = int(
+            user.get('total_places_joined', 0)) - 1
         user['modified_on'] = datetime.utcnow().isoformat()
 
         document.save(item=user)
@@ -390,7 +403,8 @@ def remove_user_place(user_id,place_id):
         'message': 'No user with the provided ID found.',
     }, 409
 
-def add_user_event(user_id,event_id):
+
+def add_user_event(user_id, event_id):
     document = Document(__TABLE_NAME__='User')
     user = get_a_user(user_id)
 
@@ -410,7 +424,8 @@ def add_user_event(user_id,event_id):
         'message': 'No user with the provided ID found.',
     }, 409
 
-def remove_user_event(user_id,event_id):
+
+def remove_user_event(user_id, event_id):
     document = Document(__TABLE_NAME__='User')
     user = get_a_user(user_id)
 
@@ -450,7 +465,6 @@ def calculate_user_score(user_data):
     ) + int(user_data.get('score'))
 
     return user_score
-
 
 
 def get_user_by_email(email):
