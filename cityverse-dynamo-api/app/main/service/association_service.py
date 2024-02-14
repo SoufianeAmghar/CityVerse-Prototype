@@ -81,12 +81,13 @@ def check_siege_exists(data):
 
 def verify_rna_number(rna_number):
     # Check if rna_number is a string and matches the required format
-    if isinstance(rna_number, str) and re.match(r'^W\d{9}$', rna_number):
+    rna = rna_number['rna']
+    if isinstance(rna, str) and re.match(r'^W\d{9}$', rna):
         return {
             'status': 'success',
             'message': 'RNA number is valid.'
         }, 200
-    elif isinstance(rna_number, str) and re.match(r'^w\d{9}$', rna_number):
+    elif isinstance(rna, str) and re.match(r'^w\d{9}$', rna):
         return {
             'status': 'warning',
             'message': 'RNA number starts with lowercase "w". Please use capital "W" instead.'
