@@ -4,7 +4,7 @@ from flask_restplus import Resource
 
 from app.main.util.decorator import token_required
 from ..util.dto import UserDto
-from ..service.user_service import save_new_user, get_all_users, get_a_user, delete_user, update_user, update_user_description, update_user_banner, update_password, get_user_by_email, add_user_event, add_user_place, update_user_social, update_user_sdg, update_user_profile
+from ..service.user_service import save_new_user, get_all_users, get_a_user, delete_user, update_user, update_user_description, update_user_banner, update_password, get_user_by_email, add_user_event, add_user_place, update_user_social, update_user_sdg, update_user_profile, follow_association, unfollow_association
 import logging
 
 api = UserDto.api
@@ -152,6 +152,28 @@ class UserEventResource(Resource):
     def put(self, public_id, event_id):
         """Update a User's event"""
         return add_user_event(public_id, event_id)
+    
+@api.route('/<public_id>/follow/<association_id>')
+@api.param('public_id', 'The Public identifier of the user')
+@api.param('association_id', 'The Association identifier')
+class UserFollowResource(Resource):
+    @api.response(201, 'Association successfully followed.')
+    @api.doc('update user event')
+    def put(self, public_id, association_id):
+        """Update a User's event"""
+        data = request.json
+        return follow_association(public_id, association_id,data)
+    
+@api.route('/<public_id>/unfollow/<association_id>')
+@api.param('public_id', 'The Public identifier of the user')
+@api.param('association_id', 'The Association identifier')
+class UserUnfollowResource(Resource):
+    @api.response(204, 'Association successfully unfollowed.')
+    @api.doc('update user event')
+    def put(self, public_id, association_id):
+        """Update a User's event to unfollow an association"""
+        data = request.json
+        return unfollow_association(public_id, association_id,data)
 
 
 # @api.route('/<public_id>/badges/<badge_id>')

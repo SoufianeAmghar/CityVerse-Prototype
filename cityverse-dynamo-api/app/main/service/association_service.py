@@ -1,5 +1,5 @@
 from app.db.dynamodb_document import Document
-from ..service.user_service import add_user_place, remove_user_place
+from app.main.service.user_service import add_user_place, remove_user_place
 from boto3.dynamodb.conditions import Key
 from datetime import datetime
 import logging

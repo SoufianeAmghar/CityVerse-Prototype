@@ -56,6 +56,8 @@ def save_new_user(data):
         'description': '',
         'social_links': [],
         'sdg': [],
+        'followings': [],
+        'total_followed': int(0),
         'profile_image': profile_image_url if profile_image_url else "https://cityverse-profilepics.s3.us-east-2.amazonaws.com/profile-images/blank-profile-picture.webp",
 
 
@@ -401,6 +403,68 @@ def remove_user_place(user_id, place_id):
     return {
         'status': 'fail',
         'message': 'No user with the provided ID found.',
+    }, 409
+
+def follow_association(user_id, association_id,data):
+    user_document = Document(__TABLE_NAME__='User')
+    association_document = Document(__TABLE_NAME__='Association')
+    
+    user = get_a_user(user_id)
+    from app.main.service.association_service import get_a_association
+    association = get_a_association(association_id,data)
+
+    if user and association:
+        user['followings'] = user.get('followings', []) + [association_id]
+        user['total_followed'] = int(user.get('total_followed', 0)) + 1
+        user['modified_on'] = datetime.utcnow().isoformat()
+        
+        association['followers_count'] = int(association.get('followers_count', 0)) + 1
+        association['modified_on'] = datetime.utcnow().isoformat()
+
+        user_document.save(item=user)
+        association_document.save(item=association)
+        
+        return {
+            'status': 'success',
+            'message': 'Association followed successfully.',
+        }, 200
+    return {
+        'status': 'fail',
+        'message': 'No user or association with the provided ID found.',
+    }, 409
+
+def unfollow_association(user_id, association_id,data):
+    user_document = Document(__TABLE_NAME__='User')
+    association_document = Document(__TABLE_NAME__='Association')
+    
+    user = get_a_user(user_id)
+    from app.main.service.association_service import get_a_association
+    association = get_a_association(association_id,data)
+
+    if user and association:
+        if association_id in user.get('followings', []):
+            user['followings'].remove(association_id)
+            user['total_followed'] = max(int(user.get('total_followed', 0)) - 1, 0)
+            user['modified_on'] = datetime.utcnow().isoformat()
+            
+            association['followers_count'] = max(int(association.get('followers_count', 0)) - 1, 0)
+            association['modified_on'] = datetime.utcnow().isoformat()
+
+            user_document.save(item=user)
+            association_document.save(item=association)
+            
+            return {
+                'status': 'success',
+                'message': 'Association unfollowed successfully.',
+            }, 200
+        else:
+            return {
+                'status': 'fail',
+                'message': 'User is not following the provided association ID.',
+            }, 409
+    return {
+        'status': 'fail',
+        'message': 'No user or association with the provided ID found.',
     }, 409
 
 
