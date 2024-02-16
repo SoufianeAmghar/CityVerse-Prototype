@@ -101,7 +101,7 @@ class ProductDto:
 
     post = api.model('post', {
         'id': fields.String(description='Post identifier'),
-        'product_id': fields.String(description='Product identifier'),
+        'creator_id': fields.String(description='Product or Association identifier'),
         'created_on': fields.String(description='Post created on'),
         'modified_on': fields.String(description='Post modified on'),
         'created_by': fields.String(description='User ID who created the post'),
@@ -156,6 +156,25 @@ class AssociationDto:
         'keywords': fields.Nested(keywords),
         'short': fields.String,
         'title': fields.String,
+    })
+
+    reaction_emojis = {
+        'like': '👍',
+        'love': '❤️',
+        'haha': '😄',
+        'wow': '😮',
+        'sad': '😢',
+        'angry': '😡'
+    }
+
+    post = api.model('post', {
+        'id': fields.String(description='Post identifier'),
+        'product_id': fields.String(description='Product identifier'),
+        'created_on': fields.String(description='Post created on'),
+        'modified_on': fields.String(description='Post modified on'),
+        'created_by': fields.String(description='User ID who created the post'),
+        'links': fields.List(fields.String, description='List of links'),
+        'description': fields.String(description='Post description'),
     })
 
     association = api.model('association', {
@@ -222,4 +241,37 @@ class BadgeDto:
         'size': fields.Integer,
         'total': fields.Integer,
         'content': fields.List(fields.Nested(badge)),
+    })
+
+class FeedDto:
+    api = Namespace('feed', description='user feed related operations')
+
+    # reaction_emojis = {
+    #     'like': '👍',
+    #     'love': '❤️',
+    #     'haha': '😄',
+    #     'wow': '😮',
+    #     'sad': '😢',
+    #     'angry': '😡'
+    # }
+
+    post = api.model('post', {
+        'post': fields.Nested(ProductDto.post, description='Post details'),
+        # 'is_liked': fields.Boolean(description='Indicates if the user liked the post'),
+        # # Use Raw to represent a map
+        # 'reactions': fields.Raw(description='Map of reactions as numbers'),
+        # 'reaction_emojis': fields.String(description='Dictionary mapping reactions to emojis')
+    })
+
+    feed_response = api.model('feed_response', {
+        'posts': fields.List(fields.Nested(post), description='List of posts from followed associations'),
+        # 'filters': fields.Dict(description='Dictionary of available filters (e.g., {"date_from": "2024-01-01", "association_type": "NGO"})'),
+        
+    })
+
+    page_feed = api.model('flow page', {
+        'page': fields.Integer,
+        'size': fields.Integer,
+        'total': fields.Integer,
+        'content': fields.List(fields.Nested(feed_response)),
     })

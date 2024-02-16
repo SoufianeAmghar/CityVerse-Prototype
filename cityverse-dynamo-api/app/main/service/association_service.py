@@ -242,3 +242,63 @@ def edit_association(association_id, data):
             'status': 'fail',
             'message': 'Place not found.',
         }, 401
+    
+def create_post(data,image_files,video_files):
+        document = Document(__TABLE_NAME__='Post', __BUCKET_NAME__='cityverse-videos',
+                            __S3_OBJECT_PREFIX__='media-posts/')
+
+        image_urls = []
+
+        video_urls = []
+
+        if image_files:
+             for img_file in image_files:
+                  img_url = document.upload_image_to_s3(img_file)
+                  if img_url is not None:
+            # Append the image URL to the list
+                    image_urls.append(img_url)
+                  else:
+                      return {
+                'status': 'fail',
+                'message': 'Failed to upload an image to S3.',
+            }, 500
+        
+        if video_files:
+             for vid_file in video_files:
+                  vid_url = document.upload_video_to_s3(vid_file)
+                  if vid_url is not None:
+            # Append the image URL to the list
+                    video_urls.append(vid_url)
+                  else:
+                      return {
+                'status': 'fail',
+                'message': 'Failed to upload an image to S3.',
+            }, 500
+
+        # Reactions handling       
+
+        reactions_list = data.get('reactions', [])
+
+        reactions_data = [{'reaction': reaction, 'count': 0} for reaction in reactions_list] 
+
+
+        post_item = {
+            'id': generate_id(),
+            'creator_id': data['creator_id'],
+            'created_on': datetime.utcnow().isoformat(),
+            'modified_on': datetime.utcnow().isoformat(),
+            'links': image_urls + video_urls,
+            'description': data.get('description', []),
+            'created_by': data['created_by'],
+            'modified_by': data['modified_by'],
+            'reactions': reactions_data
+        }
+
+
+            # Save the updated product with the new post
+        document.save(item=post_item)
+
+        return {
+                'status': 'success',
+                'message': 'Post successfully created.',
+            }, 201

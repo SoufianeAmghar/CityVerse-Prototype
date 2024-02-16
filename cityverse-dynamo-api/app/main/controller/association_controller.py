@@ -3,7 +3,7 @@ from flask import request
 from flask_restplus import Resource
 
 from app.main.util.decorator import token_required
-from ..util.dto import AssociationDto
+from ..util.dto import AssociationDto, ProductDto
 from ..service.association_service import (
     create_association,
     edit_association,
@@ -12,11 +12,13 @@ from ..service.association_service import (
     get_all_associations,
     get_associations_by_sdg,
     check_siege_exists,
-    verify_rna_number
+    verify_rna_number,
+    create_post
 )
 
 api = AssociationDto.api
 _association = AssociationDto.association
+_post = ProductDto.post
 
 
 @api.route('/')
@@ -91,4 +93,17 @@ class PlaceVerifySiege(Resource):
         """Verify siege"""
         data = request.json
         return verify_rna_number(data)
+    
+@api.route('/post')
+class Post(Resource):
+    @api.expect(_post, validate=True)
+    @api.response(201, 'Post successfully created.')
+    @api.doc('create a new post for a product')
+    def post(self):
+        """Create a new Post for a Product"""
+        json_data_str = request.form.get('json')
+        data = json.loads(json_data_str) if json_data_str else {}
+        img_files = request.files.getlist('img')
+        video_files = request.files.getlist('video')
+        return create_post( data,img_files, video_files)
 
