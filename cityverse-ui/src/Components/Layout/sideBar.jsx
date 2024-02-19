@@ -148,6 +148,7 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 const Sidebar = ({ children }) => {
+  const dispatch = useDispatch();
   const [anchorEl1, setAnchorEl1] = useState(null);
   const changeLanguage = (e) => {
     sessionStorage.setItem("language", e.target.value);
@@ -165,8 +166,18 @@ const Sidebar = ({ children }) => {
   const [open, setOpen] = React.useState(true);
   const [openItems, setOpenItems] = React.useState(false);
   const { isAuthenticated, setisAuthenticated } = useContext(UserLoginContext);
+
+
+  //profile infos
+
   const imageProfile = useSelector(
     (state) => state.FileUploadReducer?.imageProfile
+  );
+  const Score = useSelector(
+    (state) => state.ProfileReducer?.score
+  );
+  const Following = useSelector(
+    (state) => state.ProfileReducer?.following
   );
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -202,18 +213,96 @@ const Sidebar = ({ children }) => {
         headers,
       })
       .then((value) => {
-        setdata(value.data.data);
-        console.log( value.data?.data.id.S)
+        dispatch({
+          type: "ImageProfile",
+          imageProfile: value?.data?.data?.profile_image?.S,
+        });
+        dispatch({
+          type: "CoverProfile",
+          coverProfile: value?.data?.data?.banner_image?.S,
+        });
+        dispatch({
+          type: "Firstname",
+          firstname: value?.data?.data?.first_name?.S,
+        });
+        dispatch({
+          type: "Sdg",
+          sdg: value?.data?.data?.sdg?.L,
+        });
+        dispatch({
+          type: "Fb_link",
+          fb_link: value?.data?.data?.social_links?.M?.facebook?.S,
+        });
+        dispatch({
+          type: "X_link",
+          x_link: value?.data?.data?.social_links?.M?.twitter?.S,
+        });
+        dispatch({
+          type: "Instagram_link",
+          instagram_link: value?.data?.data?.social_links?.M?.instagram?.S,
+        });
+        dispatch({
+          type: "Y_link",
+          y_link: value?.data?.data?.social_links?.M?.tiktok?.S,
+        });
+        dispatch({
+          type: "Lastname",
+          lastname: value?.data?.data?.last_name?.S,
+        });
+        (value?.data?.data?.score?.S === undefined ? dispatch({
+          type: "Score",
+          score: value?.data?.data?.score?.N,
+        }) : dispatch({
+          type: "Score",
+          score: value?.data?.data?.score?.S,
+        }))
+        dispatch({
+          type: "Description",
+          description: value?.data?.data?.description?.S,
+        });
+        dispatch({
+          type: "Address",
+          address: value?.data?.data?.address?.S,
+        });
+        dispatch({
+          type: "Following",
+          following: value?.data?.data?.followings?.L,
+        });
+        setdata(value.data.data);   
         sessionStorage.setItem("user_Id", value.data?.data.id.S);
        
       })
       .catch((err) => {
-        deconnexion();
+         deconnexion();
       });
+  };
+  const call_api_get_SDG_goals = () => {
+    axios
+      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "goal/")
+      .then((value) => {
+        dispatch({
+          type: "Goals",
+          goals: value.data,
+        });
+      })
+      .catch((err) => {});
+  };
+  const call_api_get_associations = () => {
+    axios
+      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "association/")
+      .then((value) => {
+        dispatch({
+          type: "Associations",
+          associations: value?.data,
+        });
+      })
+      .catch((err) => {});
   };
 
   useEffect(() => {
     call_api_get_user_info();
+    call_api_get_SDG_goals();
+    call_api_get_associations();
   }, []);
 
   const deconnexion = () => {
@@ -315,7 +404,7 @@ const Sidebar = ({ children }) => {
                             alignItems: "center",
                           }}
                         >
-                          {data?.first_name?.S} {data?.last_name?.S} {data?.score?.N}{" "}
+                          {data?.first_name?.S} {data?.last_name?.S} {Score}{" "}
                           <StarIcon sx={{ color: "#FFD700" }} />          
                         </Typography>
                       </>

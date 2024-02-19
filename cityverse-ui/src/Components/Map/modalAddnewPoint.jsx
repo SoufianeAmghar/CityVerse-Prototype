@@ -38,6 +38,11 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Autocomplete from "@mui/material/Autocomplete";
 import AddLocationIcon from "@mui/icons-material/AddLocation";
 import L, { Icon, MarkerCluster, point } from "leaflet";
+import Collapse from "@mui/material/Collapse";
+import CloseIcon from "@mui/icons-material/Close";
+import Alert from "@mui/material/Alert";
+import ErrorIcon from "@mui/icons-material/Error";
+import { useDispatch, useSelector } from "react-redux";
 
 const style = {
   position: "absolute",
@@ -64,7 +69,7 @@ const styleValidate = {
 
 export default function ModaladdnewPoint({ open, setOpen, goals }) {
   const [location, setLocation] = useState({});
-
+  const dispatch = useDispatch();
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -79,6 +84,7 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
   const [Rna, setRna] = useState("");
   const [desc, setDesc] = useState("");
   const [adress, setAdress] = useState("");
+  const [coor_siege, setcoor_siege] = useState([]);
   const [fblink, setFblink] = useState("");
   const [instagramLink, setinstagramLink] = useState("");
   const [xLink, setXLink] = useState("");
@@ -86,24 +92,38 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
   const [selectedGoals, setSelectedGoals] = useState([]);
   const [selectedActivity, setSelectedActivity] = useState([]);
   const [passWord, setPassWord] = useState("");
-  const [values, setValues] = useState({
-    showPassword: false,
+  const [valuesRna, setValuesRna] = useState({
+    valideRna: false,
+    error: false,
   });
+  const [valuesSiege, setValuesSiege] = useState({
+    valideSiege: false,
+    error: false,
+  });
+
+  //message error
+  const [openSnack, setopenSnack] = React.useState(false);
+  const [message, setmessage] = React.useState({ msg: "", error: false });
+
   const [selectedImage, setSelectedImage] = useState(null);
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setSelectedImage(URL.createObjectURL(file));
+    setSelectedImage(file);
   };
   const [selectedBannerImage, setSelectedBannerImage] = useState(null);
   const handleImageBannerChange = (e) => {
     const file = e.target.files[0];
-    setSelectedBannerImage(URL.createObjectURL(file));
+    setSelectedBannerImage(file);
   };
-  const handleClickShowPassword = () => {
-    setValues({
-      ...values,
-      showPassword: !values.showPassword,
-    });
+  const handleClickVerifierRna = () => {
+    verifierRna();
+    // setValues({
+    //   ...values,
+    //   showPassword: !values.showPassword,
+    // });
+  };
+  const handleClickVerifierSiege = () => {
+    verifierSiege();
   };
 
   const iconPin = L.icon({
@@ -242,43 +262,111 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
       </>
     );
   };
-
-  const object = {
-    user_id: sessionStorage.getItem("user_Id"),
-    name: Name,
-    rna: Rna,
-    description: desc,
-    siege: adress,
-    sdg: selectedGoals,
-    activilty: selectedActivity,
-    links: [xLink, fblink, instagramLink, youtubeLink],
-    banner_image: "string",
-    profile_image: selectedImage,
+  const verifierRna = () => {
+    const object = {
+      rna: Rna,
+    };
+    axios
+      .post(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "association/verify-rna",
+        object
+      )
+      .then((value) => {
+        setValuesRna({
+          ...valuesRna,
+          valideRna: true,
+          error: false,
+        });
+      })
+      .catch((err) => {
+        setValuesRna({
+          ...valuesRna,
+          valideRna: false,
+          error: true,
+        });
+      });
   };
-
+  const verifierSiege = () => {
+    const object = {
+      siege: adress,
+    };
+    axios
+      .post(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "association/verify-siege",
+        object
+      )
+      .then((value) => {
+        setcoor_siege([
+          (value?.data.lat).toFixed(10),
+          (value?.data.long).toFixed(10),
+        ]);
+        setValuesSiege({
+          ...valuesSiege,
+          valideSiege: true,
+          error: false,
+        });
+      })
+      .catch((err) => {
+        setValuesSiege({
+          ...valuesSiege,
+          valideSiege: false,
+          error: true,
+        });
+      });
+  };
+  const handleClickSnack = () => {
+    setopenSnack(true);
+  };
+  const handleCloseSnack = () => {
+    setopenSnack(false);
+  };
+  useEffect(() => {
+    if (openSnack === true) {
+      setTimeout(() => {
+        handleCloseSnack();
+      }, 3000);
+    }
+  }, [openSnack]);
+  
+  const call_api_get_associations = () => {
+    axios
+      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "association/")
+      .then((value) => {
+        console.log('association', value?.data)
+        // setAssociation(value?.data)
+        dispatch({
+          type: "Associations",
+          associations: value?.data,
+        });
+      })
+      .catch((err) => {});
+  };
   const save = () => {
     var json = new FormData();
     const object = JSON.stringify({
       created_by: sessionStorage.getItem("user_Id"),
       modified_by: sessionStorage.getItem("user_Id"),
       name: Name,
-      rna: Rna,
+      rna: Rna === "" ? undefined : Rna,
       description: desc,
-      siege: adress,
+      siege: adress === "" ? undefined : adress,
+      siege_coordinates: coor_siege,
       sdg: selectedGoals,
       activity: selectedActivity,
       social_links: [xLink, fblink, instagramLink, youtubeLink],
-      
+
       // banner_image: "string",
       // profile_image: selectedImage,
-    })
+    });
     json.append("json", object);
     json.append("banner_image", selectedBannerImage);
     json.append("profile_image", selectedImage);
-
     axios
       .post(
-        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "/association/",json,
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "/association/",
+        json,
         {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -287,8 +375,31 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
           },
         }
       )
-      .then((value) => {})
-      .catch((err) => {});
+      .then((value) => {
+        handleClickSnack();
+        call_api_get_associations();
+        setmessage({
+          ...message,
+          msg: "Successfully stored.",
+          error: false,
+        });
+        dispatch({
+          type: "ImageAssociation",
+          imageAssociation: selectedImage,
+        });
+        dispatch({
+          type: "BannerAssociation",
+          bannerAssociation: selectedBannerImage,
+        });
+      })
+      .catch((err) => {
+        handleClickSnack();
+        setmessage({
+          ...message,
+          msg: `Failed to store.`,
+          error: true,
+        });
+      });
   };
 
   return (
@@ -368,8 +479,8 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
                   }
                   label={
                     sessionStorage.getItem("language") === "fr"
-                      ? "Name"
-                      : "Name"
+                      ? "Name*"
+                      : "Name*"
                   }
                   value={Name}
                   onChange={(e) => setName(e.target.value)}
@@ -382,8 +493,8 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
                     InputLabelProps={{ style: { color: "black" } }}
                   >
                     {sessionStorage.getItem("language") === "fr"
-                      ? "Numero RNA"
-                      : "Numero RNA"}
+                      ? "Numero RNA*"
+                      : "Numero RNA*"}
                   </InputLabel>
                   <OutlinedInput
                     color="success"
@@ -404,16 +515,24 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
                       <InputAdornment position="end">
                         <IconButton
                           aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
+                          onClick={handleClickVerifierRna}
                           onMouseDown={handleMouseDownPassword}
                           edge="end"
                         >
-                          {values.showPassword ? (
+                          {valuesRna.valideRna ? (
                             <CheckCircleIcon
                               sx={{
                                 height: "20px",
                                 width: "auto",
                                 color: "green",
+                              }}
+                            />
+                          ) : valuesRna.error ? (
+                            <ErrorIcon
+                              sx={{
+                                height: "20px",
+                                width: "auto",
+                                color: "red",
                               }}
                             />
                           ) : (
@@ -426,8 +545,8 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
                     }
                     label={
                       sessionStorage.getItem("language") === "fr"
-                        ? "Numero RNA"
-                        : "Numero RNA"
+                        ? "Numero RNA*"
+                        : "Numero RNA*"
                     }
                   />
                 </FormControl>
@@ -464,8 +583,8 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
                     InputLabelProps={{ style: { color: "black" } }}
                   >
                     {sessionStorage.getItem("language") === "fr"
-                      ? "Siège Social"
-                      : "Siège Social"}
+                      ? "Siège Social*"
+                      : "Siège Social*"}
                   </InputLabel>
                   <OutlinedInput
                     color="success"
@@ -490,16 +609,24 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
                       <InputAdornment position="end">
                         <IconButton
                           aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
+                          onClick={handleClickVerifierSiege}
                           onMouseDown={handleMouseDownPassword}
                           edge="end"
                         >
-                          {values.showPassword ? (
+                          {valuesSiege.valideSiege ? (
                             <CheckCircleIcon
                               sx={{
                                 height: "20px",
                                 width: "auto",
                                 color: "green",
+                              }}
+                            />
+                          ) : valuesSiege.error ? (
+                            <ErrorIcon
+                              sx={{
+                                height: "20px",
+                                width: "auto",
+                                color: "red",
                               }}
                             />
                           ) : (
@@ -589,7 +716,6 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
                         />
                       ))
                     }
-                    {...console.log(goals)}
                     renderOption={(props, option) => (
                       <Box
                         sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
@@ -608,7 +734,7 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
                     renderInput={(params) => (
                       <TextField
                         {...params}
-                        label="SDG Goals"
+                        label="SDG Goals*"
                         size="small"
                         focused
                         variant="outlined"
@@ -620,13 +746,12 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
                         }
                         inputProps={{
                           ...params.inputProps,
-                          autoComplete: "new-password", // disable autocomplete and autofill
+                          // disable autocomplete and autofill
                         }}
                       />
                     )}
                   />
                 </FormControl>
-                {console.log(selectedActivity)}
                 <FormControl variant="outlined" color="success" focused>
                   <Autocomplete
                     multiple
@@ -669,7 +794,7 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
                     renderInput={(params) => (
                       <TextField
                         {...params}
-                        label="Activity"
+                        label="Activity*"
                         size="small"
                         focused
                         variant="outlined"
@@ -681,7 +806,7 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
                         }
                         inputProps={{
                           ...params.inputProps,
-                          autoComplete: "new-password", // disable autocomplete and autofill
+                          // disable autocomplete and autofill
                         }}
                       />
                     )}
@@ -839,7 +964,7 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
                               height: "100px",
                               borderRadius: "100%",
                             }}
-                            src={selectedImage}
+                            src={URL.createObjectURL(selectedImage)}
                             alt="Uploaded"
                           />
                           <CancelIcon
@@ -896,7 +1021,7 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
                               height: "100px",
                               borderRadius: "1%",
                             }}
-                            src={selectedBannerImage}
+                            src={URL.createObjectURL(selectedBannerImage)}
                             alt="Uploaded"
                           />
                           <CancelIcon
@@ -921,6 +1046,9 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
                 sx={{
                   p: 2,
                   "& > :not(style)": { m: 1 },
+                  display: "flex",
+                  alignItems: "center",
+                  flexDirection: "row",
                 }}
                 noValidate
                 autoComplete="off"
@@ -931,14 +1059,47 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
                   // disabled={handleAdd()}
                   sx={styleValidate}
                   onClick={() => {
-                    save()
-                    console.log("object", object);
+                    save();
                   }}
                 >
                   {sessionStorage.getItem("language") === "fr"
                     ? "Sauvegarder"
                     : "Save"}
                 </Button>
+                <Collapse
+                  in={openSnack}
+                  className={openSnack ? "" : "dontDisplay"}
+                  onClose={handleCloseSnack}
+                  sx={{
+                    position: "fixed",
+                    left: "65%",
+                    mb: "1%",
+                    mt: 0.5,
+                    width: "30%",
+                    height: 30,
+                    borderRadius: "20%",
+                  }}
+                  action={
+                    <React.Fragment>
+                      <IconButton
+                        size="small"
+                        aria-label="close"
+                        color="warning"
+                        onClick={handleCloseSnack}
+                      >
+                        <CloseIcon fontSize="small" />
+                      </IconButton>
+                    </React.Fragment>
+                  }
+                >
+                  <Alert
+                    onClose={handleCloseSnack}
+                    severity={message?.error ? "error" : "success"}
+                    // icon={<WarningAmberIcon fontSize="warning" />}
+                  >
+                    {message?.msg}
+                  </Alert>
+                </Collapse>
               </Box>
             </Container>
           </Card>

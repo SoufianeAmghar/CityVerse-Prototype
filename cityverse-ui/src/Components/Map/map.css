@@ -52,11 +52,19 @@
 
 .edit-location-button {
   position: absolute;
-  top: 11%;
+  top: 10%;
   right: 2%;
-  border-radius: 100%;
+  border-radius: 15%;
   z-index: 10000;
-  background-color: transparent;
+  background-color: white;
+}
+.edit-location-button1 {
+  position: absolute;
+  top: 18%;
+  right: 2%;
+  border-radius: 5%;
+  z-index: 10000;
+  background-color: white;
 }
 
 .filterscrollBar  ::-webkit-scrollbar-thumb {
@@ -77,4 +85,8 @@
   border-radius: 10%;
   z-index: 10000;
   background-color: white;
+}
+
+.dontDisplay{
+  display: none;
 }
