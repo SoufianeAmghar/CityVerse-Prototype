@@ -109,7 +109,8 @@ class ProductDto:
         'description': fields.String(description='Post description'),
         # Use Raw to represent a map
         'reactions': fields.Raw(description='Map of reactions as numbers'),
-        'reaction_emojis': fields.String(description='Dictionary mapping reactions to emojis')
+        'reaction_emojis': fields.String(description='Dictionary mapping reactions to emojis'),
+        'comments': fields.List(fields.String,description='Comments on post')
     })
 
     product = api.model('product', {

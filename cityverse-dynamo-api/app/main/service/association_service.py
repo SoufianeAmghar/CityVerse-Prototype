@@ -281,6 +281,8 @@ def create_post(data,image_files,video_files):
 
         reactions_data = [{'reaction': reaction, 'count': 0} for reaction in reactions_list] 
 
+        comments_data = data.get('comments', [])
+
 
         post_item = {
             'id': generate_id(),
@@ -291,7 +293,8 @@ def create_post(data,image_files,video_files):
             'description': data.get('description', []),
             'created_by': data['created_by'],
             'modified_by': data['modified_by'],
-            'reactions': reactions_data
+            'reactions': reactions_data,
+            'comments': comments_data
         }
 
 

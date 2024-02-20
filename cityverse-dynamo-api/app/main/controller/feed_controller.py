@@ -6,7 +6,9 @@ from app.main.util.decorator import token_required
 from ..util.dto import FeedDto
 from ..service.feed_service import (
     get_all_posts,
-    get_filtered_posts
+    get_filtered_posts,
+    post_comment_on_post,
+    edit_comment_on_post
 )
 
 
@@ -19,6 +21,23 @@ class Feed(Resource):
         """List all posts from associations user follows"""
         data = request.json
         return get_all_posts(data)
+
+@api.route('/<post_id>')
+@api.param('post_id', 'The Post identifier')
+class FeedPost(Resource):
+    @api.doc('post_comment')
+    def post(self,post_id):
+        """Post a comment on a post"""
+        data = request.json
+        return post_comment_on_post(post_id, data)
+    
+    @api.doc('edit comment')
+    def put (self,post_id):
+        "Edit a comment on a post"
+        data = request.json
+        return edit_comment_on_post(post_id, data)
+
+
 
 
 
