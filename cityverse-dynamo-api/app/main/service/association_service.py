@@ -26,7 +26,7 @@ def get_all_associations():
 def get_a_association(association_id,data):
     document = Document(__TABLE_NAME__='Association')
 
-    name = data['name']
+    name = data
 
     association = document.get_item(association_id,name)
 
