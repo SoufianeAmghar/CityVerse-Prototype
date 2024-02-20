@@ -18,7 +18,7 @@ def get_all_posts(data):
     # Query all posts
     posts = document.get_all()
 
-    user = get_a_user(data.get('user_id', ''))
+    user = get_a_user(data)
     if user:
 
         followed_creator_ids = set(user.get('followings', []))

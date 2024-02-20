@@ -19,7 +19,7 @@ class Feed(Resource):
     @api.doc('list_of_posts')
     def get(self):
         """List all posts from associations user follows"""
-        data = request.json
+        data = request.headers.get('UserAgent')
         return get_all_posts(data)
 
 @api.route('/<post_id>')
