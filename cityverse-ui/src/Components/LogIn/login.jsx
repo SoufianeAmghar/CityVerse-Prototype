@@ -33,6 +33,7 @@ const Login = (props) => {
 
   const history = useHistory();
   const call_api_auth = async () => {
+   
     setInprogress(true);
     let options = {
       password: passwordValue,

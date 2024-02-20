@@ -23,6 +23,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import InputAdornment from "@mui/material/InputAdornment";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
 
 const styleValidate = {
   backgroundColor: "success",
@@ -42,6 +43,7 @@ const styleCancelDelete = {
 };
 
 export default function PersonalDetails() {
+  const dispatch = useDispatch();
   const [firstName, setFirstName] = useState("");
   const [SecondeName, setSecondeName] = useState("");
   const [email, setEmail] = useState("");
@@ -65,7 +67,10 @@ export default function PersonalDetails() {
         setFirstName(value.data.data.first_name?.S);
         setSecondeName(value.data.data.last_name?.S);
         setEmail(value.data.data.email?.S);
-
+        dispatch({
+          type: "ImageProfile",
+          imageProfile: value.data.data.profile_image?.S,
+        });
         console.log(value.data.data);
       })
       .catch((err) => {
@@ -76,7 +81,7 @@ export default function PersonalDetails() {
   const [selectedImage, setSelectedImage] = useState(null);
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setSelectedImage(URL.createObjectURL(file));
+    setSelectedImage(e.target.files[0]);
   };
 
   const handleClickShowPassword = () => {
@@ -102,21 +107,29 @@ export default function PersonalDetails() {
   };
 
   const sign_up = () => {
-    const obj = {
-      profile_image: selectedImage,
+   
+    var json = new FormData();
+    const obj = JSON.stringify({
       first_name: firstName,
       last_name: SecondeName,
       email: email,
       password: passWord,
       is_creator: true,
-    };
+    });
+    json.append("json", obj);
+    json.append("profile_image", selectedImage);
 
     axios
-      .post(
-        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "/auth/signup",
-        obj
+      .put(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "user/" + sessionStorage.getItem("user_Id"),
+        json, 
       )
-      .then((value) => {})
+      .then((value) => {
+        dispatch({
+          type: "ImageProfile",
+          imageProfile: selectedImage,
+        });
+      })
       .catch((err) => {});
   };
 
@@ -380,7 +393,7 @@ export default function PersonalDetails() {
                         height: "100px",
                         borderRadius: "100%",
                       }}
-                      src={selectedImage}
+                      src={URL.createObjectURL(selectedImage)}
                       alt="Uploaded"
                     />
                     <CancelIcon

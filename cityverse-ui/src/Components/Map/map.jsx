@@ -73,13 +73,51 @@ import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
 import SolarPowerIcon from "@mui/icons-material/SolarPower";
 import SdgweelImage from "../../Asset/SDG_weel.png";
+import ActivityImage from "../../Asset/activity.png";
 import Tooltip from "@mui/material/Tooltip";
 import AddLocationIcon from "@mui/icons-material/AddLocation";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import ModaladdnewPoint from "./modalAddnewPoint";
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import { useDispatch, useSelector } from "react-redux";
+import FamilyRestroom from "@mui/icons-material/FamilyRestroom";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import CloseIcon from "@mui/icons-material/Close";
+import { Stack } from "@mui/material";
+import {
+  Divider,
+  FormControl,
+  InputLabel,
+  Select,
+  OutlinedInput,
+  TextField,
+  Modal,
+} from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ErrorIcon from "@mui/icons-material/Error";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import InputAdornment from "@mui/material/InputAdornment";
+
+const styleValidate = {
+  background:
+    "linear-gradient(180deg, rgba(190, 255, 157, 0.00) 0%, #9FFF6F 10%)",
+  color: "#556B2F",
+  borderRadius: "20px",
+};
+
+const styleCancelDelete = {
+  background: "#fff",
+  minWidth: "20%",
+  borderRadius: "14px",
+  color: "#556B2F",
+  borderColor: "#556B2F",
+};
 
 const Drawer = styled(MuiDrawer)({
   width: 300, //drawer width
@@ -90,14 +128,48 @@ const Drawer = styled(MuiDrawer)({
 });
 
 export default function MapCart() {
+  const dispatch = useDispatch();
+  const association = useSelector(
+    (state) => state.AssociationReducer?.associations
+  );
+  const address_coordinate = useSelector(
+    (state) => state.ProfileReducer?.address_coordinate
+  );
+  const imageProfile = useSelector(
+    (state) => state.FileUploadReducer?.imageProfile
+  );
+  const goals = useSelector((state) => state.ProfileReducer?.goals);
+  // const [association, setAssociation] = useState([])
   const [openModal, setOpenModal] = useState(false);
   const [openVelo, setOpenVelo] = useState(false);
   const [openStation, setOpenStation] = useState(false);
   const [openEvent, setOpenEvent] = useState(false);
   const [openMetaVerse, setOpenMetaVerse] = useState(false);
   const [openPointInterset, setopenPointInterset] = useState(false);
-  const [goals, setGoals] = useState([]);
   const [goal, setgoal] = useState();
+  const [selectedActivity, setselecteDAcitivity] = useState();
+  const [selectedGoals, setSelectedGoals] = useState([]);
+  const [selectedActivities, setSelectedActivities] = useState([]);
+  const [selectedAssocition, setSelectedAssociation] = useState([]);
+  function handleSelectedGoals(arr, str) {
+    const index = arr.indexOf(str);
+    if (index !== -1) {
+      arr.splice(index, 1); // Remove the string if it exists
+    } else {
+      arr.push(str); // Add the string if it doesn't exist
+    }
+    return arr;
+  }
+
+  function handleselectedActivities(arr, str) {
+    const index = arr.indexOf(str);
+    if (index !== -1) {
+      arr.splice(index, 1); // Remove the string if it exists
+    } else {
+      arr.push(str); // Add the string if it doesn't exist
+    }
+    return arr;
+  }
   //association menu
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -107,16 +179,79 @@ export default function MapCart() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const call_api_get_associations = () => {
+    axios
+      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "association/")
+      .then((value) => {
+        console.log("association", value?.data);
+        // setAssociation(value?.data)
+        dispatch({
+          type: "Associations",
+          associations: value?.data,
+        });
+      })
+      .catch((err) => {});
+  };
   const call_api_get_SDG_goals = () => {
     axios
       .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "goal/")
       .then((value) => {
-        setGoals(value.data);
+        dispatch({
+          type: "Goals",
+          goals: value.data,
+        });
       })
       .catch((err) => {});
   };
+  const headers = {
+    Authorization: sessionStorage.getItem("acces_token")?.toString(),
+  };
+
+  const [data, setdata] = useState();
+  const call_api_get_user_info = () => {
+    axios
+      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "auth/info", {
+        headers,
+      })
+      .then((value) => {
+        console.log('test',convertStringArrayToNumberArray([value?.data?.data?.address_coordinates?.M?.latitude?.S, value?.data?.data?.address_coordinates?.M?.longitude?.S]))
+       
+        if (
+          value?.data?.data?.address_coordinates?.L?.length === 0 &&
+          value?.data?.data?.address?.S === ""
+        ) {
+          HandleOpenAddAdress();
+          dispatch({
+            type: "Address_coordinate",
+            address_coordinate: [],
+          });  
+        } else {
+          if(value?.data?.data?.address_coordinates?.M?.latitude?.S !== undefined && value?.data?.data?.address_coordinates?.M?.longitude?.S !== undefined ) {
+            dispatch({
+              type: "Address_coordinate",
+              address_coordinate: convertStringArrayToNumberArray([value?.data?.data?.address_coordinates?.M?.latitude?.S, value?.data?.data?.address_coordinates?.M?.longitude?.S]),
+            });    
+
+          }
+          
+        }
+       
+        dispatch({
+          type: "ImageProfile",
+          imageProfile: value?.data?.data?.profile_image?.S,
+        });
+        sessionStorage.setItem("user_Id", value.data?.data.id.S);
+        setdata(value?.data?.data);
+      })
+      .catch((err) => {
+        //  deconnexion();
+      });
+  };
+
   useEffect(() => {
-    call_api_get_SDG_goals();
+    // call_api_get_SDG_goals();
+    // call_api_get_associations();
+    call_api_get_user_info();
   }, []);
 
   const iconWifi = L.icon({
@@ -491,9 +626,248 @@ export default function MapCart() {
       </>
     );
   };
+  const Activity = [
+    { label: "Arts & Culture", icon: require("../../Asset/cultureArt.png") },
+    {
+      label: "Sports",
+      icon: require("../../Asset/running.png"),
+    },
+    { label: "Social Action", icon: require("../../Asset/dish.png") },
+    {
+      label: "Recreation",
+      icon: require("../../Asset/park.png"),
+    },
+    {
+      label: "Humanitary",
+      icon: require("../../Asset/solidarity.png"),
+    },
+  ];
+  function filterArrayOfObjects(
+    association,
+    selectedGoals,
+    selectedActivities
+  ) {
+    return association.filter((item, key) => {
+      // Check if item's arrays contain values from filterArray1 and filterArray2
+      return (
+        selectedGoals.every((value) =>
+          item?.sdg?.find((ob) => ob.short === value)
+        ) &&
+        selectedActivities.every((value) =>
+          item?.activity?.find((obj) => obj.label === value)
+        )
+      );
+    });
+  }
+  useEffect(() => {
+    const filteredArray = filterArrayOfObjects(
+      association,
+      selectedGoals,
+      selectedActivities
+    );
+    setSelectedAssociation(
+      filterArrayOfObjects(association, selectedGoals, selectedActivities)
+    );
+    console.log(filteredArray);
+  }, [openPointInterset, selectedActivity, goal]);
+  const [expanded, setExpanded] = React.useState(false);
+
+  const handleChange = (panel) => (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : false);
+  };
+
+  // Profile Configiration
+  const [openAddAdress, setOpenAddAdress] = useState(false);
+  const [adress, setAdress] = useState("");
+  const [coor_siege, setcoor_siege] = useState([]);
+  const [valuesSiege, setValuesSiege] = useState({
+    valideSiege: false,
+    error: false,
+  });
+  const HandleOpenAddAdress = () => {
+    setOpenAddAdress(true);
+  };
+  const HandleCloseAddAdress = () => {
+    setOpenAddAdress(false);
+  };
+  const handleClickVerifierSiege = () => {
+    verifierSiege();
+  };
+  const verifierSiege = () => {
+    const object = {
+      siege: adress,
+    };
+    axios
+      .post(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "association/verify-siege",
+        object
+      )
+      .then((value) => {
+        setcoor_siege([
+          (value?.data.lat).toFixed(10),
+          (value?.data.long).toFixed(10),
+        ]);
+        setValuesSiege({
+          ...valuesSiege,
+          valideSiege: true,
+          error: false,
+        });
+      })
+      .catch((err) => {
+        setValuesSiege({
+          ...valuesSiege,
+          valideSiege: false,
+          error: true,
+        });
+      });
+  };
+  const add_Adress = () => {
+    var json = new FormData();
+    const obj = JSON.stringify({
+      address: adress,
+      address_coordinates: coor_siege,
+    });
+    json.append("json", obj);
+    json.append("profile_image", imageProfile);
+    axios
+      .put(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "user/" +
+          sessionStorage.getItem("user_Id"),
+        json
+      )
+      .then((value) => {
+        dispatch({
+          type: "Address_coordinate",
+          address_coordinate: coor_siege,
+        });
+      })
+      .catch((err) => {});
+  };
+  function convertStringArrayToNumberArray(stringArray) {
+    return stringArray.map((str) => Number(str));
+  }
 
   return (
     <>
+      <Dialog
+        open={openAddAdress}
+        onClose={() => {
+          HandleCloseAddAdress();
+        }}
+        maxWidth="sm"
+        fullWidth
+        style={{ boxShadow: "none" }}
+      >
+        <DialogTitle id="alert-dialog-title">
+          {sessionStorage.getItem("language") === "fr"
+            ? "ADD YOUR HOME"
+            : "ADD YOUR HOME"}
+        </DialogTitle>
+        <Box position="absolute" top={0} right={0}>
+          <IconButton
+            onClick={() => {
+              HandleCloseAddAdress();
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            <Stack direction="column" spacing={1}>
+              <FormControl variant="outlined" color="success" focused>
+                <InputLabel
+                  variant="outlined"
+                  color="success"
+                  size="small"
+                  InputLabelProps={{ style: { color: "black", width: "90%" } }}
+                >
+                  {sessionStorage.getItem("language") === "fr"
+                    ? "your address.*"
+                    : "your address.*"}
+                </InputLabel>
+                <OutlinedInput
+                  color="success"
+                  size="small"
+                  variant="outlined"
+                  type="text"
+                  label={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "your address."
+                      : "your address."
+                  }
+                  multiline
+                  rows={2}
+                  value={adress}
+                  placeholder={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "Please provide a Valid address."
+                      : "Entrer une adresse valide"
+                  }
+                  onChange={(e) => setAdress(e.target.value)}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickVerifierSiege}
+                        edge="end"
+                      >
+                        {valuesSiege.valideSiege ? (
+                          <CheckCircleIcon
+                            sx={{
+                              height: "20px",
+                              width: "auto",
+                              color: "green",
+                            }}
+                          />
+                        ) : valuesSiege.error ? (
+                          <ErrorIcon
+                            sx={{
+                              height: "20px",
+                              width: "auto",
+                              color: "red",
+                            }}
+                          />
+                        ) : (
+                          <CheckCircleOutlineIcon
+                            sx={{ height: "20px", width: "auto" }}
+                          />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+              </FormControl>
+            </Stack>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              add_Adress();
+              HandleCloseAddAdress();
+            }}
+            variant="contained"
+            style={styleValidate}
+            color="success"
+          >
+            {sessionStorage.getItem("language") === "fr"
+              ? "Confirmer"
+              : "Confirmer"}
+          </Button>
+          <Button
+            onClick={() => {
+              HandleCloseAddAdress();
+            }}
+            variant="contained"
+            style={styleCancelDelete}
+          >
+            {sessionStorage.getItem("language") === "fr" ? "Skip" : "Skip"}
+          </Button>
+        </DialogActions>
+      </Dialog>
       <div disableGutters width="99%" height="auto">
         <Card>
           <Container maxWidth="99%" sx={{ px: "20px" }}>
@@ -702,15 +1076,16 @@ export default function MapCart() {
                 }}
               >
                 <MenuItem onClick={handleAddnewPointInterest}>
-                 
                   <ListItemIcon>
                     <AddLocationIcon />
                   </ListItemIcon>
                   <ListItemText primary="Create an association" />
                 </MenuItem>
                 <MenuItem onClick={handleOpenPointInterest}>
-                <ListItemIcon>
-                    <VisibilityIcon />
+                  <ListItemIcon>
+                    <VisibilityIcon
+                      sx={{ color: openPointInterset ? "red" : "" }}
+                    />
                   </ListItemIcon>
                   <ListItemText primary="Show on map" />
                 </MenuItem>
@@ -751,16 +1126,24 @@ export default function MapCart() {
                 iconCreateFunction={createClusterCustomIcon}
                 showCoverageOnHover={false}
               >
+                {address_coordinate.length !== 0 && (
+                  <Marker
+                    position={convertStringArrayToNumberArray(
+                      address_coordinate
+                    )}
+                    icon={iconHome}
+                  >
+                    <Popup className="popupmeta">
+                      <CardHome />
+                    </Popup>
+                  </Marker>
+                )}
+
                 <Marker position={[48.85837, 2.294481]} icon={iconMetaVerse}>
                   <Popup className="popupmeta">
                     <CardMetaVerse />
                   </Popup>
                 </Marker>
-                {goal === 1 && (
-                  <Marker position={[48.85837, 2.214481]} icon={iconMarket}>
-                    <Popup className="popupmeta">Goal's One</Popup>
-                  </Marker>
-                )}
                 {/* <LocationMarker /> */}
                 <NearestMarkerBike />
                 <NearestMarkerEvent />
@@ -841,19 +1224,59 @@ export default function MapCart() {
                       )}
                     </>
                   ))}
-                {openPointInterset && (
-                  <Marker
-                    // key={index}
-                    position={[48.921329648, 2.355998576]}
-                    icon={iconPointOfInterset}
-                  >
-                    <Popup className="popup">
-                      <CardPlace />
-                    </Popup>
-                  </Marker>
-                )}
-                {/* <ReseauCyclable data={dataRéseau_cyclable}/> */}
 
+                {openPointInterset &&
+                  selectedAssocition?.map((item, index) => (
+                    <Marker
+                      key={index}
+                      position={
+                        Array.isArray(item?.siege_coor)
+                          ? [0, 0]
+                          : [
+                              item?.siege_coordinates[0] !== "undefined"
+                                ? parseFloat(item?.siege_coordinates[0])
+                                : 0,
+                              item?.siege_coordinates[0] !== "undefined"
+                                ? parseFloat(item?.siege_coordinates[1])
+                                : 0,
+                            ]
+                      }
+                      icon={iconPointOfInterset}
+                    >
+                      <Popup className="popup">
+                        <CardPlace item={item} />
+                      </Popup>
+                    </Marker>
+                  ))}
+                {/* {openPointInterset &&
+                  association?.map(
+                    (item) =>
+                      item?.activity?.find(
+                        (element) => element?.label == selectedActivity
+                      ) && (
+                        <Marker
+                          // key={index}
+                          {...console.log(selectedActivity)}
+                          position={
+                            Array.isArray(item?.siege_coor)
+                              ? [0, 0]
+                              : [
+                                  item?.siege_coordinates[0] !== "undefined"
+                                    ? parseFloat(item?.siege_coordinates[0])
+                                    : 0,
+                                  item?.siege_coordinates[0] !== "undefined"
+                                    ? parseFloat(item?.siege_coordinates[1])
+                                    : 0,
+                                ]
+                          }
+                          icon={iconPointOfInterset}
+                        >
+                          <Popup className="popup">
+                            <CardPlace item={item} />
+                          </Popup>
+                        </Marker>
+                      )
+                  )} */}
                 {dataRéseau_cyclable.features
                   .filter(function (feature) {
                     return feature.geometry.type == "LineString";
@@ -963,74 +1386,167 @@ export default function MapCart() {
               <LocateZone />
             </MapContainer>
           </Container>
-          <Accordion className="edit-location-button">
-            <AccordionSummary
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexDirection: "column",
-              }}
+          <div className="edit-location-button">
+            <Accordion
+              expanded={expanded === "panel1"}
+              onChange={handleChange("panel1")}
             >
-              <Tooltip title="SDG GOALS" placement="left-start">
-                <IconButton>
-                  <img
-                    style={{
-                      width: "30px",
-                      height: "30px",
-                      borderRadius: "100%",
-                    }}
-                    src={SdgweelImage}
-                    alt="webscript"
-                  />
-                </IconButton>
-              </Tooltip>
-            </AccordionSummary>
-            <AccordionDetails
-              sx={{
-                alignContent: "center",
-                justifyContent: "center",
-                flexDirection: "column",
-              }}
-            >
-              <Box
-                mb={2}
-                display="flex"
-                flexDirection="column"
-                // justifyContent="flex-end" # DO NOT USE THIS WITH 'scroll'
-                height="400px" // fixed the height
-                style={{
-                  overflow: "scroll",
-                  overflowY: "scroll",
+              <AccordionSummary
+                sx={{
+                  // display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "column",
                 }}
               >
-                {goals.map((item, index) => {
-                  return (
-                    <Tooltip
-                      title={`${item?.goal}.${item.short}`}
-                      placement="left-start"
-                    >
-                      <IconButton
-                        onClick={() => {
-                          setgoal(item?.goal);
-                        }}
+                <Tooltip title="SDG GOALS" placement="left-start">
+                  <IconButton>
+                    <img
+                      style={{
+                        width: "35px",
+                        height: "35px",
+                        borderRadius: "100%",
+                      }}
+                      src={SdgweelImage}
+                      alt="webscript"
+                    />
+                  </IconButton>
+                </Tooltip>
+              </AccordionSummary>
+              <AccordionDetails
+                sx={{
+                  alignContent: "center",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                }}
+              >
+                <Box
+                  mb={1}
+                  display="flex"
+                  flexDirection="column"
+                  // justifyContent="flex-end" # DO NOT USE THIS WITH 'scroll'
+                  height="400px" // fixed the height
+                  style={{
+                    overflow: "scroll",
+                    overflowY: "scroll",
+                  }}
+                >
+                  {goals.map((item, index) => {
+                    return (
+                      <Tooltip
+                        title={`${item?.goal}.${item.short}`}
+                        placement="left-start"
                       >
-                        <img
-                          style={{
-                            width: "auto",
-                            height: goal === index + 1 ? "50px" : "40px",
-                            borderRadius: goal === index + 1 ? "20%" : "5%",
+                        <IconButton
+                          onClick={() => {
+                            setgoal(item?.goal);
+                            console.log(
+                              "sdg",
+                              handleSelectedGoals(selectedGoals, item?.short)
+                            );
                           }}
-                          src={item?.icon_url}
-                          alt="webscript"
-                        />
-                      </IconButton>
-                    </Tooltip>
-                  );
-                })}
-              </Box>
-            </AccordionDetails>
-          </Accordion>
+                        >
+                          <img
+                            style={{
+                              width: "auto",
+                              height:
+                                selectedGoals.indexOf(item?.short) !== -1
+                                  ? "50px"
+                                  : "40px",
+                              borderRadius:
+                                selectedGoals.indexOf(item?.short) !== -1
+                                  ? "20%"
+                                  : "5%",
+                            }}
+                            src={item?.icon_url}
+                            alt="webscript"
+                          />
+                        </IconButton>
+                      </Tooltip>
+                    );
+                  })}
+                </Box>
+              </AccordionDetails>
+            </Accordion>
+            <Accordion
+              expanded={expanded === "panel2"}
+              onChange={handleChange("panel2")}
+            >
+              <AccordionSummary
+                sx={{
+                  // display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                }}
+              >
+                <Tooltip title="Activity" placement="left-start">
+                  <IconButton>
+                    <img
+                      style={{
+                        width: "35px",
+                        height: "35px",
+                        borderRadius: "0%",
+                      }}
+                      src={ActivityImage}
+                      alt="webscript"
+                    />
+                  </IconButton>
+                </Tooltip>
+              </AccordionSummary>
+              <AccordionDetails
+                sx={{
+                  alignContent: "center",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                }}
+              >
+                <Box
+                  mb={1}
+                  display="flex"
+                  flexDirection="column"
+                  // justifyContent="flex-end" # DO NOT USE THIS WITH 'scroll'
+                  height="250px" // fixed the height
+                  // style={{
+                  //   overflow: "scroll",
+                  //   overflowY: "scroll",
+                  // }}
+                >
+                  {Activity.map((item, index) => {
+                    return (
+                      <Tooltip title={item?.label} placement="left-start">
+                        <IconButton
+                          onClick={() => {
+                            setselecteDAcitivity(item?.label);
+                            console.log(
+                              "activities",
+                              handleselectedActivities(
+                                selectedActivities,
+                                item?.label
+                              )
+                            );
+                          }}
+                        >
+                          <img
+                            style={{
+                              width: "auto",
+                              borderRadius: "5%",
+                              height:
+                                selectedActivities.indexOf(item?.label) !== -1
+                                  ? "40px"
+                                  : "30px",
+                            }}
+                            src={item?.icon}
+                            alt="webscript"
+                          />
+                        </IconButton>
+                      </Tooltip>
+                    );
+                  })}
+                </Box>
+              </AccordionDetails>
+            </Accordion>
+          </div>
         </Card>
       </div>
       <ModaladdnewPoint open={openModal} setOpen={setOpenModal} goals={goals} />

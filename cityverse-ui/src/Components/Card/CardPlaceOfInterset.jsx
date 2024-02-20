@@ -1,32 +1,36 @@
-import { Button } from "@mui/material";
-import EventIcon from "@mui/icons-material/Event";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import React, { useEffect, useRef, useState } from "react";
-import { useTheme } from "@mui/material/styles";
-import Box from "@mui/material/Box";
+import axios from "axios";
+import { useHistory } from "react-router-dom";
+import { styled } from "@mui/material/styles";
+import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
+import CardMedia from "@mui/material/CardMedia";
+import CardContent from "@mui/material/CardContent";
+import CardActions from "@mui/material/CardActions";
+import Collapse from "@mui/material/Collapse";
+import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import SkipNextIcon from "@mui/icons-material/SkipNext";
-import { Container, MenuItem, Modal, Stack } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { red } from "@mui/material/colors";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import ShareIcon from "@mui/icons-material/Share";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import format from "date-fns/format";
+import { Button } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import StarOutlineIcon from "@mui/icons-material/StarOutline";
-import Card from "@material-ui/core/Card";
-import CardActionArea from "@material-ui/core/CardActionArea";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import CardMedia from "@material-ui/core/CardMedia";
-import withStyles from "@material-ui/core/styles/withStyles";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import img from "../../Asset/Tour.png";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { useHistory } from "react-router-dom";
+import Box from "@mui/material/Box";
+import CloseIcon from "@mui/icons-material/Close";
+import Chip from "@mui/material/Chip";
+import Stack from "@mui/material/Stack";
+import Divider from "@mui/material/Divider";
+import { useDispatch, useSelector } from "react-redux";
 
 const styleValidate = {
   background:
@@ -43,88 +47,24 @@ const styleCancelDelete = {
   borderColor: "#556B2F",
 };
 
-const FiCard = withStyles({
-  root: {
-    position: "relative",
-  },
-})(Card);
-const FiCardActionArea = withStyles({
-  root: {
-    position: "relative",
-  },
-})(CardActionArea);
-const FiCardActions = withStyles({
-  root: {
-    position: "relative",
-  },
-})(CardActions);
+const ExpandMore = styled((props) => {
+  const { expand, ...other } = props;
+  return <IconButton {...other} />;
+})(({ theme, expand }) => ({
+  transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
+  marginLeft: "auto",
+  transition: theme.transitions.create("transform", {
+    duration: theme.transitions.duration.shortest,
+  }),
+}));
 
-const FiCardContent = withStyles({
-  root: {
-    position: "relative",
-    backgroundColor: "transparent",
-  },
-})(CardContent);
-
-const FiCardMedia = withStyles({
-  root: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    height: "100%",
-    width: "100%",
-  },
-})(CardMedia);
-
-const useStyles = makeStyles({
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  /**
-   * Max Card with for demo
-   * same values used in Material-Ui Card Demos
-   */
-  card: {
-    maxWidth: 345,
-  },
-
-  /**
-   * Applied to Orginal Card demo
-   * Same vale used in Material-ui Card Demos
-   */
-  media: {
-    height: 140,
-  },
-
-  /**
-   * Demo stlying to inclrease text visibility
-   * May verry on implementation
-   */
-  fiCardContent: {
-    color: "#ffffff",
-    flexDirection: "row-reverse",
-  },
-  fiCardContentbottom: {
-    color: "#ffffff",
-    background:
-      "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 90%)",
-    // display: "flex",
-    // justifyItems: "right",
-    flexDirection: "row",
-  },
-  fiCardContentTextSecondary: {
-    color: "rgba(255,255,255,0.78)",
-  },
-});
-
-export default function CardPlace() {
-  const theme = useTheme();
-  const classes = useStyles();
-  const [fav, setFav] = useState(true);
+export default function CardPlace(item) {
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const [expanded, setExpanded] = React.useState(false);
+  const [fav, setFav] = useState(false);
   const [open, setopen] = useState(false);
+  const following = useSelector((state) => state.ProfileReducer?.following);
   const handleClose = () => {
     setopen(false);
   };
@@ -137,7 +77,84 @@ export default function CardPlace() {
     inputRef.current.focus();
   }
 
-  const history = useHistory();
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+  {
+    console.log("following", following);
+  }
+
+  useEffect(() => {
+    for (let i = 0; i <= following?.length; i++) {
+      if (item?.item?.id === following[i]) {
+        setFav(true);
+      }
+    }
+  }, []);
+
+  const headers = {
+    Authorization: sessionStorage.getItem("acces_token")?.toString(),
+  };
+  const call_api_get_user_info = () => {
+    axios
+      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "auth/info", {
+        headers,
+      })
+      .then((value) => {
+        (value?.data?.data?.score?.S === undefined ? dispatch({
+          type: "Score",
+          score: value?.data?.data?.score?.N,
+        }) : dispatch({
+          type: "Score",
+          score: value?.data?.data?.score?.S,
+        }))
+        dispatch({
+          type: "Following",
+          following: value?.data?.data?.followings?.L,
+        });
+       
+        sessionStorage.setItem("user_Id", value.data?.data.id.S);
+       
+      })
+      .catch((err) => {
+        
+      });
+  };
+
+  const handlefollow = () => {
+    axios
+      .put(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "user/" +
+          sessionStorage.getItem("user_Id") +
+          "/follow/" +
+          item?.item?.id,
+        { name: item?.item?.name }
+      )
+      .then((value) => {
+        call_api_get_user_info()
+        setFav(!fav);
+        handleClose();
+      })
+      .catch((err) => {});
+  };
+  const handleUnfollow = () => {
+    axios
+      .put(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "user/" +
+          sessionStorage.getItem("user_Id") +
+          "/unfollow/" +
+          item?.item?.id,
+        { name: item?.item?.name }
+      )
+      .then((value) => {
+        call_api_get_user_info()
+        setFav(!fav);
+        handleClose();
+      })
+      .catch((err) => {});
+  };
 
   return (
     <>
@@ -175,8 +192,7 @@ export default function CardPlace() {
         <DialogActions>
           <Button
             onClick={() => {
-              setFav(!fav);
-              handleClose();
+              !fav ? handlefollow() : handleUnfollow();
             }}
             variant="contained"
             style={styleValidate}
@@ -197,80 +213,134 @@ export default function CardPlace() {
           </Button>
         </DialogActions>
       </Dialog>
-      <FiCard className={classes.card}>
-        <FiCardMedia
-          media="picture"
-          alt="Contemplative Reptile"
-          //   image={img}
-          image={
-            "https://thumbs.dreamstime.com/b/stare-de-france-stadium-official-stadium-french-national-football-team-56956107.jpg"
+      <Card sx={{ maxWidth: 345 }}>
+        <CardHeader
+          avatar={
+            <img
+              style={{
+                width: "35px",
+                height: "35px",
+                borderRadius: "100%",
+              }}
+              src={item?.item?.profile_image}
+              alt="webscript"
+            />
           }
-          title="Contemplative Reptile"
+          // action={
+          //   <IconButton aria-label="settings">
+          //     <MoreVertIcon />
+          //   </IconButton>
+          // }
+          title={item?.item?.name}
+          subheader={format(
+            new Date(item?.item?.created_on),
+            "dd/MM/yyyy HH:mm"
+          )}
         />
-        <FiCardContent className={classes.fiCardContent}>
-          <br />
-          <br />
-
-          {/* <Typography
-              variant="body2"
-              className={classes.fiCardContentTextSecondary}
-              component="p"
-            >
-              Lizards are a widespread group of squamate reptiles, with over
-              6,000 species, ranging across all continents except Antarctica
-            </Typography> */}
-        </FiCardContent>
-        <FiCardActions className={classes.fiCardContentbottom}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyItems: "rows",
-              width: "600px",
-              alignItems: "flex-end",
-              alignItems: "center"
+        <br />
+        <CardMedia
+          component="img"
+          height="160"
+          image={item?.item?.banner_image}
+          alt="Paella dish"
+        />
+        <CardContent>
+          <Typography variant="body2" color="text.secondary">
+            {item?.item?.description}
+          </Typography>
+        </CardContent>
+        <CardActions disableSpacing>
+          <IconButton
+            sx={{ flexShrink: 1 }}
+            onClick={() => {
+              // setFav(!fav);
+              inputRef.current.focus();
+              handleOpen();
             }}
           >
-            <Typography
-              gutterBottom
-              variant="subtitle2"
-              component="h2"
-              sx={{ width: "100%" }}
-            >
-              Stade de France
-            </Typography>
-            <>
-              <IconButton
-                sx={{ flexShrink: 1 }}
-                onClick={() => {
-                  // setFav(!fav);
-                  inputRef.current.focus();
-                  handleOpen();
+            {fav ? (
+              <StarIcon ref={inputRef} sx={{ color: "gold" }} />
+            ) : (
+              <StarOutlineIcon ref={inputRef} />
+            )}
+          </IconButton>
+          <ExpandMore
+            expand={expanded}
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label="show more"
+          >
+            <ExpandMoreIcon />
+          </ExpandMore>
+
+          <Button
+            size="small"
+            variant="contained"
+            sx={styleValidate}
+            onClick={() => {
+              setFav(!fav);
+              history.push("/product");
+            }}
+            // href="https://odre.opendatasoft.com/explore/dataset/bornes-irve/map/?disjunctive.region&disjunctive.departement&refine.departement=Paris&location=15,48.88233,2.33646&basemap=jawg.light"
+          >
+            Join
+          </Button>
+        </CardActions>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <CardContent>
+            <Divider>
+              <Chip
+                label="SDG's"
+                size="small"
+                sx={{
+                  backgroundColor: "#08089C",
+                  color: "#ffff",
                 }}
-              >
-                {fav ? (
-                  <StarIcon ref={inputRef} sx={{ color: "gold" }} />
-                ) : (
-                  <StarOutlineIcon ref={inputRef} />
-                )}
-              </IconButton>
-              <Box sx={{ flexShrink: 1}}>
-                <Button
-                  size="small"
-                  variant="contained"
-                  sx={styleValidate}
-                  onClick={() => {
-                    setFav(!fav);
-                    history.push('/product')
-                  }}
-                  // href="https://odre.opendatasoft.com/explore/dataset/bornes-irve/map/?disjunctive.region&disjunctive.departement&refine.departement=Paris&location=15,48.88233,2.33646&basemap=jawg.light"
-                >
-                  Join
-                </Button>
-              </Box>
-            </>
-          </Box>
-        </FiCardActions>
-      </FiCard>
+              />
+            </Divider>
+            <Stack direction="row" spacing={1} sx={{ paddingY: "3%" }}>
+              {item?.item?.sdg.map((item, index) => {
+                return (
+                  <>
+                    <Chip
+                      label={item?.short}
+                      size="small"
+                      sx={{
+                        backgroundColor: item?.colorInfo?.hex,
+                        color: "#ffff",
+                      }}
+                    />
+                  </>
+                );
+              })}
+            </Stack>
+            <Divider>
+              <Chip
+                label="Activities"
+                size="small"
+                sx={{
+                  backgroundColor: "#08089C",
+                  color: "#ffff",
+                }}
+              />
+            </Divider>
+            <Stack direction="row" spacing={1} sx={{ paddingY: "3%" }}>
+              {item?.item?.activity.map((item, index) => {
+                return (
+                  <>
+                    <Chip
+                      label={item?.label}
+                      size="small"
+                      color="success"
+                      variant="outlined"
+                    />
+                  </>
+                );
+              })}
+            </Stack>
+          </CardContent>
+        </Collapse>
+      </Card>
     </>
   );
 }
