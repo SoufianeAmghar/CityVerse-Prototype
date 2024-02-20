@@ -47,7 +47,7 @@ class Place(Resource):
     @api.doc('get a association')
     def get(self, association_id):
         """Get a association given its identifier"""
-        data = request.headers.get('User-Agent')
+        data = request.headers.get('UserAgent')
         association = get_a_association(association_id,data) 
         if not association:
             api.abort(404)
