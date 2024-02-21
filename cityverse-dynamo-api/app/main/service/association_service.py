@@ -244,7 +244,7 @@ def edit_association(association_id, data):
         }, 401
     
 def create_post(data,image_files,video_files):
-        document = Document(__TABLE_NAME__='Post', __BUCKET_NAME__='cityverse-videos',
+        document = Document(__TABLE_NAME__='Posts', __BUCKET_NAME__='cityverse-videos',
                             __S3_OBJECT_PREFIX__='media-posts/')
 
         image_urls = []
@@ -289,10 +289,9 @@ def create_post(data,image_files,video_files):
             'creator_id': data['creator_id'],
             'created_on': datetime.utcnow().isoformat(),
             'modified_on': datetime.utcnow().isoformat(),
-            'links': image_urls + video_urls,
+            'links': image_urls + video_urls if image_urls or video_urls else [],
             'description': data.get('description', []),
-            'created_by': data['created_by'],
-            'modified_by': data['modified_by'],
+            'modified_by': "",
             'reactions': reactions_data,
             'comments': comments_data
         }
