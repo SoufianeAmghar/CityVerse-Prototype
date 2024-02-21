@@ -272,7 +272,7 @@ def create_post(data,image_files,video_files):
                   else:
                       return {
                 'status': 'fail',
-                'message': 'Failed to upload an image to S3.',
+                'message': 'Failed to upload a video to S3.',
             }, 500
 
         # Reactions handling       
