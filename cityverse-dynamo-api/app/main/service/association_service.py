@@ -287,10 +287,11 @@ def create_post(data,image_files,video_files):
         post_item = {
             'id': generate_id(),
             'creator_id': data['creator_id'],
+            'created_by': data['created_by'],
             'created_on': datetime.utcnow().isoformat(),
             'modified_on': datetime.utcnow().isoformat(),
             'links': image_urls + video_urls if image_urls or video_urls else [],
-            'description': data.get('description', []),
+            'description': data['description'],
             'modified_by': "",
             'reactions': reactions_data,
             'comments': comments_data
