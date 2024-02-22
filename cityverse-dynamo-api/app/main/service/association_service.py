@@ -202,7 +202,7 @@ def create_association(data, banner_image, profile_image):
         }, 500
 
 
-def delete_association(association_id, data):
+def delete_association(association_id):
     document = Document(__TABLE_NAME__='Association')
 
     try:
