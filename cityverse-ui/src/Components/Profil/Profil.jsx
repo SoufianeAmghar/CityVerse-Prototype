@@ -143,6 +143,7 @@ export default function Profile() {
   const dispatch = useDispatch();
   const history = useHistory();
   const [value, setValue] = React.useState(0);
+  const [feed, setfeed] = useState([]);
   const imageProfile = useSelector(
     (state) => state.FileUploadReducer?.imageProfile
   );
@@ -281,8 +282,26 @@ export default function Profile() {
     setOpenStepper(false);
   };
 
+
+  const call_api_get_feed_by_id = (id, n) => {
+    const headers = {
+      UserAgent : sessionStorage.getItem("user_Id"),
+    };
+    axios
+      .get(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "feed/",
+        { headers }
+      )
+      .then((value) => {
+        setfeed(value?.data)     
+      })
+      .catch((err) => {});
+  };
+
+
   useEffect(() => {
     call_api_get_user_info();
+    call_api_get_feed_by_id();
     if (
       !(
         imageProfile !==
@@ -1280,18 +1299,6 @@ export default function Profile() {
                                       marginRight: "1%",
                                     }}
                                   >
-                                    {/* <p
-                                      style={{
-                                        color: "#000",
-                                        fontFamily: "Inter",
-                                        fontSize: "25px",
-                                        fontStyle: "normal",
-                                        fontWeight: "700",
-                                        lineHeight: "normal",
-                                      }}
-                                    >
-                                      N
-                                    </p> */}
                                     <img
                                       style={{
                                         width: "35px",
@@ -1504,7 +1511,6 @@ export default function Profile() {
                           </>
                         );
                       })}
-
                       <br />
                     </Grid>
                   </Suspense>
@@ -2419,4 +2425,275 @@ function HorizontalNonLinearStepper() {
       </div>
     </Box>
   );
+}
+
+
+function Feeds(item , index) {
+
+  const imageProfile = useSelector(
+    (state) => state.FileUploadReducer?.imageProfile
+  );
+
+  const call_api_get_association_by_id = (id, n) => {
+    const headers = {
+      UserAgent: n,
+    };
+    axios
+      .get(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "association/" + id,
+        { headers }
+      )
+      .then((value) => {
+        console.log("association", value?.data);
+      })
+      .catch((err) => {});
+  };
+
+
+  return (
+    <>
+    <Card key={index}>
+      <Grid
+        item
+        xs={12}
+        sx={{
+          display: "flex",
+          padding: "32px",
+          flexDirection: "column",
+          gap: "24px",
+          alignSelf: "stretch",
+          background: "#F1FBEC",
+        }}
+      >
+        <Box
+          sx={{
+            marginLeft: "7%",
+            display: "flex",
+            flexDirection: "rows",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              width: "42px",
+              height: "42px",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "10px",
+              border: "3px solid #000",
+              background: "#FFF",
+              marginRight: "1%",
+            }}
+          >
+            <img
+              style={{
+                width: "35px",
+                height: "35px",
+                borderRadius: "100%",
+              }}
+              src={item?.profile_image}
+              alt="webscript"
+            />
+          </div>
+          <div
+            style={{
+              //display: "flex",
+              width: "100%",
+              height: "40px",
+              // justifyContent: "center",
+              // alignItems: "center",
+              //flexDirection: "rows",
+            }}
+          >
+            <Typography
+              gutterBottoms
+              variant="subtitle1"
+              component="div"
+              style={{ paddingLeft: "1%" }}
+            >
+              {item?.name}
+            </Typography>
+            <Typography
+              variant="subtitle2"
+              color="text.secondary"
+              sx={{ paddingLeft: "1%" }}
+            >
+              {format(
+                new Date(item?.created_on),
+                "dd/MM/yyyy HH:mm"
+              )}
+            </Typography>
+          </div>
+        </Box>
+      </Grid>
+      <Grid
+        item
+        xs={12}
+        sx={{
+          display: "flex",
+          paddingX: "32px",
+          flexDirection: "column",
+          gap: "24px",
+          alignSelf: "stretch",
+          background: "#F1FBEC",
+        }}
+      >
+        <p
+          style={{
+            marginLeft: "7%",
+          }}
+        >
+          🌟 Join us in making a difference in Paris! 🌟
+          <br />
+          <br />
+          We're thrilled to announce our latest
+          initiative to support those in need right here
+          in Paris. 💖 Our association is dedicated to
+          giving back to our community, and we need YOUR
+          help to make it happen! 🤝 Whether it's food,
+          clothing, or other essentials, every donation
+          counts and makes a real impact on the lives of
+          those less fortunate. Together, we can spread
+          kindness and compassion throughout our city.
+          <br />
+          <br />
+          ✨ Let's come together and make a positive
+          difference in the lives of others. Share the
+          love, spread the word, and let's make Paris an
+          even brighter and more supportive community
+          for all! <br />
+          <br /> #DonationDrive #ParisCares
+          #CommunitySupport
+        </p>
+      </Grid>
+      <Grid
+        item
+        xs={12}
+        sx={{
+          display: "flex",
+          paddingX: "32px",
+          paddingTop: "3%",
+          flexDirection: "column",
+          gap: "24px",
+          alignSelf: "stretch",
+          background: "#F1FBEC",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            alignSelf: "stretch",
+            marginLeft: "7%",
+            flexDirection: "rows",
+          }}
+        >
+          <div style={{ display: "flex" }}>
+            <img
+              src={require("../../Asset/fav.png")}
+              style={{
+                width: "30px",
+                height: "30px",
+                marginTop: "5%",
+                marginBottom: "5%",
+                marginLeft: "4%",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "6px",
+                background: "#fff",
+                padding: "6%",
+                borderTop: "2px solid #000",
+                boxShadow: "0px -7px 0px 0px #A9FF7F",
+              }}
+            />
+            <Typography
+              gutterBottom
+              variant="h5"
+              component="div"
+              style={{
+                paddingLeft: "4%",
+                paddingTop: "4%",
+              }}
+            >
+              18{" "}
+            </Typography>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "16px",
+            }}
+          >
+            <div style={{ display: "flex" }}>
+              <FavoriteBorderOutlinedIcon /> 18 J'aime
+            </div>{" "}
+            <div style={{ display: "flex" }}>
+              <ModeCommentOutlinedIcon /> 1 Commentaires
+            </div>
+            <div style={{ display: "flex" }}>
+              <TurnRightOutlinedIcon /> 1 Partage
+            </div>
+          </div>
+        </Box>
+        <Box
+          sx={{
+            marginLeft: "10%",
+            display: "flex",
+            flexDirection: "rows",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              width: "42px",
+              height: "42px",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "10px",
+              border: "3px solid #000",
+              background: "#FFF",
+              marginRight: "3%",
+            }}
+          >
+            <img
+              style={{
+                width: "35px",
+                height: "35px",
+                borderRadius: "100%",
+              }}
+              src={imageProfile}
+              alt="webscript"
+            />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              width: "80%",
+              height: "40px",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <TextField
+              id="outlined-basic"
+              label="Rédigez votre recommandation"
+              variant="outlined"
+              fullWidth
+              InputLabelProps={{
+                style: {
+                  fontStyle: "italic",
+                  borderRadius: "50px",
+                },
+              }}
+            />
+          </div>
+        </Box>
+        <br />
+      </Grid>
+    </Card>
+    <br />
+  </>
+  )
 }

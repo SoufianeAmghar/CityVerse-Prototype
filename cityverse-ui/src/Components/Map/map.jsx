@@ -103,6 +103,8 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import InputAdornment from "@mui/material/InputAdornment";
+import ViewInArIcon from "@mui/icons-material/ViewInAr";
+import UnityScene from "./webScene";
 
 const styleValidate = {
   background:
@@ -139,6 +141,7 @@ export default function MapCart() {
     (state) => state.FileUploadReducer?.imageProfile
   );
   const goals = useSelector((state) => state.ProfileReducer?.goals);
+  const Activity = useSelector((state) => state.AssociationReducer?.activity);
   // const [association, setAssociation] = useState([])
   const [openModal, setOpenModal] = useState(false);
   const [openVelo, setOpenVelo] = useState(false);
@@ -151,6 +154,7 @@ export default function MapCart() {
   const [selectedGoals, setSelectedGoals] = useState([]);
   const [selectedActivities, setSelectedActivities] = useState([]);
   const [selectedAssocition, setSelectedAssociation] = useState([]);
+  const [switch3d, setSwitch3d] = useState(false);
   function handleSelectedGoals(arr, str) {
     const index = arr.indexOf(str);
     if (index !== -1) {
@@ -214,8 +218,14 @@ export default function MapCart() {
         headers,
       })
       .then((value) => {
-        console.log('test',convertStringArrayToNumberArray([value?.data?.data?.address_coordinates?.M?.latitude?.S, value?.data?.data?.address_coordinates?.M?.longitude?.S]))
-       
+        console.log(
+          "test",
+          convertStringArrayToNumberArray([
+            value?.data?.data?.address_coordinates?.M?.latitude?.S,
+            value?.data?.data?.address_coordinates?.M?.longitude?.S,
+          ])
+        );
+
         if (
           value?.data?.data?.address_coordinates?.L?.length === 0 &&
           value?.data?.data?.address?.S === ""
@@ -224,18 +234,23 @@ export default function MapCart() {
           dispatch({
             type: "Address_coordinate",
             address_coordinate: [],
-          });  
+          });
         } else {
-          if(value?.data?.data?.address_coordinates?.M?.latitude?.S !== undefined && value?.data?.data?.address_coordinates?.M?.longitude?.S !== undefined ) {
+          if (
+            value?.data?.data?.address_coordinates?.M?.latitude?.S !==
+              undefined &&
+            value?.data?.data?.address_coordinates?.M?.longitude?.S !==
+              undefined
+          ) {
             dispatch({
               type: "Address_coordinate",
-              address_coordinate: convertStringArrayToNumberArray([value?.data?.data?.address_coordinates?.M?.latitude?.S, value?.data?.data?.address_coordinates?.M?.longitude?.S]),
-            });    
-
+              address_coordinate: convertStringArrayToNumberArray([
+                value?.data?.data?.address_coordinates?.M?.latitude?.S,
+                value?.data?.data?.address_coordinates?.M?.longitude?.S,
+              ]),
+            });
           }
-          
         }
-       
         dispatch({
           type: "ImageProfile",
           imageProfile: value?.data?.data?.profile_image?.S,
@@ -626,22 +641,24 @@ export default function MapCart() {
       </>
     );
   };
-  const Activity = [
-    { label: "Arts & Culture", icon: require("../../Asset/cultureArt.png") },
-    {
-      label: "Sports",
-      icon: require("../../Asset/running.png"),
-    },
-    { label: "Social Action", icon: require("../../Asset/dish.png") },
-    {
-      label: "Recreation",
-      icon: require("../../Asset/park.png"),
-    },
-    {
-      label: "Humanitary",
-      icon: require("../../Asset/solidarity.png"),
-    },
-  ];
+
+  // const Activity = [
+  //   { label: "Arts & Culture", icon: require("../../Asset/cultureArt.png") },
+  //   {
+  //     label: "Sports",
+  //     icon: require("../../Asset/running.png"),
+  //   },
+  //   { label: "Social Action", icon: require("../../Asset/dish.png") },
+  //   {
+  //     label: "Recreation",
+  //     icon: require("../../Asset/park.png"),
+  //   },
+  //   {
+  //     label: "Humanitary",
+  //     icon: require("../../Asset/solidarity.png"),
+  //   },
+  // ];
+
   function filterArrayOfObjects(
     association,
     selectedGoals,
@@ -1091,6 +1108,19 @@ export default function MapCart() {
                 </MenuItem>
               </Menu>
             </Box>
+            <div className="edit-vr-button">
+              <Box>
+                <Tooltip title="3D" placement="left-start">
+                  <IconButton
+                    onClick={() => {
+                      setSwitch3d(!switch3d);
+                    }}
+                  >
+                    <ViewInArIcon fontSize="large" />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            </div>
             {/* <Box>
             <Button
               variant="contained"
@@ -1113,142 +1143,147 @@ export default function MapCart() {
             </Button>
           </Box> */}
             <br />
-            <MapContainer
-              // whenReady={setMap}
-              center={[48.85837, 2.294481]}
-              zoom={12}
-              maxZoom={20}
-              scrollWheelZoom={true}
-              style={{ height: "100vh", width: "100%", borderRadius: "2%" }}
-            >
-              <MarkerClusterGroup
-                chunkedLoading
-                iconCreateFunction={createClusterCustomIcon}
-                showCoverageOnHover={false}
+            {switch3d ? (
+              <UnityScene />
+            ) : (
+              <MapContainer
+                // whenReady={setMap}
+                center={[48.85837, 2.294481]}
+                zoom={12}
+                maxZoom={20}
+                scrollWheelZoom={true}
+                style={{ height: "100vh", width: "100%", borderRadius: "2%" }}
               >
-                {address_coordinate.length !== 0 && (
-                  <Marker
-                    position={convertStringArrayToNumberArray(
-                      address_coordinate
-                    )}
-                    icon={iconHome}
-                  >
+                <MarkerClusterGroup
+                  chunkedLoading
+                  iconCreateFunction={createClusterCustomIcon}
+                  showCoverageOnHover={false}
+                >
+                  {address_coordinate.length !== 0 && (
+                    <Marker
+                      position={convertStringArrayToNumberArray(
+                        address_coordinate
+                      )}
+                      icon={iconHome}
+                    >
+                      <Popup className="popupmeta">
+                        <CardHome />
+                      </Popup>
+                    </Marker>
+                  )}
+
+                  <Marker position={[48.85837, 2.294481]} icon={iconMetaVerse}>
                     <Popup className="popupmeta">
-                      <CardHome />
+                      <CardMetaVerse />
                     </Popup>
                   </Marker>
-                )}
+                  {/* <LocationMarker /> */}
+                  <NearestMarkerBike />
+                  <NearestMarkerEvent />
+                  {openVelo &&
+                    dataVélo &&
+                    dataVélo?.map((item, index) => (
+                      <Marker
+                        key={index}
+                        position={[
+                          item.coordonnees_geo.lat,
+                          item.coordonnees_geo.lon,
+                        ]}
+                        icon={svgIconBike}
+                      >
+                        <Popup className="popup">
+                          <CardVelo item={item} />
+                        </Popup>
+                      </Marker>
+                    ))}
+                  {openStation &&
+                    dataStation?.map((item, index) => (
+                      <>
+                        {" "}
+                        {item?.geo_point_borne !== null &&
+                        item?.geo_point_borne !== undefined ? (
+                          <Marker
+                            key={index}
+                            position={[
+                              item.geo_point_borne.lat,
+                              item.geo_point_borne.lon,
+                            ]}
+                            icon={iconWifi}
+                          >
+                            <Popup className="popup">
+                              <CardWifi key={index} item={item} />
+                            </Popup>
+                          </Marker>
+                        ) : (
+                          <></>
+                        )}
+                      </>
+                    ))}
+                  {openEvent &&
+                    dataEvent &&
+                    dataEvent?.map((item, index) => (
+                      <>
+                        {item?.lat_lon !== null &&
+                        item?.lat_lon !== undefined ? (
+                          <Marker
+                            key={index}
+                            position={[item.lat_lon.lat, item.lat_lon.lon]}
+                            icon={iconEvent}
+                          >
+                            <Popup className="popup">
+                              <CardEvent key={index} />
+                            </Popup>
+                          </Marker>
+                        ) : (
+                          <></>
+                        )}
+                      </>
+                    ))}
+                  {openMetaVerse &&
+                    dataEvent &&
+                    dataEvent?.map((item, index) => (
+                      <>
+                        {item?.lat_lon !== null &&
+                        item?.lat_lon !== undefined ? (
+                          <Marker
+                            key={index}
+                            position={[item.lat_lon.lat, item.lat_lon.lon]}
+                            icon={iconMetaVerse}
+                          >
+                            <Popup className="popup">
+                              <CardEvent key={index} />
+                            </Popup>
+                          </Marker>
+                        ) : (
+                          <></>
+                        )}
+                      </>
+                    ))}
 
-                <Marker position={[48.85837, 2.294481]} icon={iconMetaVerse}>
-                  <Popup className="popupmeta">
-                    <CardMetaVerse />
-                  </Popup>
-                </Marker>
-                {/* <LocationMarker /> */}
-                <NearestMarkerBike />
-                <NearestMarkerEvent />
-                {openVelo &&
-                  dataVélo &&
-                  dataVélo?.map((item, index) => (
-                    <Marker
-                      key={index}
-                      position={[
-                        item.coordonnees_geo.lat,
-                        item.coordonnees_geo.lon,
-                      ]}
-                      icon={svgIconBike}
-                    >
-                      <Popup className="popup">
-                        <CardVelo item={item} />
-                      </Popup>
-                    </Marker>
-                  ))}
-                {openStation &&
-                  dataStation?.map((item, index) => (
-                    <>
-                      {" "}
-                      {item?.geo_point_borne !== null &&
-                      item?.geo_point_borne !== undefined ? (
-                        <Marker
-                          key={index}
-                          position={[
-                            item.geo_point_borne.lat,
-                            item.geo_point_borne.lon,
-                          ]}
-                          icon={iconWifi}
-                        >
-                          <Popup className="popup">
-                            <CardWifi key={index} item={item} />
-                          </Popup>
-                        </Marker>
-                      ) : (
-                        <></>
-                      )}
-                    </>
-                  ))}
-                {openEvent &&
-                  dataEvent &&
-                  dataEvent?.map((item, index) => (
-                    <>
-                      {item?.lat_lon !== null && item?.lat_lon !== undefined ? (
-                        <Marker
-                          key={index}
-                          position={[item.lat_lon.lat, item.lat_lon.lon]}
-                          icon={iconEvent}
-                        >
-                          <Popup className="popup">
-                            <CardEvent key={index} />
-                          </Popup>
-                        </Marker>
-                      ) : (
-                        <></>
-                      )}
-                    </>
-                  ))}
-                {openMetaVerse &&
-                  dataEvent &&
-                  dataEvent?.map((item, index) => (
-                    <>
-                      {item?.lat_lon !== null && item?.lat_lon !== undefined ? (
-                        <Marker
-                          key={index}
-                          position={[item.lat_lon.lat, item.lat_lon.lon]}
-                          icon={iconMetaVerse}
-                        >
-                          <Popup className="popup">
-                            <CardEvent key={index} />
-                          </Popup>
-                        </Marker>
-                      ) : (
-                        <></>
-                      )}
-                    </>
-                  ))}
-
-                {openPointInterset &&
-                  selectedAssocition?.map((item, index) => (
-                    <Marker
-                      key={index}
-                      position={
-                        Array.isArray(item?.siege_coor)
-                          ? [0, 0]
-                          : [
-                              item?.siege_coordinates[0] !== "undefined"
-                                ? parseFloat(item?.siege_coordinates[0])
-                                : 0,
-                              item?.siege_coordinates[0] !== "undefined"
-                                ? parseFloat(item?.siege_coordinates[1])
-                                : 0,
-                            ]
-                      }
-                      icon={iconPointOfInterset}
-                    >
-                      <Popup className="popup">
-                        <CardPlace item={item} />
-                      </Popup>
-                    </Marker>
-                  ))}
-                {/* {openPointInterset &&
+                  {openPointInterset &&
+                    selectedAssocition?.map((item, index) => (
+                      <Marker
+                        key={index}
+                        position={
+                          Array.isArray(item?.siege_coor)
+                            ? [0, 0]
+                            : [
+                                item?.siege_coordinates[0] !== "undefined"
+                                  ? parseFloat(item?.siege_coordinates[0])
+                                  : 0,
+                                item?.siege_coordinates[0] !== "undefined"
+                                  ? parseFloat(item?.siege_coordinates[1])
+                                  : 0,
+                              ]
+                        }
+                        icon={iconPointOfInterset}
+                      >
+                        <Popup className="popup">
+                          <CardPlace item={item} />
+                        </Popup>
+                      </Marker>
+                    ))}
+                  {/* {openPointInterset &&
                   association?.map(
                     (item) =>
                       item?.activity?.find(
@@ -1277,114 +1312,118 @@ export default function MapCart() {
                         </Marker>
                       )
                   )} */}
-                {dataRéseau_cyclable.features
-                  .filter(function (feature) {
-                    return feature.geometry.type == "LineString";
-                  })
-                  .map(function (feature) {
-                    var coordinates = feature.geometry.coordinates;
-                    coordinates.forEach(function (coordinate) {
-                      coordinate.reverse();
-                    });
-                    return coordinates;
-                  })
-                  ?.map((item, id) => {
-                    return (
-                      <Polyline key={id} positions={item} color={"red"}>
-                        <Popup className="popupHome">
-                          <p style={{ color: "blue" }}>
-                            {
-                              dataRéseau_cyclable?.features[id]?.properties
-                                ?.voie
-                            }
-                          </p>
-                          <p>
-                            status:{" "}
-                            <span style={{ color: "blue" }}>
+                  {dataRéseau_cyclable.features
+                    .filter(function (feature) {
+                      return feature.geometry.type == "LineString";
+                    })
+                    .map(function (feature) {
+                      var coordinates = feature.geometry.coordinates;
+                      coordinates.forEach(function (coordinate) {
+                        coordinate.reverse();
+                      });
+                      return coordinates;
+                    })
+                    ?.map((item, id) => {
+                      return (
+                        <Polyline key={id} positions={item} color={"red"}>
+                          <Popup className="popupHome">
+                            <p style={{ color: "blue" }}>
                               {
                                 dataRéseau_cyclable?.features[id]?.properties
-                                  ?.statut
+                                  ?.voie
                               }
-                            </span>
-                          </p>
-                          <p>
-                            Longeur:{" "}
-                            <span style={{ color: "blue" }}>
-                              {
-                                dataRéseau_cyclable?.features[id]?.properties
-                                  ?.length
-                              }{" "}
-                              KM
-                            </span>
-                          </p>
-                          <p>
-                            Typologie simple:{" "}
-                            <span style={{ color: "blue" }}>
-                              {" "}
-                              {
-                                dataRéseau_cyclable?.features[id]?.properties
-                                  ?.typologie_simple
-                              }
-                            </span>
-                          </p>
-                        </Popup>
-                      </Polyline>
-                    );
-                  })}
-                {/* <TerrassesAutorisation data={dataterrasses} /> */}
-                {dataterrasses.features
-                  .filter(function (feature) {
-                    return feature.geometry.type == "Point";
-                  })
-                  .map(function (feature) {
-                    var coordinates = feature.geometry.coordinates.reverse();
-                    return coordinates;
-                  })
-                  ?.map((item, id) => {
-                    return (
-                      <Marker key={id} position={item} icon={iconMarket}>
-                        <Popup className="popupmeta">
-                          <p style={{ color: "blue" }}>
-                            <span style={{ color: "blue" }}>
-                              {" "}
-                              {
-                                dataterrasses?.features[id]?.properties
-                                  ?.nom_societe
-                              }
-                            </span>
-                          </p>
-                          <p>
-                            adress:
-                            <span style={{ color: "blue" }}>
-                              {" "}
-                              {dataterrasses?.features[id]?.properties?.adresse}
-                            </span>
-                          </p>
-                          <p>
-                            periode d'installation:{" "}
-                            <span style={{ color: "blue" }}>
-                              {" "}
-                              {
-                                dataterrasses?.features[id]?.properties
-                                  ?.periode_installation
-                              }
-                            </span>
-                          </p>
-                        </Popup>
-                      </Marker>
-                    );
-                  })}
-              </MarkerClusterGroup>
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                maxNativeZoom={19}
-                minZoom={0}
-                maxZoom={22}
-              />
+                            </p>
+                            <p>
+                              status:{" "}
+                              <span style={{ color: "blue" }}>
+                                {
+                                  dataRéseau_cyclable?.features[id]?.properties
+                                    ?.statut
+                                }
+                              </span>
+                            </p>
+                            <p>
+                              Longeur:{" "}
+                              <span style={{ color: "blue" }}>
+                                {
+                                  dataRéseau_cyclable?.features[id]?.properties
+                                    ?.length
+                                }{" "}
+                                KM
+                              </span>
+                            </p>
+                            <p>
+                              Typologie simple:{" "}
+                              <span style={{ color: "blue" }}>
+                                {" "}
+                                {
+                                  dataRéseau_cyclable?.features[id]?.properties
+                                    ?.typologie_simple
+                                }
+                              </span>
+                            </p>
+                          </Popup>
+                        </Polyline>
+                      );
+                    })}
+                  {/* <TerrassesAutorisation data={dataterrasses} /> */}
+                  {dataterrasses.features
+                    .filter(function (feature) {
+                      return feature.geometry.type == "Point";
+                    })
+                    .map(function (feature) {
+                      var coordinates = feature.geometry.coordinates.reverse();
+                      return coordinates;
+                    })
+                    ?.map((item, id) => {
+                      return (
+                        <Marker key={id} position={item} icon={iconMarket}>
+                          <Popup className="popupmeta">
+                            <p style={{ color: "blue" }}>
+                              <span style={{ color: "blue" }}>
+                                {" "}
+                                {
+                                  dataterrasses?.features[id]?.properties
+                                    ?.nom_societe
+                                }
+                              </span>
+                            </p>
+                            <p>
+                              adress:
+                              <span style={{ color: "blue" }}>
+                                {" "}
+                                {
+                                  dataterrasses?.features[id]?.properties
+                                    ?.adresse
+                                }
+                              </span>
+                            </p>
+                            <p>
+                              periode d'installation:{" "}
+                              <span style={{ color: "blue" }}>
+                                {" "}
+                                {
+                                  dataterrasses?.features[id]?.properties
+                                    ?.periode_installation
+                                }
+                              </span>
+                            </p>
+                          </Popup>
+                        </Marker>
+                      );
+                    })}
+                </MarkerClusterGroup>
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  maxNativeZoom={19}
+                  minZoom={0}
+                  maxZoom={22}
+                />
 
-              <LocateZone />
-            </MapContainer>
+                <LocateZone />
+              </MapContainer>
+            )}
           </Container>
           <div className="edit-location-button">
             <Accordion
