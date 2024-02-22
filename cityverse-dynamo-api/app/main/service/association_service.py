@@ -5,6 +5,7 @@ from datetime import datetime
 import logging
 from app.main.util.strings import generate_id
 from geopy.geocoders import Nominatim
+import traceback
 import re
 
 # Set up logging configuration
@@ -22,13 +23,34 @@ def get_all_associations():
 
     return associations
 
+def get_association_posts(association_id):
+    document = Document(__TABLE_NAME__='Posts')
 
-def get_a_association(association_id,data):
+    # Query all products
+    posts = document.get_all()
+
+    if posts:
+        posts_from_association = [
+            post for post in posts if association_id in post['creator_id']]
+        if posts_from_association:
+            return posts_from_association
+        else:
+            return {
+            'status': 'fail',
+            'message': 'Association has no posts',
+        }, 500
+
+    else:
+        return {
+            'status': 'fail',
+            'message': 'Posts not found',
+        }, 500
+
+
+def get_a_association(association_id):
     document = Document(__TABLE_NAME__='Association')
 
-    name = data
-
-    association = document.get_item(association_id,name)
+    association = document.get_item(association_id)
 
 
     if association is None:
@@ -153,14 +175,14 @@ def create_association(data, banner_image, profile_image):
         'user_id': data['created_by'],
         'activity': data['activity'],
         'name': data['name'],
-        'sdg': data['sdg'],
+        'sdg': data.get('sdg', ""),
         'rna': data['rna'],
-        'description': data['description'],
+        'description': data.get('description',""),
         'siege': valid_siege,
-        'siege_coordinates': data['siege_coordinates'],
-        'links': data['social_links'],
-        'banner_image': banner_image_url,
-        'profile_image': profile_image_url
+        'siege_coordinates': data.get('siege_coordinates',[]),
+        'links': data.get('social_links',[]),
+        'banner_image': banner_image_url if banner_image_url else "",
+        'profile_image': profile_image_url if profile_image else ""
     }
 
     try:
@@ -173,6 +195,7 @@ def create_association(data, banner_image, profile_image):
             'message': 'Association successfully created.',
         }, 201
     except Exception as e:
+        traceback.print_exc()
         return {
             'status': 'fail',
             'message': f'Failed to create association: {str(e)}'
@@ -184,14 +207,14 @@ def delete_association(association_id, data):
 
     try:
         # Your existing code to get the association
-        place = get_a_association(association_id, data)
+        place = get_a_association(association_id)
 
         if place:
             # Your existing code to remove user place
             remove_user_place(place['user_id'], association_id)
 
             # Your existing code to perform deletion
-            document.delete(association_id, data.get('name'))
+            document.delete(association_id)
 
             return {
                 'status': 'success',

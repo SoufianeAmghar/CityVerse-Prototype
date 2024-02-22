@@ -13,7 +13,8 @@ from ..service.association_service import (
     get_associations_by_sdg,
     check_siege_exists,
     verify_rna_number,
-    create_post
+    create_post,
+    get_association_posts
 )
 
 api = AssociationDto.api
@@ -47,8 +48,7 @@ class Place(Resource):
     @api.doc('get a association')
     def get(self, association_id):
         """Get a association given its identifier"""
-        data = request.headers.get('UserAgent')
-        association = get_a_association(association_id,data) 
+        association = get_a_association(association_id) 
         if not association:
             api.abort(404)
         else:
@@ -57,9 +57,8 @@ class Place(Resource):
     @api.doc('Delete Association')
     def delete(self, association_id):
         """Delete a association given its identifier"""
-        data = request.json
         
-        return delete_association(association_id,data)  
+        return delete_association(association_id)  
 
     @api.response(201, 'Place successfully updated.')
     @api.doc('update association')
@@ -106,4 +105,13 @@ class Post(Resource):
         img_files = request.files.getlist('img')
         video_files = request.files.getlist('video')
         return create_post( data,img_files, video_files)
+    
+@api.route('/posts/<association_id>')
+class AssociationPosts(Resource):
+    @api.expect(_post, validate=True)
+    @api.doc('Get all association posts')
+    def get(self,association_id):
+        """Get all association posts"""
+        return get_association_posts(association_id)
+
 
