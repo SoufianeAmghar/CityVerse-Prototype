@@ -60,6 +60,8 @@ import PermMediaIcon from "@mui/icons-material/PermMedia";
 import PermMediaOutlinedIcon from "@mui/icons-material/PermMediaOutlined";
 import format from "date-fns/format";
 
+import ImageListItem from "@mui/material/ImageListItem";
+
 const AntTabs = styled(Tabs)({
   "& .MuiTabs-indicator": {
     backgroundColor: "#0000",
@@ -367,10 +369,10 @@ export default function Product() {
       const dateB = new Date(b.created_on);
       return dateB - dateA;
     });
-  
+
     return array;
   }
-  
+
   return (
     <div style={{}}>
       {/* add new photos */}
@@ -1188,6 +1190,39 @@ export default function Product() {
                                   {item?.description}
                                 </Typography>
                                 {/* <ListImage itemData={itemData} /> */}
+                                <Grid
+                                  item
+                                  xs={12}
+                                  sx={{
+                                    display: "flex",
+                                    paddingX: "20%",
+                                    flexDirection: "column",
+                                    gap: "24px",
+                                    alignSelf: "stretch",
+                                    // background: "#F1FBEC",
+                                  }}
+                                >
+                                  {item?.links.length !== 0 && (
+                                    <ImageList
+                                      sx={{ width: "100%", height: "auto" }}
+                                      cols={2}
+                                      rowHeight={"20%"}
+                                    >
+                                      {item?.links?.reverse()?.map((i , index) => (
+                                        <ImageListItem key={index}>
+                                          <img
+                                            srcSet={`${i}`}
+                                            src={`${i}`}
+                                            width={"5%"}
+                                            height={"auto"}
+                                            alt="image"
+                                            loading="lazy"
+                                          />
+                                        </ImageListItem>
+                                      ))}
+                                    </ImageList>
+                                  )}
+                                </Grid>
                               </Box>
                             </Grid>
                           </>
