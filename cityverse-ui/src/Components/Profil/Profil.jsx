@@ -53,6 +53,13 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import FavouriteAssociation from "../Card/CardFavouriteAssociation";
+import ListImage from "../Product/listImage";
+import ImageList from "@mui/material/ImageList";
+import ImageListItem from "@mui/material/ImageListItem";
+import SendIcon from "@mui/icons-material/Send";
+import InputAdornment from "@mui/material/InputAdornment";
+import { InputLabel, OutlinedInput } from "@mui/material";
+import Popper from "@mui/material/Popper";
 
 const AntTabs = styled(Tabs)({
   "& .MuiTabs-indicator": {
@@ -142,7 +149,10 @@ export default function Profile() {
   const theme = useTheme();
   const dispatch = useDispatch();
   const history = useHistory();
+
+  const [inProgressFeeds, setInprogressFeeds] = useState(true);
   const [value, setValue] = React.useState(0);
+  const [feed, setfeed] = useState([]);
   const imageProfile = useSelector(
     (state) => state.FileUploadReducer?.imageProfile
   );
@@ -150,6 +160,7 @@ export default function Profile() {
     (state) => state.FileUploadReducer?.coverProfile
   );
   const firstname = useSelector((state) => state.ProfileReducer?.firstname);
+  const feeds = useSelector((state) => state.ProfileReducer?.feeds);
   const lastname = useSelector((state) => state.ProfileReducer?.lastname);
   const description = useSelector((state) => state.ProfileReducer?.description);
   const address = useSelector((state) => state.ProfileReducer?.address);
@@ -168,9 +179,7 @@ export default function Profile() {
   const association = useSelector(
     (state) => state.AssociationReducer?.associations
   );
-  const Following = useSelector(
-    (state) => state.ProfileReducer?.following
-  );
+  const Following = useSelector((state) => state.ProfileReducer?.following);
   const handleCoverChange = (e) => {
     const filecover = e.target.files[0];
     setSelectedImage(e.target.files[0]);
@@ -281,8 +290,41 @@ export default function Profile() {
     setOpenStepper(false);
   };
 
+  function orderByDate(array) {
+    // Convert object to array of key-value pairs
+    array.sort((a, b) => {
+      const dateA = new Date(a.created_on);
+      const dateB = new Date(b.created_on);
+      return dateB - dateA;
+    });
+
+    return array;
+  }
+
+  const call_api_get_feed_by_id = (id, n) => {
+    const headers = {
+      UserAgent: sessionStorage.getItem("user_Id"),
+    };
+    axios
+      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "feed/", {
+        headers,
+      })
+      .then((value) => {
+        setfeed(orderByDate(value?.data));
+        dispatch({
+          type: "Feeds",
+          feeds: orderByDate(value?.data),
+        });
+        setInprogressFeeds(false);
+      })
+      .catch((err) => {
+        setInprogressFeeds(false);
+      });
+  };
+
   useEffect(() => {
     call_api_get_user_info();
+    call_api_get_feed_by_id();
     if (
       !(
         imageProfile !==
@@ -1235,278 +1277,53 @@ export default function Profile() {
                       </div>
                     }
                   >
-                    <Grid
-                      container
-                      spacing={0}
-                      height="450px" // fixed the height
-                      style={{
-                        overflow: "scroll",
-                        overflowY: "scroll",
-                      }}
-                    >
-                      {association?.map((item, index) => {
-                        return (
-                          <>
-                            <Card key={index}>
-                              <Grid
-                                item
-                                xs={12}
-                                sx={{
-                                  display: "flex",
-                                  padding: "32px",
-                                  flexDirection: "column",
-                                  gap: "24px",
-                                  alignSelf: "stretch",
-                                  background: "#F1FBEC",
-                                }}
-                              >
-                                <Box
-                                  sx={{
-                                    marginLeft: "7%",
-                                    display: "flex",
-                                    flexDirection: "rows",
-                                  }}
-                                >
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      width: "42px",
-                                      height: "42px",
-                                      justifyContent: "center",
-                                      alignItems: "center",
-                                      gap: "10px",
-                                      border: "3px solid #000",
-                                      background: "#FFF",
-                                      marginRight: "1%",
-                                    }}
-                                  >
-                                    {/* <p
-                                      style={{
-                                        color: "#000",
-                                        fontFamily: "Inter",
-                                        fontSize: "25px",
-                                        fontStyle: "normal",
-                                        fontWeight: "700",
-                                        lineHeight: "normal",
-                                      }}
-                                    >
-                                      N
-                                    </p> */}
-                                    <img
-                                      style={{
-                                        width: "35px",
-                                        height: "35px",
-                                        borderRadius: "100%",
-                                      }}
-                                      src={item?.profile_image}
-                                      alt="webscript"
-                                    />
-                                  </div>
-                                  <div
-                                    style={{
-                                      //display: "flex",
-                                      width: "100%",
-                                      height: "40px",
-                                      // justifyContent: "center",
-                                      // alignItems: "center",
-                                      //flexDirection: "rows",
-                                    }}
-                                  >
-                                    <Typography
-                                      gutterBottoms
-                                      variant="subtitle1"
-                                      component="div"
-                                      style={{ paddingLeft: "1%" }}
-                                    >
-                                      {item?.name}
-                                    </Typography>
-                                    <Typography
-                                      variant="subtitle2"
-                                      color="text.secondary"
-                                      sx={{ paddingLeft: "1%" }}
-                                    >
-                                      {format(
-                                        new Date(item?.created_on),
-                                        "dd/MM/yyyy HH:mm"
-                                      )}
-                                    </Typography>
-                                  </div>
-                                </Box>
-                              </Grid>
-                              <Grid
-                                item
-                                xs={12}
-                                sx={{
-                                  display: "flex",
-                                  paddingX: "32px",
-                                  flexDirection: "column",
-                                  gap: "24px",
-                                  alignSelf: "stretch",
-                                  background: "#F1FBEC",
-                                }}
-                              >
-                                <p
-                                  style={{
-                                    marginLeft: "7%",
-                                  }}
-                                >
-                                  🌟 Join us in making a difference in Paris! 🌟
-                                  <br />
-                                  <br />
-                                  We're thrilled to announce our latest
-                                  initiative to support those in need right here
-                                  in Paris. 💖 Our association is dedicated to
-                                  giving back to our community, and we need YOUR
-                                  help to make it happen! 🤝 Whether it's food,
-                                  clothing, or other essentials, every donation
-                                  counts and makes a real impact on the lives of
-                                  those less fortunate. Together, we can spread
-                                  kindness and compassion throughout our city.
-                                  <br />
-                                  <br />
-                                  ✨ Let's come together and make a positive
-                                  difference in the lives of others. Share the
-                                  love, spread the word, and let's make Paris an
-                                  even brighter and more supportive community
-                                  for all! <br />
-                                  <br /> #DonationDrive #ParisCares
-                                  #CommunitySupport
-                                </p>
-                              </Grid>
-                              <Grid
-                                item
-                                xs={12}
-                                sx={{
-                                  display: "flex",
-                                  paddingX: "32px",
-                                  paddingTop: "3%",
-                                  flexDirection: "column",
-                                  gap: "24px",
-                                  alignSelf: "stretch",
-                                  background: "#F1FBEC",
-                                }}
-                              >
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
-                                    alignSelf: "stretch",
-                                    marginLeft: "7%",
-                                    flexDirection: "rows",
-                                  }}
-                                >
-                                  <div style={{ display: "flex" }}>
-                                    <img
-                                      src={require("../../Asset/fav.png")}
-                                      style={{
-                                        width: "30px",
-                                        height: "30px",
-                                        marginTop: "5%",
-                                        marginBottom: "5%",
-                                        marginLeft: "4%",
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        gap: "6px",
-                                        background: "#fff",
-                                        padding: "6%",
-                                        borderTop: "2px solid #000",
-                                        boxShadow: "0px -7px 0px 0px #A9FF7F",
-                                      }}
-                                    />
-                                    <Typography
-                                      gutterBottom
-                                      variant="h5"
-                                      component="div"
-                                      style={{
-                                        paddingLeft: "4%",
-                                        paddingTop: "4%",
-                                      }}
-                                    >
-                                      18{" "}
-                                    </Typography>
-                                  </div>
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      gap: "16px",
-                                    }}
-                                  >
-                                    <div style={{ display: "flex" }}>
-                                      <FavoriteBorderOutlinedIcon /> 18 J'aime
-                                    </div>{" "}
-                                    <div style={{ display: "flex" }}>
-                                      <ModeCommentOutlinedIcon /> 1 Commentaires
-                                    </div>
-                                    <div style={{ display: "flex" }}>
-                                      <TurnRightOutlinedIcon /> 1 Partage
-                                    </div>
-                                  </div>
-                                </Box>
-                                <Box
-                                  sx={{
-                                    marginLeft: "10%",
-                                    display: "flex",
-                                    flexDirection: "rows",
-                                  }}
-                                >
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      width: "42px",
-                                      height: "42px",
-                                      justifyContent: "center",
-                                      alignItems: "center",
-                                      gap: "10px",
-                                      border: "3px solid #000",
-                                      background: "#FFF",
-                                      marginRight: "3%",
-                                    }}
-                                  >
-                                    <img
-                                      style={{
-                                        width: "35px",
-                                        height: "35px",
-                                        borderRadius: "100%",
-                                      }}
-                                      src={imageProfile}
-                                      alt="webscript"
-                                    />
-                                  </div>
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      width: "80%",
-                                      height: "40px",
-                                      justifyContent: "center",
-                                      alignItems: "center",
-                                    }}
-                                  >
-                                    <TextField
-                                      id="outlined-basic"
-                                      label="Rédigez votre recommandation"
-                                      variant="outlined"
-                                      fullWidth
-                                      InputLabelProps={{
-                                        style: {
-                                          fontStyle: "italic",
-                                          borderRadius: "50px",
-                                        },
-                                      }}
-                                    />
-                                  </div>
-                                </Box>
-                                <br />
-                              </Grid>
-                            </Card>
-                            <br />
-                          </>
-                        );
-                      })}
-
-                      <br />
-                    </Grid>
+                    {inProgressFeeds ? (
+                      <>
+                        <Card
+                          style={{
+                            borderRadius: "0px",
+                            marginTop: "10px",
+                            padding: "20px",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <CircularProgress
+                            color="success"
+                            disableShrink
+                            sx={{
+                              animationDuration: "550ms",
+                            }}
+                            size={60}
+                            thickness={2}
+                          />
+                        </Card>
+                      </>
+                    ) : (
+                      <Grid
+                        container
+                        spacing={0}
+                        height="450px" // fixed the height
+                        style={{
+                          overflow: "scroll",
+                          overflowY: "scroll",
+                        }}
+                      >
+                        {feeds?.map((item, index) => {
+                          return (
+                            <>
+                              {item?.creator_id !== null &&
+                                item?.creator_id !== undefined && (
+                                  <Feeds item={item} key={index} />
+                                )}
+                              <br />
+                            </>
+                          );
+                        })}
+                        <br />
+                      </Grid>
+                    )}
                   </Suspense>
                 </TabPanel>
                 <TabPanel value={value} index={1} dir={theme.direction}>
@@ -1544,15 +1361,13 @@ export default function Profile() {
                       }}
                     >
                       <Grid item xs={12}>
-                        <Box sx={{ display: 'flex',  justifyContent: 'center'}}> 
-                        
-                        <Chip label={`Total following : ${Following?.length}`} sx={{ backgroundColor: "#08089C", color: "#FFF"}}/>
+                        <Box sx={{ display: "flex", justifyContent: "center" }}>
+                          <Chip
+                            label={`Total following : ${Following?.length}`}
+                            sx={{ backgroundColor: "#08089C", color: "#FFF" }}
+                          />
                         </Box>
-
-                       
-
-                      </Grid>
-                      {" "}
+                      </Grid>{" "}
                       {Following?.map((item, index) => {
                         return (
                           <>
@@ -2418,5 +2233,460 @@ function HorizontalNonLinearStepper() {
         )}
       </div>
     </Box>
+  );
+}
+
+function Feeds(item, key) {
+  const imageProfile = useSelector(
+    (state) => state.FileUploadReducer?.imageProfile
+  );
+  const [data, setData] = useState();
+  const [comment, setComment] = useState();
+
+  const call_api_get_association_by_id = (id) => {
+    axios
+      .get(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "association/" + id
+      )
+      .then((value) => {
+        setData(value?.data);
+      })
+      .catch((err) => {});
+  };
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (
+      item?.item?.creator_id !== null &&
+      item?.item?.creator_id !== undefined
+    ) {
+      call_api_get_association_by_id(item?.item?.creator_id);
+    }
+  }, []);
+  function orderByDate(array) {
+    // Convert object to array of key-value pairs
+    array.sort((a, b) => {
+      const dateA = new Date(a.created_on);
+      const dateB = new Date(b.created_on);
+      return dateB - dateA;
+    });
+
+    return array;
+  }
+  const call_api_get_feed_by_id = (id, n) => {
+    const headers = {
+      UserAgent: sessionStorage.getItem("user_Id"),
+    };
+    axios
+      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "feed/", {
+        headers,
+      })
+      .then((value) => {
+        dispatch({
+          type: "Feeds",
+          feeds: orderByDate(value?.data),
+        });
+      })
+      .catch((err) => {});
+  };
+
+  function addComment(id) {
+    const object = {
+      text: comment,
+    };
+    axios
+      .post(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "feed/" + id,
+        object
+      )
+      .then((value) => {
+        call_api_get_feed_by_id();
+      })
+      .catch((err) => {});
+  }
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(anchorEl ? null : event.currentTarget);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popper" : undefined;
+
+  const emojis = {
+    like: "👍",
+    love: "❤️",
+    haha: "😄",
+    wow: "😮",
+    sad: "😢",
+    angry: "😡",
+  };
+
+  return (
+    <>
+      <Card key={key} sx={{ width: "100%" }}>
+        <Grid
+          item
+          xs={12}
+          sx={{
+            display: "flex",
+            padding: "32px",
+            flexDirection: "column",
+            gap: "24px",
+            alignSelf: "stretch",
+            background: "#F1FBEC",
+          }}
+        >
+          <Box
+            sx={{
+              marginLeft: "7%",
+              display: "flex",
+              flexDirection: "rows",
+              width: "100%",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                width: "42px",
+                height: "42px",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "10px",
+                border: "3px solid #000",
+                background: "#FFF",
+                marginRight: "1%",
+              }}
+            >
+              <img
+                style={{
+                  width: "35px",
+                  height: "35px",
+                  borderRadius: "100%",
+                }}
+                src={data?.profile_image}
+                alt="webscript"
+              />
+            </div>
+            <div
+              style={{
+                //display: "flex",
+                width: "100%",
+                height: "40px",
+                // justifyContent: "center",
+                // alignItems: "center",
+                //flexDirection: "rows",
+              }}
+            >
+              <Typography
+                gutterBottoms
+                variant="subtitle1"
+                component="div"
+                style={{ paddingLeft: "1%" }}
+              >
+                {data?.name}
+              </Typography>
+              <Typography
+                variant="subtitle2"
+                color="text.secondary"
+                sx={{ paddingLeft: "1%" }}
+              >
+                {/* {format(new Date(data?.created_on), "dd/MM/yyyy HH:mm")} */}
+              </Typography>
+            </div>
+          </Box>
+        </Grid>
+        <Grid
+          item
+          xs={12}
+          sx={{
+            display: "flex",
+            paddingX: "32px",
+            flexDirection: "column",
+            gap: "24px",
+            alignSelf: "stretch",
+            background: "#F1FBEC",
+          }}
+        >
+          <p
+            style={{
+              marginLeft: "7%",
+            }}
+          >
+            {item?.item?.description}
+          </p>
+        </Grid>
+        <Grid
+          item
+          xs={12}
+          sx={{
+            display: "flex",
+            paddingX: "20%",
+            flexDirection: "column",
+            gap: "24px",
+            alignSelf: "stretch",
+            background: "#F1FBEC",
+          }}
+        >
+          {item?.item?.links.length !== 0 && (
+            <ImageList
+              sx={{ width: "60%", height: "60%", justifyContent: "center" }}
+              cols={2}
+              rowHeight={"20%"}
+            >
+              {item?.item?.links?.reverse()?.map((i) => (
+                <ImageListItem key={key}>
+                  <img
+                    srcSet={`${i}`}
+                    src={`${i}`}
+                    width={"5%"}
+                    height={"auto"}
+                    alt="image"
+                    loading="lazy"
+                  />
+                </ImageListItem>
+              ))}
+            </ImageList>
+          )}
+        </Grid>
+
+        <Grid
+          item
+          xs={12}
+          sx={{
+            display: "flex",
+            paddingX: "32px",
+            paddingTop: "3%",
+            flexDirection: "column",
+            gap: "24px",
+            alignSelf: "stretch",
+            background: "#F1FBEC",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              alignSelf: "stretch",
+              marginLeft: "7%",
+              flexDirection: "rows",
+            }}
+          >
+            <div style={{ display: "flex" }}>
+              <IconButton aria-describedby={id} onClick={handleClick}>
+                <img
+                  src={require("../../Asset/fav.png")}
+                  style={{
+                    width: "30px",
+                    height: "30px",
+                    marginTop: "5%",
+                    marginBottom: "5%",
+                    marginLeft: "4%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: "6px",
+                    background: "#fff",
+                    padding: "6%",
+                    borderTop: "2px solid #000",
+                    boxShadow: "0px -7px 0px 0px #A9FF7F",
+                  }}
+                />
+                <Typography
+                  gutterBottom
+                  variant="h5"
+                  component="div"
+                  style={{
+                    paddingLeft: "5%",
+                    paddingTop: "5%",
+                  }}
+                >
+                  {item?.item?.reactions?.length}{" "}
+                </Typography>
+              </IconButton>
+              <div>
+                <Popper id={id} open={open} anchorEl={anchorEl}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      border: 0.25,
+                      borderRadius: "2%",
+                      borderColor: "#1890FF",
+                      bgcolor: "background.paper",
+                      flexDirection: "rows",
+                    }}
+                  >
+                    <IconButton>{emojis?.like}</IconButton>
+                    <IconButton>{emojis?.love}</IconButton>
+                    <IconButton>{emojis?.angry}</IconButton>
+                    <IconButton>{emojis?.haha}</IconButton>
+                    <IconButton>{emojis?.sad}</IconButton>
+                    <IconButton>{emojis?.wow}</IconButton>
+                  </Box>
+                </Popper>
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "16px",
+              }}
+            >
+              <div style={{ display: "flex" }}>
+                <FavoriteBorderOutlinedIcon /> {item?.item?.reactions?.length}{" "}
+                J'aime
+              </div>{" "}
+              <div style={{ display: "flex" }}>
+                <ModeCommentOutlinedIcon />
+                {item?.item?.comments?.length} Commentaires
+              </div>
+              {/* <div style={{ display: "flex" }}>
+                <TurnRightOutlinedIcon /> 1 Partage
+              </div> */}
+            </div>
+          </Box>
+          <Box
+            sx={{
+              marginLeft: "10%",
+              display: "flex",
+              flexDirection: "rows",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                width: "42px",
+                height: "42px",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "10px",
+                border: "3px solid #000",
+                background: "#FFF",
+                marginRight: "3%",
+              }}
+            >
+              <img
+                style={{
+                  width: "35px",
+                  height: "35px",
+                  borderRadius: "100%",
+                }}
+                src={imageProfile}
+                alt="webscript"
+              />
+            </div>
+            <div
+              style={{
+                display: "flex",
+                width: "990%",
+                height: "40px",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <FormControl variant="outlined" color="success" fullWidth focused>
+                <InputLabel
+                  variant="outlined"
+                  color="success"
+                  size="small"
+                  InputLabelProps={{
+                    style: { fontStyle: "italic", fontSize: 15 },
+                  }}
+                >
+                  {sessionStorage.getItem("language") === "fr"
+                    ? "Add comment"
+                    : "Add comment"}
+                </InputLabel>
+                <OutlinedInput
+                  color="success"
+                  size="small"
+                  variant="outlined"
+                  type="text"
+                  fullWidth
+                  onChange={(e) => {
+                    setComment(e.target.value);
+                  }}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton onClick={(e) => addComment(item?.item?.id)}>
+                        <SendIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  InputLabelProps={{
+                    style: { fontStyle: "italic", fontSize: 15 },
+                  }}
+                  label={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "Add New Post"
+                      : "Add New Post"
+                  }
+                />
+              </FormControl>
+            </div>
+          </Box>
+
+          <Box
+            height="120px"
+            sx={{
+              marginLeft: "20%",
+              display: "flex",
+              flexDirection: "column",
+              overflow: "scroll",
+              overflowY: "scroll",
+            }}
+          >
+            {item?.item?.comments.map((i, index) => {
+              return (
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "rows",
+                    paddingY: "1%",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      width: "42px",
+                      height: "42px",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      gap: "10px",
+                      border: "3px solid #000",
+                      background: "#FFF",
+                      marginRight: "3%",
+                    }}
+                  >
+                    <img
+                      style={{
+                        width: "35px",
+                        height: "35px",
+                        borderRadius: "100%",
+                      }}
+                      src={imageProfile}
+                      alt="webscript"
+                    />
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    {i?.text}
+                  </div>
+                </Box>
+              );
+            })}
+          </Box>
+          <br />
+        </Grid>
+      </Card>
+      <br />
+    </>
   );
 }

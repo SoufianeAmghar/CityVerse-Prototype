@@ -31,12 +31,12 @@ export default function FavouriteAssociation(item) {
   }
 }
 
-  console.log("item", item, Following, association);
+  console.log("item", item, Following, association , console.log(get_association_byIdName()));
   useEffect(() => {
-    console.log(get_association_byIdName());
+    get_association_byIdName();
   }, [])
   return (
-    <Card
+     get_association_byIdName() !== undefined ? <Card
       sx={{
         display: "flex",
         width: "100%",
@@ -69,6 +69,6 @@ export default function FavouriteAssociation(item) {
         image={get_association_byIdName()?.profile_image}
         alt="Logo of association"
       />
-    </Card>
+    </Card> : <></>
   );
 }

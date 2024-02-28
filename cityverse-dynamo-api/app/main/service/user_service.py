@@ -412,7 +412,7 @@ def follow_association(user_id, association_id, data):
 
     user = get_a_user(user_id)
     from app.main.service.association_service import get_a_association
-    association = get_a_association(association_id, data)
+    association = get_a_association(association_id)
 
     if user and association:
         if association_id not in user.get('followings', []):
@@ -447,7 +447,7 @@ def unfollow_association(user_id, association_id, data):
 
     user = get_a_user(user_id)
     from app.main.service.association_service import get_a_association
-    association = get_a_association(association_id, data)
+    association = get_a_association(association_id)
 
     if user and association:
         if association_id in user.get('followings', []):

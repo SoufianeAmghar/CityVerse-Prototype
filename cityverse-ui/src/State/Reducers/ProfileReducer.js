@@ -13,6 +13,7 @@ const initState = {
   address: "",
   goals: [],
   following: [],
+  feeds: [],
 };
 
 const ProfileReducer = (state = initState, action) => {
@@ -92,6 +93,12 @@ const ProfileReducer = (state = initState, action) => {
         ...state,
         following: action.following,
       };
+    case "Feeds":
+      return {
+        ...state,
+        feeds: action.feeds,
+      };
+
     default:
       return state;
   }

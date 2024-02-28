@@ -1,5 +1,6 @@
 import { useTheme } from "@mui/material/styles";
 import React, { useEffect, useRef, useState } from "react";
+import axios from "axios";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
@@ -44,6 +45,22 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import DateCalendarServerRequest from "./ProductCalendar";
 import ListImage from "./listImage";
 import ListVideo from "./listVideo";
+import FacebookIcon from "@mui/icons-material/Facebook";
+// import XIcon from "@mui/icons-material/X";
+import TwitterIcon from "@mui/icons-material/Twitter";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import YouTubeIcon from "@mui/icons-material/YouTube";
+import Tooltip from "@mui/material/Tooltip";
+import InputAdornment from "@mui/material/InputAdornment";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ErrorIcon from "@mui/icons-material/Error";
+import { FormControl, InputLabel, OutlinedInput } from "@mui/material";
+import PermMediaIcon from "@mui/icons-material/PermMedia";
+import PermMediaOutlinedIcon from "@mui/icons-material/PermMediaOutlined";
+import format from "date-fns/format";
+
+import ImageListItem from "@mui/material/ImageListItem";
 
 const AntTabs = styled(Tabs)({
   "& .MuiTabs-indicator": {
@@ -136,10 +153,33 @@ export default function Product() {
   const [value, setValue] = React.useState(0);
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [selectedNewImage, setSelectedNewImage] = useState();
+  const [selectedPostImage, setSelectedPostImage] = useState();
+  const [post, setPost] = useState();
+  const [valuesRna, setValuesRna] = useState({
+    valideRna: false,
+    error: false,
+  });
+  const association = useSelector(
+    (state) => state.AssociationReducer?.associations
+  );
+  const Activity = useSelector((state) => state.AssociationReducer?.activity);
+  const id_association = useSelector(
+    (state) => state.AssociationReducer?.id_association
+  );
+  const association_name = useSelector(
+    (state) => state.AssociationReducer?.association_name
+  );
+  const posts = useSelector((state) => state.AssociationReducer?.posts);
+
+  const sdg = useSelector((state) => state.ProfileReducer?.sdg);
 
   const handlenewImage = (e) => {
     const file = e.target.files[0];
     setSelectedNewImage(URL.createObjectURL(file));
+  };
+  const handlenewPostImage = (e) => {
+    const file = e.target.files[0];
+    setSelectedPostImage(file);
   };
 
   const handleChange = (event, newValue) => {
@@ -160,6 +200,21 @@ export default function Product() {
     handleClose();
   };
 
+  const [openMediapost, setOpenMediapost] = useState();
+  const handleopenMediapost = () => {
+    setOpenMediapost(true);
+    handleClose();
+  };
+  const handleCloseOPenPost = () => {
+    setOpenMediapost(false);
+    handleClose();
+  };
+
+  const handlenewPost = (e) => {
+    const file = e.target.files[0];
+    setSelectedNewImage(file);
+  };
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const [fav, setFav] = useState(true);
@@ -169,8 +224,6 @@ export default function Product() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  
 
   const [itemData, setItemData] = useState([
     {
@@ -211,6 +264,114 @@ export default function Product() {
   ]);
 
   useEffect(() => {}, [itemData]);
+
+  const [data, setData] = useState();
+
+  const call_api_get_all_posts = (id) => {
+    axios
+      .get(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "association/posts/" +
+          id
+      )
+      .then((value) => {
+        console.log("Posts", value.data);
+        dispatch({
+          type: "Posts",
+          posts: orderByDate(value?.data),
+        });
+      })
+      .catch((err) => {});
+  };
+
+  const call_api_get_association_by_id = (id) => {
+    axios
+      .get(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "association/" + id
+      )
+      .then((value) => {
+        setData(value?.data);
+      })
+      .catch((err) => {});
+  };
+
+  const call_api_add_post = () => {
+    var json = new FormData();
+    const object = JSON.stringify({
+      creator_id: id_association,
+      created_by: sessionStorage.getItem("user_Id"),
+      modified_by: sessionStorage.getItem("user_Id"),
+      description: post,
+      // 'creator_id': data['creator_id'],
+      // 'reactions': reactions_data,
+      // 'comments': comments_data
+    });
+    json.append("json", object);
+    json.append("img", selectedPostImage);
+    // json.append("profile_image", selectedImage);
+    axios
+      .post(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "association/post",
+        json,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Accept: "application/json",
+            type: "formData",
+          },
+        }
+      )
+      .then((value) => {
+        call_api_get_all_posts(id_association);
+      })
+      .catch((err) => {});
+  };
+  useEffect(() => {
+    if (id_association !== null && id_association !== undefined) {
+      call_api_get_association_by_id(id_association);
+      call_api_get_all_posts(id_association);
+    }
+  }, []);
+  const get_icon_activity = (label) => {
+    var icon = null;
+    for (let i = 0; i < Activity?.length; i++) {
+      if (Activity[i]?.label === label) {
+        icon = Activity[i]?.icon;
+      }
+    }
+    return icon;
+  };
+  function isPDF(file) {
+    // Get the file name
+    const fileName = file.name;
+
+    // Get the file extension
+    const fileExtension = fileName.split(".").pop().toLowerCase();
+
+    // Check if the file extension is 'pdf'
+    if (fileExtension === "pdf") {
+      return true;
+    }
+
+    // If the file extension is not 'pdf', check the MIME type
+    const fileType = file.type.toLowerCase();
+    if (fileType === "application/pdf") {
+      return true;
+    }
+
+    // If neither the file extension nor the MIME type indicates a PDF, return false
+    return false;
+  }
+  function orderByDate(array) {
+    // Convert object to array of key-value pairs
+    array.sort((a, b) => {
+      const dateA = new Date(a.created_on);
+      const dateB = new Date(b.created_on);
+      return dateB - dateA;
+    });
+
+    return array;
+  }
 
   return (
     <div style={{}}>
@@ -296,7 +457,11 @@ export default function Product() {
         <DialogActions>
           <Button
             onClick={() => {
-              itemData.push({ img: selectedNewImage, title: "new one" , type: "image"});
+              itemData.push({
+                img: selectedNewImage,
+                title: "new one",
+                type: "image",
+              });
               handleClosenewImage();
             }}
             variant="contained"
@@ -310,6 +475,114 @@ export default function Product() {
           <Button
             onClick={() => {
               handleClosenewImage();
+            }}
+            variant="contained"
+            style={styleCancelDelete}
+          >
+            {sessionStorage.getItem("language") === "fr" ? "Cacher" : "Cacher"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={openMediapost}
+        onClose={() => {
+          handleCloseOPenPost();
+        }}
+        maxWidth="sm"
+        fullWidth
+        style={{ boxShadow: "none" }}
+      >
+        <DialogTitle id="alert-dialog-title">
+          {sessionStorage.getItem("language") === "fr"
+            ? "Add Media"
+            : "Add Media"}
+        </DialogTitle>
+        <Box position="absolute" top={0} right={0}>
+          <IconButton
+            onClick={() => {
+              handleCloseOPenPost();
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            <Stack direction="row" alignItems="center" spacing={2}>
+              <input
+                accept="image/*,video/*,.pdf"
+                style={{ display: "none" }}
+                id="image-upload"
+                type="file"
+                onChange={handlenewPost}
+              />
+              <label htmlFor="image-upload">
+                <Button
+                  variant="contained"
+                  color="success"
+                  sx={{
+                    backgroundColor: "success",
+                    minWidth: "25%",
+                    borderRadius: "20px",
+                    color: "#fff",
+                  }}
+                  component="span"
+                  startIcon={<CloudUploadIcon />}
+                >
+                  Upload New Image
+                </Button>
+              </label>
+              <div style={{ position: "relative" }}>
+                {selectedNewImage && (
+                  <>
+                    <img
+                      style={{
+                        width: "100px",
+                        height: "100px",
+                        borderRadius: "20%",
+                      }}
+                      src={URL.createObjectURL(selectedNewImage)}
+                      alt="Uploaded"
+                    />
+                    <CancelIcon
+                      style={{
+                        position: "absolute",
+                        top: "-5",
+                        right: "-5",
+                        color: "#556B2F",
+                      }}
+                      onClick={() => {
+                        setSelectedNewImage(null);
+                      }}
+                    />
+                  </>
+                )}
+              </div>
+            </Stack>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              itemData.push({
+                img: selectedNewImage,
+                title: "new one",
+                type: "image",
+              });
+              handleCloseOPenPost();
+            }}
+            variant="contained"
+            style={styleValidate}
+            color="success"
+          >
+            {sessionStorage.getItem("language") === "fr"
+              ? "Confirmer"
+              : "Confirmer"}
+          </Button>
+          <Button
+            onClick={() => {
+              handleCloseOPenPost();
             }}
             variant="contained"
             style={styleCancelDelete}
@@ -335,9 +608,7 @@ export default function Product() {
             component="img"
             height="100%"
             // image={coverProfile}
-            image={
-              "https://c4.wallpaperflare.com/wallpaper/212/663/692/france-paris-stadium-stade-de-france-wallpaper-preview.jpg"
-            }
+            image={data?.banner_image}
           />
         </Card>
         <div
@@ -356,9 +627,7 @@ export default function Product() {
           }}
         >
           <img
-            src={
-              "https://w0.peakpx.com/wallpaper/725/891/HD-wallpaper-stade-de-france-french-football-stadium-paris-france-sports-arenas-national-stadium-of-france.jpg"
-            }
+            src={data?.profile_image}
             // src={imageProfile}
             style={{
               width: "200px",
@@ -390,7 +659,7 @@ export default function Product() {
                 }}
               >
                 <>
-                  Stade de France <StarIcon sx={{ color: "#FFD700" }} />
+                  {data?.name} <StarIcon sx={{ color: "#FFD700" }} />
                 </>
               </Typography>
             </div>
@@ -434,11 +703,176 @@ export default function Product() {
               xs={12}
               sx={{ backgroundColor: "#FFFF", borderRadius: "10px" }}
             >
+              {" "}
+              <br />
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "start",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  paddingX: "5%",
+                }}
+              >
+                <Divider textAlign="left" sx={{ color: "#08089C" }}>
+                  Home Adresse.
+                </Divider>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {/* <LocationOnIcon sx={{ padding: "1%", color: "#08089C" }} />{" "} */}
+                  <Typography gutterBottom variant="body2" component="div">
+                    {" "}
+                    {data?.siege}
+                  </Typography>
+                </div>
+                <br />
+                <Divider textAlign="left" sx={{ color: "#08089C" }}>
+                  Overview.
+                </Divider>
+                <div
+                  style={{
+                    paddingX: "2%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Typography gutterBottom variant="body2" component="div">
+                    {data?.description}
+                  </Typography>
+                </div>
+                <br />
+                <Divider textAlign="left" sx={{ color: "#08089C" }}>
+                  Online networking.
+                </Divider>
+                <br />
+                <div
+                  style={{
+                    paddingX: "2%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Stack direction="row" spacing={2}>
+                    <IconButton>
+                      <FacebookIcon
+                      // onClick={() =>
+                      //    console.log(fb_link)
+                      //    window.open(fb_link, "_blank")
+                      // }
+                      />
+                    </IconButton>
+                    {/* <XIcon/> */}
+                    <IconButton>
+                      <TwitterIcon
+                      // onClick={() => window.open(x_link, "_blank")}
+                      />
+                    </IconButton>
+                    <IconButton>
+                      <InstagramIcon
+                      // onClick={() => window.open(instagram_link, "_blank")}
+                      />
+                    </IconButton>
+                    <IconButton>
+                      <YouTubeIcon
+                      // onClick={() => window.open(y_link, "_blank")}
+                      />
+                    </IconButton>
+                  </Stack>
+                </div>
+                <br />
+                <Divider textAlign="left" sx={{ color: "#08089C" }}>
+                  SDG's.
+                </Divider>
+                <div
+                  style={{
+                    paddingX: "2%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Stack direction="row" spacing={2} useFlexGap flexWrap="wrap">
+                    {sdg?.map((item, index) => {
+                      return (
+                        <Tooltip
+                          title={`${item?.goal}.${item.short}`}
+                          placement="left-start"
+                        >
+                          <IconButton>
+                            <img
+                              style={{
+                                width: "auto",
+                                height: "30px",
+                              }}
+                              src={item?.icon_url}
+                              alt="webscript"
+                            />
+                          </IconButton>
+                        </Tooltip>
+                      );
+                    })}
+                  </Stack>
+                </div>
+                <br />
+                <Divider textAlign="left" sx={{ color: "#08089C" }}>
+                  SDG's.
+                </Divider>
+                <div
+                  style={{
+                    paddingX: "2%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Stack direction="row" spacing={2} useFlexGap flexWrap="wrap">
+                    {data?.activity?.map((item, index) => {
+                      return (
+                        <Tooltip
+                          title={`${item?.label}`}
+                          placement="left-start"
+                        >
+                          <IconButton>
+                            <img
+                              style={{
+                                width: "auto",
+                                height: "30px",
+                              }}
+                              src={get_icon_activity(item?.label)}
+                              alt="webscript"
+                            />
+                          </IconButton>
+                        </Tooltip>
+                      );
+                    })}
+                  </Stack>
+                </div>
+                <br />
+              </Box>
+            </Grid>
+          </Grid>
+          <br />
+          {/* <Grid container spacing={1}>
+            <Grid
+              item
+              xs={12}
+              sx={{ backgroundColor: "#FFFF", borderRadius: "10px" }}
+            >
               <Box sx={{ borderRadius: "10px" }}>
                 <ListImage itemData={itemData} />
               </Box>
             </Grid>
-          </Grid>
+          </Grid> */}
         </Grid>
         <Grid item xs={8}>
           <Grid
@@ -487,6 +921,7 @@ export default function Product() {
                         <Box
                           sx={{
                             marginLeft: "0%",
+                            marginBottom: "5px",
                             display: "flex",
                             width: "99%",
                             flexDirection: "rows",
@@ -495,10 +930,10 @@ export default function Product() {
                           }}
                         >
                           <img
-                            src={
-                              "https://w0.peakpx.com/wallpaper/725/891/HD-wallpaper-stade-de-france-french-football-stadium-paris-france-sports-arenas-national-stadium-of-france.jpg"
-                            }
-                            // src={imageProfile}
+                            // src={
+                            //   "https://w0.peakpx.com/wallpaper/725/891/HD-wallpaper-stade-de-france-french-football-stadium-paris-france-sports-arenas-national-stadium-of-france.jpg"
+                            // }
+                            src={data?.profile_image}
                             style={{
                               width: "130px",
                               borderRadius: "100%",
@@ -512,22 +947,79 @@ export default function Product() {
                             style={{
                               display: "flex",
                               width: "90%",
-                              height: "40px",
+                              height: "100px",
                               // justifyContent: "center",
                               // alignItems: "center",
                               backgroundColor: "#FFFF",
+                              flexDirection: "row",
                             }}
                           >
-                            <TextField
-                              id="outlined-basic"
-                              label="Tell us about your self"
+                            <FormControl
                               variant="outlined"
-                              fullWidth
                               color="success"
-                              InputLabelProps={{
-                                style: { fontStyle: "italic", fontSize: 15 },
-                              }}
-                            />
+                              fullWidth
+                              focused
+                            >
+                              <InputLabel
+                                variant="outlined"
+                                color="success"
+                                size="small"
+                                InputLabelProps={{
+                                  style: { fontStyle: "italic", fontSize: 15 },
+                                }}
+                              >
+                                {sessionStorage.getItem("language") === "fr"
+                                  ? "Add New Post"
+                                  : "Add New Post"}
+                              </InputLabel>
+                              <OutlinedInput
+                                color="success"
+                                id="Password"
+                                size="small"
+                                variant="outlined"
+                                type="text"
+                                multiline
+                                rows={4}
+                                onChange={(e) => {
+                                  setPost(e.target.value);
+                                }}
+                                endAdornment={
+                                  <InputAdornment position="end">
+                                    <input
+                                      accept="image/*,video/*,.pdf"
+                                      style={{ display: "none" }}
+                                      id="image-upload"
+                                      type="file"
+                                      onChange={handlenewPostImage}
+                                    />
+                                    <label htmlFor="image-upload">
+                                      <Button
+                                        variant="contained"
+                                        color="success"
+                                        sx={{
+                                          backgroundColor: "success",
+                                          minWidth: "0%",
+                                          borderRadius: "20px",
+                                          color: "#fff",
+                                        }}
+                                        component="span"
+                                        startIcon={<CloudUploadIcon />}
+                                      >
+                                        Media
+                                      </Button>
+                                    </label>
+                                  </InputAdornment>
+                                }
+                                InputLabelProps={{
+                                  style: { fontStyle: "italic", fontSize: 15 },
+                                }}
+                                label={
+                                  sessionStorage.getItem("language") === "fr"
+                                    ? "Add New Post"
+                                    : "Add New Post"
+                                }
+                              />
+                            </FormControl>
                           </div>
                           <div
                             style={{
@@ -548,97 +1040,194 @@ export default function Product() {
                                 borderRadius: "20px",
                                 color: "#fff",
                               }}
+                              onClick={call_api_add_post}
                             >
                               Post
                             </Button>
                           </div>
                         </Box>
                       </Grid>
-                      <Divider variant="middle" sx={{ width: "99%" }}></Divider>
                       <Grid
                         item
                         xs={12}
                         sx={{ display: "flex", justifyItems: "center" }}
                       >
+                        {" "}
                         <Box
                           sx={{
                             display: "flex",
-                            width: "99%",
-                            flexDirection: "rows",
-                            alignItems: "rows",
-                            paddingTop: "0.5%",
+                            justifyItems: "center",
+                            paddingY: "2%",
+                            paddingX: "15%",
                           }}
                         >
-                          <img
-                            src={
-                              "https://w0.peakpx.com/wallpaper/725/891/HD-wallpaper-stade-de-france-french-football-stadium-paris-france-sports-arenas-national-stadium-of-france.jpg"
-                            }
-                            // src={imageProfile}
-                            style={{
-                              width: "130px",
-                              borderRadius: "100%",
-                              height: "70px",
-                              padding: "10px 40px",
-                              alignItems: "flex-start",
-                              gap: "10px",
-                            }}
-                          />
-                          <Typography
-                            gutterBottom
-                            variant="subtitle1"
-                            component="div"
-                            style={{
-                              paddingTop: "3%",
-                              // color: "#000",
-                              // display: "flex",
-                              // alignItems: "center",
-                            }}
-                          >
-                            Stade de France
-                          </Typography>
-                        </Box>
+                          {console.log(selectedPostImage)}
+                          <div style={{ position: "relative" }}>
+                            {selectedPostImage &&
+                              (isPDF(selectedPostImage) === true ? (
+                                <>{console.log(selectedPostImage)}</>
+                              ) : (
+                                <>
+                                  <img
+                                    style={{
+                                      width: "100px",
+                                      height: "100px",
+                                      borderRadius: "20%",
+                                    }}
+                                    src={URL.createObjectURL(selectedPostImage)}
+                                    alt="Uploaded"
+                                  />
+                                  <CancelIcon
+                                    style={{
+                                      position: "absolute",
+                                      top: "-5",
+                                      right: "-5",
+                                      color: "#556B2F",
+                                    }}
+                                    onClick={() => {
+                                      setSelectedPostImage(null);
+                                    }}
+                                  />
+                                </>
+                              ))}
+                          </div>
+                        </Box>{" "}
                       </Grid>
-                      <Grid
-                        item
-                        xs={12}
-                        sx={{ display: "flex", justifyItems: "center" }}
-                      >
-                        <Box
-                          sx={{
-                            display: "flex",
-                            width: "99%",
-                            height: "auto",
-                            padding: "0px 40px",
-                            backgroundColor: "#FFFF",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <Typography
-                            gutterBottom
-                            variant="body2"
-                            component="div"
-                            // style={{
-                            //   paddingLeft: "0%",
-                            //   color: "#000",
-                            //   display: "flex",
-                            //   alignItems: "center",
-                            // }}
-                          >
-                            Le Stade de France, majestueux édifice sportif situé
-                            à Saint-Denis, est un symbole de grandeur et
-                            d'excitation. Ses gradins racontent l'histoire de
-                            performances mémorables, tandis que son architecture
-                            moderne célèbre le mariage de la tradition et de
-                            l'innovation. Chaque événement qui s'y déroule vibre
-                            au rythme de l'enthousiasme collectif, créant des
-                            souvenirs inoubliables. Le Stade de France, un lieu
-                            où les émotions se conjuguent avec la grandeur,
-                            capturant l'esprit vibrant du sport et du spectacle.
-                          </Typography>
-                          <ListImage itemData={itemData} />
-                        </Box>
-                      </Grid>
+                      <br />
+                      <Divider
+                        variant="middle"
+                        sx={{ width: "99%", marginTop: "20px" }}
+                      ></Divider>
+                      {posts.map((item, key) => {
+                        return (
+                          <>
+                            <Grid
+                              item
+                              xs={12}
+                              sx={{ display: "flex", justifyItems: "center" }}
+                            >
+                              <Divider
+                                textAlign="left"
+                                sx={{ color: "#08089C" }}
+                              ></Divider>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  width: "99%",
+                                  flexDirection: "rows",
+                                  alignItems: "rows",
+                                  paddingTop: "0.5%",
+                                }}
+                              >
+                                <img
+                                  // src={
+                                  //   "https://w0.peakpx.com/wallpaper/725/891/HD-wallpaper-stade-de-france-french-football-stadium-paris-france-sports-arenas-national-stadium-of-france.jpg"
+                                  // }
+                                  src={data?.profile_image}
+                                  style={{
+                                    width: "150px",
+                                    borderRadius: "100%",
+                                    height: "90px",
+                                    padding: "10px 40px",
+                                    alignItems: "flex-start",
+                                    gap: "10px",
+                                  }}
+                                />
+                                <div
+                                  style={{
+                                    width: "100%",
+                                    height: "30px",
+                                  }}
+                                >
+                                  <Typography
+                                    gutterBottom
+                                    variant="subtitle1"
+                                    component="div"
+                                    style={{
+                                      paddingTop: "2%",
+                                    }}
+                                  >
+                                    {data?.name}
+                                  </Typography>
+                                  <Typography
+                                    variant="subtitle2"
+                                    color="text.secondary"
+                                    sx={{ paddingLeft: "0%" }}
+                                  >
+                                    {format(
+                                      new Date(item?.created_on),
+                                      "dd/MM/yyyy HH:mm"
+                                    )}
+                                  </Typography>
+                                </div>
+                              </Box>
+                            </Grid>
+                            <Grid
+                              item
+                              xs={12}
+                              sx={{ display: "flex", justifyItems: "center" }}
+                            >
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  width: "99%",
+                                  height: "auto",
+                                  padding: "0px 40px",
+                                  backgroundColor: "#FFFF",
+                                  flexDirection: "column",
+                                  justifyContent: "center",
+                                  justifyItems: "center",
+                                }}
+                              >
+                                <Typography
+                                  gutterBottom
+                                  variant="body2"
+                                  component="div"
+                                  style={{
+                                    paddingLeft: "10%",
+                                  }}
+                                >
+                                  {item?.description}
+                                </Typography>
+                                {/* <ListImage itemData={itemData} /> */}
+                                <Grid
+                                  item
+                                  xs={12}
+                                  sx={{
+                                    display: "flex",
+                                    paddingX: "20%",
+                                    flexDirection: "column",
+                                    gap: "24px",
+                                    alignSelf: "stretch",
+                                    // background: "#F1FBEC",
+                                  }}
+                                >
+                                  {item?.links.length !== 0 && (
+                                    <ImageList
+                                      sx={{ width: "100%", height: "auto" }}
+                                      cols={2}
+                                      rowHeight={"20%"}
+                                    >
+                                      {item?.links?.reverse()?.map((i , index) => (
+                                        <ImageListItem key={index}>
+                                          <img
+                                            srcSet={`${i}`}
+                                            src={`${i}`}
+                                            width={"5%"}
+                                            height={"auto"}
+                                            alt="image"
+                                            loading="lazy"
+                                          />
+                                        </ImageListItem>
+                                      ))}
+                                    </ImageList>
+                                  )}
+                                </Grid>
+                              </Box>
+                            </Grid>
+                          </>
+                        );
+                      })}
                     </Grid>
                   </Suspense>
                 </TabPanel>
@@ -719,29 +1308,29 @@ export default function Product() {
                       </div>
                     }
                   >
-                     <Box
+                    <Box
                       sx={{
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
                       }}
                     >
-                    <Button onClick={() => handleOpennewImage()}>
-                      <Typography
-                        gutterBottom
-                        variant="h6"
-                        component="div"
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          color: "#08089C",
-                        }}
-                      >
-                        <AddBusinessIcon sx={{ color: "#08089C" }} />
-                        {"  "} &emsp;Ajouter Nouveau video
-                      </Typography>
-                    </Button>
-                    <ListVideo itemData={itemData} />
+                      <Button onClick={() => handleOpennewImage()}>
+                        <Typography
+                          gutterBottom
+                          variant="h6"
+                          component="div"
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            color: "#08089C",
+                          }}
+                        >
+                          <AddBusinessIcon sx={{ color: "#08089C" }} />
+                          {"  "} &emsp;Ajouter Nouveau video
+                        </Typography>
+                      </Button>
+                      <ListVideo itemData={itemData} />
                     </Box>
                   </Suspense>
                 </TabPanel>

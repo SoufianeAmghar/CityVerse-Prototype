@@ -81,7 +81,7 @@ export default function CardPlace(item) {
     setExpanded(!expanded);
   };
   {
-    console.log("following", following);
+    console.log("following", following, item);
   }
 
   useEffect(() => {
@@ -101,24 +101,23 @@ export default function CardPlace(item) {
         headers,
       })
       .then((value) => {
-        (value?.data?.data?.score?.S === undefined ? dispatch({
-          type: "Score",
-          score: value?.data?.data?.score?.N,
-        }) : dispatch({
-          type: "Score",
-          score: value?.data?.data?.score?.S,
-        }))
+        value?.data?.data?.score?.S === undefined
+          ? dispatch({
+              type: "Score",
+              score: value?.data?.data?.score?.N,
+            })
+          : dispatch({
+              type: "Score",
+              score: value?.data?.data?.score?.S,
+            });
         dispatch({
           type: "Following",
           following: value?.data?.data?.followings?.L,
         });
-       
+
         sessionStorage.setItem("user_Id", value.data?.data.id.S);
-       
       })
-      .catch((err) => {
-        
-      });
+      .catch((err) => {});
   };
 
   const handlefollow = () => {
@@ -132,7 +131,7 @@ export default function CardPlace(item) {
         { name: item?.item?.name }
       )
       .then((value) => {
-        call_api_get_user_info()
+        call_api_get_user_info();
         setFav(!fav);
         handleClose();
       })
@@ -149,7 +148,7 @@ export default function CardPlace(item) {
         { name: item?.item?.name }
       )
       .then((value) => {
-        call_api_get_user_info()
+        call_api_get_user_info();
         setFav(!fav);
         handleClose();
       })
@@ -280,6 +279,14 @@ export default function CardPlace(item) {
             onClick={() => {
               setFav(!fav);
               history.push("/product");
+              dispatch({
+                type: "Id_association",
+                id_association: item?.item?.id,
+              });
+              dispatch({
+                type: "Association_name",
+                association_name: item?.item?.name,
+              });
             }}
             // href="https://odre.opendatasoft.com/explore/dataset/bornes-irve/map/?disjunctive.region&disjunctive.departement&refine.departement=Paris&location=15,48.88233,2.33646&basemap=jawg.light"
           >
