@@ -310,7 +310,7 @@ def create_post(data, image_files, video_files):
     }
 
     reactions_list = list(reaction_emojis.keys())
-    reactions_data = [{'reaction': reaction, 'count': 0}
+    reactions_data = [{'type': reaction, 'reacted_by': [], 'date': datetime.utcnow().isoformat()}  #type, created_by, date
                       for reaction in reactions_list]
 
     comments_data = data.get('comments', [])

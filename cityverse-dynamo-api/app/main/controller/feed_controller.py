@@ -9,7 +9,8 @@ from ..service.feed_service import (
     get_filtered_posts,
     post_comment_on_post,
     edit_comment_on_post,
-    get_reactions_post
+    get_reactions_post,
+    edit_reaction_on_post
 )
 
 
@@ -41,6 +42,17 @@ class FeedPost(Resource):
     @api.doc('get emojis')
     def get(self,post_id):
         return get_reactions_post(post_id)
+    
+@api.route('/<post_id>/reactions')
+@api.param('post_id', 'The Post identifier')
+class FeedPost(Resource):
+    
+    @api.doc('update reactions array')
+    def put (self,post_id):
+        "Edit a comment on a post"
+        data = request.json
+        return edit_reaction_on_post(post_id, data)
+ 
 
 
 

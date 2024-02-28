@@ -249,7 +249,7 @@ class Document:
     def upload_video_to_s3(self, video_file):
         s3 = boto3.client('s3')
 
-        video_key = f"{self.__S3_OBJECT_PREFIX__}{self.generate_id()}"
+        video_key = f"{self.__S3_OBJECT_PREFIX__}{generate_id()}"
 
         file_extension = Path(video_file.filename).suffix.lower()
         if not file_extension or not self.is_video_file(file_extension):

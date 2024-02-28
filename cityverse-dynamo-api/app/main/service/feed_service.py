@@ -130,5 +130,22 @@ def get_reactions_post(post_id):
             'status': 'fail',
             'message': 'Post not found.',
         }, 404
+    
+def edit_reaction_on_post(post_id,data):
+    document = Document(__TABLE_NAME__='Posts')
+    post = document.get_item(post_id)
+
+    if post:
+        post['reactions'] = data.get('reactions')
+        document.save(item=post)
+        return {
+                'status': 'success',
+                'message': 'Reactions successfully updated.',
+            }, 200
+    else:
+        return {
+            'status': 'fail',
+            'message': 'Post not found.',
+        }, 404
 
 
