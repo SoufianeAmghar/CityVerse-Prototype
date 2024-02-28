@@ -23,6 +23,7 @@ def get_all_associations():
 
     return associations
 
+
 def get_association_posts(association_id):
     document = Document(__TABLE_NAME__='Posts')
 
@@ -36,9 +37,9 @@ def get_association_posts(association_id):
             return posts_from_association
         else:
             return {
-            'status': 'fail',
-            'message': 'Association has no posts',
-        }, 500
+                'status': 'fail',
+                'message': 'Association has no posts',
+            }, 500
 
     else:
         return {
@@ -52,12 +53,10 @@ def get_a_association(association_id):
 
     association = document.get_item(association_id)
 
-
     if association is None:
         logging.warning(f"Association with ID {association_id} not found.")
 
     return association
-
 
 
 def get_associations_by_sdg(numbers):
@@ -87,7 +86,7 @@ def check_siege_exists(data):
     location = geolocator.geocode(data['siege'])
     logging.info("Location location: %s" % location)
     if location and location.raw.get('osm_type') == 'node':
-       return {
+        return {
             "status": "success",
             "message": "Siege exists.",
             "lat": location.latitude,
@@ -124,7 +123,7 @@ def verify_rna_number(rna_number):
 def create_association(data, banner_image, profile_image):
 
     document = Document(__TABLE_NAME__='Association', __BUCKET_NAME__='cityverse-profilepics',
-                            __S3_OBJECT_PREFIX__='product-images/')
+                        __S3_OBJECT_PREFIX__='product-images/')
     # Check if 'rna' is empty or None
     if data.get('rna') is None or not data['rna'].strip():
         return {
@@ -133,7 +132,7 @@ def create_association(data, banner_image, profile_image):
         }, 404
 
     # Check if 'activity' is None or empty
-    if data.get('activity') is None or len(data['activity']) ==0:
+    if data.get('activity') is None or len(data['activity']) == 0:
         return {
             'status': 'fail',
             'message': 'Activity cannot be None or empty.',
@@ -177,10 +176,10 @@ def create_association(data, banner_image, profile_image):
         'name': data['name'],
         'sdg': data.get('sdg', ""),
         'rna': data['rna'],
-        'description': data.get('description',""),
+        'description': data.get('description', ""),
         'siege': valid_siege,
-        'siege_coordinates': data.get('siege_coordinates',[]),
-        'links': data.get('social_links',[]),
+        'siege_coordinates': data.get('siege_coordinates', []),
+        'links': data.get('social_links', []),
         'banner_image': banner_image_url if banner_image_url else "",
         'profile_image': profile_image_url if profile_image else ""
     }
@@ -265,66 +264,74 @@ def edit_association(association_id, data):
             'status': 'fail',
             'message': 'Place not found.',
         }, 401
-    
-def create_post(data,image_files,video_files):
-        document = Document(__TABLE_NAME__='Posts', __BUCKET_NAME__='cityverse-videos',
-                            __S3_OBJECT_PREFIX__='media-posts/')
-
-        image_urls = []
-
-        video_urls = []
-
-        if image_files:
-             for img_file in image_files:
-                  img_url = document.upload_image_to_s3(img_file)
-                  if img_url is not None:
-            # Append the image URL to the list
-                    image_urls.append(img_url)
-                  else:
-                      return {
-                'status': 'fail',
-                'message': 'Failed to upload an image to S3.',
-            }, 500
-        
-        if video_files:
-             for vid_file in video_files:
-                  vid_url = document.upload_video_to_s3(vid_file)
-                  if vid_url is not None:
-            # Append the image URL to the list
-                    video_urls.append(vid_url)
-                  else:
-                      return {
-                'status': 'fail',
-                'message': 'Failed to upload a video to S3.',
-            }, 500
-
-        # Reactions handling       
-
-        reactions_list = data.get('reactions', [])
-
-        reactions_data = [{'reaction': reaction, 'count': 0} for reaction in reactions_list] 
-
-        comments_data = data.get('comments', [])
 
 
-        post_item = {
-            'id': generate_id(),
-            'creator_id': data['creator_id'],
-            'created_by': data['created_by'],
-            'created_on': datetime.utcnow().isoformat(),
-            'modified_on': datetime.utcnow().isoformat(),
-            'links': image_urls + video_urls if image_urls or video_urls else [],
-            'description': data['description'],
-            'modified_by': "",
-            'reactions': reactions_data,
-            'comments': comments_data
-        }
+def create_post(data, image_files, video_files):
+    document = Document(__TABLE_NAME__='Posts', __BUCKET_NAME__='cityverse-videos',
+                        __S3_OBJECT_PREFIX__='media-posts/')
 
+    image_urls = []
 
-            # Save the updated product with the new post
-        document.save(item=post_item)
+    video_urls = []
 
-        return {
-                'status': 'success',
-                'message': 'Post successfully created.',
-            }, 201
+    if image_files:
+        for img_file in image_files:
+            img_url = document.upload_image_to_s3(img_file)
+            if img_url is not None:
+                # Append the image URL to the list
+                image_urls.append(img_url)
+            else:
+                return {
+                    'status': 'fail',
+                    'message': 'Failed to upload an image to S3.',
+                }, 500
+
+    if video_files:
+        for vid_file in video_files:
+            vid_url = document.upload_video_to_s3(vid_file)
+            if vid_url is not None:
+                # Append the image URL to the list
+                video_urls.append(vid_url)
+            else:
+                return {
+                    'status': 'fail',
+                    'message': 'Failed to upload a video to S3.',
+                }, 500
+
+    # Reactions handling
+
+    reaction_emojis = {
+        'like': '👍',
+        'love': '❤️',
+        'haha': '😄',
+        'wow': '😮',
+        'sad': '😢',
+        'angry': '😡'
+    }
+
+    reactions_list = list(reaction_emojis.keys())
+    reactions_data = [{'reaction': reaction, 'count': 0}
+                      for reaction in reactions_list]
+
+    comments_data = data.get('comments', [])
+
+    post_item = {
+        'id': generate_id(),
+        'creator_id': data['creator_id'],
+        'created_by': data['created_by'],
+        'created_on': datetime.utcnow().isoformat(),
+        'modified_on': datetime.utcnow().isoformat(),
+        'links': image_urls + video_urls if image_urls or video_urls else [],
+        'description': data['description'],
+        'modified_by': "",
+        'reactions': reactions_data,
+        'comments': comments_data
+    }
+
+    # Save the updated product with the new post
+    document.save(item=post_item)
+
+    return {
+        'status': 'success',
+        'message': 'Post successfully created.',
+    }, 201

@@ -8,7 +8,8 @@ from ..service.feed_service import (
     get_all_posts,
     get_filtered_posts,
     post_comment_on_post,
-    edit_comment_on_post
+    edit_comment_on_post,
+    get_reactions_post
 )
 
 
@@ -36,6 +37,10 @@ class FeedPost(Resource):
         "Edit a comment on a post"
         data = request.json
         return edit_comment_on_post(post_id, data)
+    
+    @api.doc('get emojis')
+    def get(self,post_id):
+        return get_reactions_post(post_id)
 
 
 

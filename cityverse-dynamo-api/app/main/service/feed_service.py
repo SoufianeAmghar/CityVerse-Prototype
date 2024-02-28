@@ -118,3 +118,17 @@ def edit_comment_on_post(post_id, data):
             'status': 'fail',
             'message': 'Post not found.',
         }, 404
+    
+def get_reactions_post(post_id):
+    document = Document(__TABLE_NAME__='Posts')
+    post = document.get_item(post_id)
+
+    if post:
+        return post['reactions']
+    else:
+        return {
+            'status': 'fail',
+            'message': 'Post not found.',
+        }, 404
+
+
