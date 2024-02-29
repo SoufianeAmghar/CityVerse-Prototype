@@ -23,5 +23,7 @@ services:
     build: ./cityverse-ui
     ports:
       - 90:80
+    volumes:
+     - /home/ubuntu/cityverse-proto/CityVerse-Prototype/certs:/etc/nginx/certs
     
     

@@ -12,9 +12,16 @@ COPY . .
 RUN react-scripts  build
 # STAGE 2 - build the final image using a nginx web server
 # distribution and copy the react build files
-FROM nginx:1.21.6-alpine
+FROM nginx:stable-alpine  
+RUN apk --no-cache add gettext
+COPY nginx.conf /etc/nginx/nginx.conf.template
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /app/build /usr/share/nginx/html
 
+CMD /bin/sh -c "export DOLLAR=\"$\" && envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && cat /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+
 EXPOSE 80
+
+
+
