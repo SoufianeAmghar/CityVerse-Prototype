@@ -131,21 +131,38 @@ def get_reactions_post(post_id):
             'message': 'Post not found.',
         }, 404
     
-def edit_reaction_on_post(post_id,data):
+def edit_reaction_on_post(post_id, data):
     document = Document(__TABLE_NAME__='Posts')
     post = document.get_item(post_id)
 
     if post:
-        post['reactions'] = data.get('reactions')
+        reactions = post.get('reactions', [])
+        
+        new_reaction = {
+            'type': data.get('type'),
+            'date': data.get('date', datetime.now().isoformat()),  # Assuming current timestamp if date not provided
+            'reacted_by': [data.get('reacted_by')] 
+        }
+        
+        existing_index = next((index for index, reaction in enumerate(reactions) if reaction['type'] == new_reaction['type']), None)
+        
+        if existing_index is not None:
+            reactions[existing_index]['reacted_by'].append(data['reacted_by'])
+            reactions[existing_index]['date'] = new_reaction['date']
+        else:
+            reactions.append(new_reaction)
+    
+        post['reactions'] = reactions
+        
         document.save(item=post)
+        
         return {
-                'status': 'success',
-                'message': 'Reactions successfully updated.',
-            }, 200
+            'status': 'success',
+            'message': 'Reaction successfully added.'
+        }, 200
     else:
         return {
             'status': 'fail',
             'message': 'Post not found.',
         }, 404
-
 
