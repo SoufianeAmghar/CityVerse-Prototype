@@ -19,7 +19,7 @@ COPY nginx.conf /etc/nginx/nginx.conf.template
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /app/build /usr/share/nginx/html
 
-CMD /bin/sh -c "export DOLLAR=\"$\" && envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && cat /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+CMD /bin/sh -c "export DOLLAR=\"$\" && envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && cat /etc/nginx/nginx.conf && cat /var/log/nginx/error.log && nginx -g 'daemon off;'"
 
 EXPOSE 80
 
