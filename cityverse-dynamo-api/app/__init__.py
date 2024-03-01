@@ -12,7 +12,7 @@ from .main.controller.feed_controller import api as feed_ns
 
 
 
-blueprint = Blueprint('api', __name__)
+blueprint = Blueprint('api', __name__,url_prefix='/api')
 
 api = Api(blueprint,
           title='CityVerse-V:1.0',
