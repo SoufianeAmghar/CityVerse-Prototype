@@ -75,7 +75,7 @@ export default function AccountProfile(props) {
   function handleDeleteUser(id) {
     axios
       .delete(
-        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "/api/user/" + id,
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "/user/" + id,
         { headers }
       )
       .then((data) => {
@@ -209,7 +209,7 @@ export default function AccountProfile(props) {
       Authorization: "Bearer " + access_token.toString(),
     };
     axios
-      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "/api/users", {
+      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "/users", {
         headers,
       })
       .then((data) => {

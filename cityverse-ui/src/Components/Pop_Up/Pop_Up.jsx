@@ -34,7 +34,7 @@ const Pop_Up = ({onClose}) => {
 };
 const call_api_auth=async ()=>{
 
-  axios.get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER+'/api/refreshtoken',{headers}).then(data=>{
+  axios.get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER+'/refreshtoken',{headers}).then(data=>{
     sessionStorage.setItem('acces_token',data.data.acces_token)
     axios.defaults.headers.common['Authorization'] = `Bearer ${data.data.acces_token}`;
       sessionStorage.setItem('refresh_token',data.data.refresh_token)

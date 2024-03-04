@@ -55,7 +55,7 @@ const FirstAuth = () => {
   const call_api_change_password = () => {
     axios
       .post(
-        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "/api/firsauth",
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "/firsauth",
         {
           password: password,
         },
