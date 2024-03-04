@@ -118,7 +118,8 @@ def edit_comment_on_post(post_id, data):
             'status': 'fail',
             'message': 'Post not found.',
         }, 404
-    
+
+
 def get_reactions_post(post_id):
     document = Document(__TABLE_NAME__='Posts')
     post = document.get_item(post_id)
@@ -130,32 +131,44 @@ def get_reactions_post(post_id):
             'status': 'fail',
             'message': 'Post not found.',
         }, 404
-    
+
+
 def edit_reaction_on_post(post_id, data):
     document = Document(__TABLE_NAME__='Posts')
     post = document.get_item(post_id)
 
     if post:
         reactions = post.get('reactions', [])
-        
+
         new_reaction = {
             'type': data.get('type'),
-            'date': data.get('date', datetime.now().isoformat()),  # Assuming current timestamp if date not provided
-            'reacted_by': [data.get('reacted_by')] 
+            # Assuming current timestamp if date not provided
+            'date': data.get('date', datetime.now().isoformat()),
+            'reacted_by': [data.get('reacted_by')]
         }
-        
-        existing_index = next((index for index, reaction in enumerate(reactions) if reaction['type'] == new_reaction['type']), None)
-        
+
+        existing_index = next((index for index, reaction in enumerate(
+            reactions) if reaction['type'] == new_reaction['type']), None)
+
         if existing_index is not None:
-            reactions[existing_index]['reacted_by'].append(data['reacted_by'])
-            reactions[existing_index]['date'] = new_reaction['date']
+            # Check if the user has already reacted for this type of reaction
+            if data['reacted_by'] not in reactions[existing_index]['reacted_by']:
+                reactions[existing_index]['reacted_by'].append(
+                    data['reacted_by'])
+                reactions[existing_index]['date'] = new_reaction['date']
+            else:
+                return {
+                    'status': 'Not modified',
+                    'message': 'User already reacted with the same type of reaction.',
+                }, 200
+
         else:
             reactions.append(new_reaction)
-    
+
         post['reactions'] = reactions
-        
+
         document.save(item=post)
-        
+
         return {
             'status': 'success',
             'message': 'Reaction successfully added.'
@@ -165,4 +178,3 @@ def edit_reaction_on_post(post_id, data):
             'status': 'fail',
             'message': 'Post not found.',
         }, 404
-
