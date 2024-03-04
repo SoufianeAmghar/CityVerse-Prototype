@@ -21,7 +21,9 @@ COPY --from=build /app/build /usr/share/nginx/html
 
 CMD /bin/sh -c "export DOLLAR=\"$\" && envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && cat /etc/nginx/nginx.conf && cat /var/log/nginx/error.log && nginx -g 'daemon off;'"
 
+# Expose the listening port
 EXPOSE 80
+EXPOSE 443
 
 
 
