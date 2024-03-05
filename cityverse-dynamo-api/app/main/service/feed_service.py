@@ -173,9 +173,7 @@ def edit_reaction_on_post(post_id, data):
             'status': 'success',
             'message': 'Reaction successfully added.'
         }, 200
-            'status': 'success',
-            'message': 'Reaction successfully added.'
-        }, 200
+            
     else:
         return {
             'status': 'fail',
