@@ -22,6 +22,11 @@ services:
     restart: always
     build: ./cityverse-ui
     ports:
-      - 90:80
+      - 80:80
+      - 443:443
+    env_file:
+      - ./cityverse-ui/.env
+    volumes:
+     - /home/ubuntu/cityverse-proto/CityVerse-Prototype/certs:/etc/nginx/certs
     
     
