@@ -245,6 +245,7 @@ export default function Profile() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     dispatch({
@@ -1300,7 +1301,7 @@ export default function Profile() {
                           />
                         </Card>
                       </>
-                    ) : (
+                    ) : feeds.length !== 0 ? (
                       <Grid
                         container
                         spacing={0}
@@ -1323,6 +1324,19 @@ export default function Profile() {
                         })}
                         <br />
                       </Grid>
+                    ) : (
+                      <Card
+                        style={{
+                          borderRadius: "0px",
+                          marginTop: "10px",
+                          padding: "20px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        Follow association to get news feeds
+                      </Card>
                     )}
                   </Suspense>
                 </TabPanel>
@@ -1410,7 +1424,7 @@ export default function Profile() {
                       sx={{ display: "flex", alignItems: "center" }}
                     >
                       <AddBusinessIcon sx={{ color: "#08089C" }} />
-                      {"  "} &emsp;Ajouter Nouveau Badge
+                      {"  "} &emsp;Ajouter Nouveau Mission
                     </Typography>
                   </Suspense>
                 </TabPanel>
@@ -2304,14 +2318,23 @@ function Feeds(item, key) {
       .catch((err) => {});
   }
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl1, setAnchorEl1] = React.useState(null);
 
-  const handleClick = (event) => {
-    setAnchorEl(anchorEl ? null : event.currentTarget);
+  const handleClickE1 = (event) => {
+    setAnchorEl1(anchorEl1 ? null : event.currentTarget);
   };
 
-  const open = Boolean(anchorEl);
+  const open = Boolean(anchorEl1);
   const id = open ? "simple-popper" : undefined;
+
+  const [anchorEl2, setAnchorEl2] = React.useState(null);
+
+  const handleClickE2 = (event) => {
+    setAnchorEl2(anchorEl2 ? null : event.currentTarget);
+  };
+
+  const openE2 = Boolean(anchorEl2);
+  const idE2 = openE2 ? "simple-popper" : undefined;
 
   const emojis = {
     like: "👍",
@@ -2320,6 +2343,132 @@ function Feeds(item, key) {
     wow: "😮",
     sad: "😢",
     angry: "😡",
+  };
+
+  const reactions = item?.item?.reactions;
+
+  const like = (id) => {
+    const object = {
+      type: "like",
+      date: new Date().toISOString(),
+      reacted_by: sessionStorage.getItem("user_Id"),
+    };
+    axios
+      .put(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "feed/" +
+          id +
+          "/reactions",
+        object
+      )
+      .then((value) => {
+        call_api_get_feed_by_id();
+      })
+      .catch((err) => {});
+  };
+  const love = (id) => {
+    const object = {
+      type: "love",
+      date: new Date().toISOString(),
+      reacted_by: sessionStorage.getItem("user_Id"),
+    };
+    axios
+      .put(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "feed/" +
+          id +
+          "/reactions",
+        object
+      )
+      .then((value) => {
+        call_api_get_feed_by_id();
+      })
+      .catch((err) => {});
+  };
+  const haha = (id) => {
+    const object = {
+      type: "haha",
+      date: new Date().toISOString(),
+      reacted_by: sessionStorage.getItem("user_Id"),
+    };
+    axios
+      .put(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "feed/" +
+          id +
+          "/reactions",
+        object
+      )
+      .then((value) => {
+        call_api_get_feed_by_id();
+      })
+      .catch((err) => {});
+  };
+  const wow = (id) => {
+    const object = {
+      type: "wow",
+      date: new Date().toISOString(),
+      reacted_by: sessionStorage.getItem("user_Id"),
+    };
+    axios
+      .put(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "feed/" +
+          id +
+          "/reactions",
+        object
+      )
+      .then((value) => {
+        call_api_get_feed_by_id();
+      })
+      .catch((err) => {});
+  };
+  const sad = (id) => {
+    const object = {
+      type: "sad",
+      date: new Date().toISOString(),
+      reacted_by: sessionStorage.getItem("user_Id"),
+    };
+    axios
+      .put(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "feed/" +
+          id +
+          "/reactions",
+        object
+      )
+      .then((value) => {
+        call_api_get_feed_by_id();
+      })
+      .catch((err) => {});
+  };
+  const angry = (id) => {
+    const object = {
+      type: "angry",
+      date: new Date().toISOString(),
+      reacted_by: sessionStorage.getItem("user_Id"),
+    };
+    axios
+      .put(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "feed/" +
+          id +
+          "/reactions",
+        object
+      )
+      .then((value) => {
+        call_api_get_feed_by_id();
+      })
+      .catch((err) => {});
+  };
+  const already_Reacted = (id, array) => {
+    
+    for (let i = 0; i < array?.length; i++) {
+      if (array[i] == sessionStorage.getItem('user_Id')) {
+        return true;
+      }
+    }
+    return false;
   };
 
   return (
@@ -2431,7 +2580,7 @@ function Feeds(item, key) {
           {item?.item?.links.length !== 0 && (
             <ImageList
               sx={{ width: "60%", height: "60%", justifyContent: "center" }}
-              cols={2}
+              cols={item?.item?.links?.length}
               rowHeight={"20%"}
             >
               {item?.item?.links?.reverse()?.map((i) => (
@@ -2473,8 +2622,8 @@ function Feeds(item, key) {
               flexDirection: "rows",
             }}
           >
-            <div style={{ display: "flex" }}>
-              <IconButton aria-describedby={id} onClick={handleClick}>
+            <div style={{ display: "relative" }}>
+              <IconButton aria-describedby={id} onClick={handleClickE1}>
                 <img
                   src={require("../../Asset/fav.png")}
                   style={{
@@ -2501,11 +2650,11 @@ function Feeds(item, key) {
                     paddingTop: "5%",
                   }}
                 >
-                  {item?.item?.reactions?.length}{" "}
+                  {/* {item?.item?.reactions?.length}{" "} */}
                 </Typography>
               </IconButton>
               <div>
-                <Popper id={id} open={open} anchorEl={anchorEl}>
+                <Popper id={id} open={open} anchorEl={anchorEl1}>
                   <Box
                     sx={{
                       display: "flex",
@@ -2516,12 +2665,100 @@ function Feeds(item, key) {
                       flexDirection: "rows",
                     }}
                   >
-                    <IconButton>{emojis?.like}</IconButton>
-                    <IconButton>{emojis?.love}</IconButton>
-                    <IconButton>{emojis?.angry}</IconButton>
-                    <IconButton>{emojis?.haha}</IconButton>
-                    <IconButton>{emojis?.sad}</IconButton>
-                    <IconButton>{emojis?.wow}</IconButton>
+                    <IconButton
+                      style={
+                        already_Reacted(
+                          sessionStorage.getItem("user_Id"),
+                          item?.item?.reactions
+                            .filter((item) => item.type === "like")
+                            .map((item) => item.reacted_by)
+                        )
+                          ? { fontSize: "50px" }
+                          : { fontSize: "30px" }
+                      }
+                      onClick={() => like(item?.item?.id)}
+                    >
+                      {/* {console.log(
+                        already_Reacted(
+                          sessionStorage.getItem("user_Id"),
+                          item?.item?.reactions
+                            .filter((item) => item.type === "like")
+                            .map((item) => item.reacted_by)
+                        ),
+                        item?.item?.reactions
+                          .filter((item) => item.type === "like")
+                          .map((item) => item.reacted_by),
+                        sessionStorage.getItem("user_Id")
+                      )} */}
+                      {emojis?.like}
+                    </IconButton>
+                    <IconButton
+                      style={
+                        already_Reacted(
+                          sessionStorage.getItem("user_Id"),
+                          item?.item?.reactions
+                            .filter((item) => item.type === "love")
+                            .map((item) => item.reacted_by)
+                        )
+                          ? { fontSize: "35px" }
+                          : { fontSize: "25px" }
+                      }
+                      onClick={() => love(item?.item?.id)}
+                    >
+                      {emojis?.love}
+                    </IconButton>
+                    <IconButton  style={
+                        already_Reacted(
+                          sessionStorage.getItem("user_Id"),
+                          item?.item?.reactions
+                            .filter((item) => item.type === "angry")
+                            .map((item) => item.reacted_by)
+                        )
+                          ? { fontSize: "35px" }
+                          : { fontSize: "25px" }
+                      }onClick={() => angry(item?.item?.id)}>
+                      {emojis?.angry}
+                    </IconButton>
+                    <IconButton  style={
+                        already_Reacted(
+                          sessionStorage.getItem("user_Id"),
+                          item?.item?.reactions
+                            .filter((item) => item.type === "haha")
+                            .map((item) => item.reacted_by)
+                        )
+                          ? { fontSize: "35px" }
+                          : { fontSize: "25px" }
+                      }
+                      onClick={() => haha(item?.item?.id)}>
+                      {emojis?.haha}
+                    </IconButton>
+                    <IconButton style={
+                        already_Reacted(
+                          sessionStorage.getItem("user_Id"),
+                          item?.item?.reactions
+                            .filter((item) => item.type === "sad")
+                            .map((item) => item.reacted_by)
+                        )
+                          ? { fontSize: "35px" }
+                          : { fontSize: "25px" }
+                      }
+                      onClick={() => sad(item?.item?.id)}>
+                      {emojis?.sad}
+                    </IconButton>
+                    <IconButton 
+                    style={
+                      already_Reacted(
+                        sessionStorage.getItem("user_Id"),
+                        item?.item?.reactions
+                          .filter((item) => item.type === "wow")
+                          .map((item) => item.reacted_by)
+                      )
+                        ? { fontSize: "35px" }
+                        : { fontSize: "25px" }
+                    }
+                    onClick={() => wow(item?.item?.id)}>
+                      {emojis?.wow}
+                    </IconButton>
                   </Box>
                 </Popper>
               </div>
@@ -2535,8 +2772,70 @@ function Feeds(item, key) {
               }}
             >
               <div style={{ display: "flex" }}>
-                <FavoriteBorderOutlinedIcon /> {item?.item?.reactions?.length}{" "}
-                J'aime
+                <IconButton aria-describedby={idE2} onClick={handleClickE2}>
+                  <FavoriteBorderOutlinedIcon /> {item?.item?.reactions?.length}{" "}
+                  {/* reactions */}
+                </IconButton>
+
+                <div>
+                  <Popper id={idE2} open={openE2} anchorEl={anchorEl2}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        border: 0.25,
+                        borderRadius: "2%",
+                        borderColor: "#1890FF",
+                        bgcolor: "background.paper",
+                        flexDirection: "rows",
+                      }}
+                    >
+                      <span>
+                        {emojis?.like}
+                        {
+                          item?.item?.reactions
+                            .filter((item) => item.type === "like")
+                            .map((item) => item.reacted_by) === [] ? "" : item?.item?.reactions
+                            .filter((item) => item.type === "like")
+                            .map((item) => item.reacted_by)?.length
+                        }
+                      </span>
+                      {emojis?.love}
+                      {
+                        item?.item?.reactions
+                          .filter((item) => item.type === "love")
+                          .map((item) => item.reacted_by)?.length
+                      }
+
+                      {emojis?.angry}
+                      {
+                        item?.item?.reactions
+                          .filter((item) => item.type === "angry")
+                          .map((item) => item.reacted_by)?.length
+                      }
+
+                      {emojis?.haha}
+                      {
+                        item?.item?.reactions
+                          .filter((item) => item.type === "haha")
+                          .map((item) => item.reacted_by)?.length
+                      }
+
+                      {emojis?.sad}
+                      {
+                        item?.item?.reactions
+                          .filter((item) => item.type === "sad")
+                          .map((item) => item.reacted_by)?.length
+                      }
+
+                      {emojis?.wow}
+                      {
+                        item?.item?.reactions
+                          .filter((item) => item.type === "wow")
+                          .map((item) => item.reacted_by)?.length
+                      }
+                    </Box>
+                  </Popper>
+                </div>
               </div>{" "}
               <div style={{ display: "flex" }}>
                 <ModeCommentOutlinedIcon />

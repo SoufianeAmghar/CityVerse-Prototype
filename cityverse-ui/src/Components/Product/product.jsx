@@ -16,6 +16,7 @@ import TurnRightOutlinedIcon from "@mui/icons-material/TurnRightOutlined";
 import BikeMarker from "../Map/MarkerBike";
 import img from "../../Asset/rose.png";
 import CardMedia from "@mui/material/CardMedia";
+import Chip from "@mui/material/Chip";
 import StarIcon from "@mui/icons-material/Star";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PropTypes from "prop-types";
@@ -59,8 +60,11 @@ import { FormControl, InputLabel, OutlinedInput } from "@mui/material";
 import PermMediaIcon from "@mui/icons-material/PermMedia";
 import PermMediaOutlinedIcon from "@mui/icons-material/PermMediaOutlined";
 import format from "date-fns/format";
-
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
 import ImageListItem from "@mui/material/ImageListItem";
+import ModaladdnewMission from "./addNewMission";
+import Autocomplete from "@mui/material/Autocomplete";
 
 const AntTabs = styled(Tabs)({
   "& .MuiTabs-indicator": {
@@ -150,6 +154,7 @@ export default function Product() {
   const theme = useTheme();
   const dispatch = useDispatch();
   const history = useHistory();
+  const [inProgress, setInprogress] = useState(true);
   const [value, setValue] = React.useState(0);
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [selectedNewImage, setSelectedNewImage] = useState();
@@ -162,6 +167,46 @@ export default function Product() {
   const association = useSelector(
     (state) => state.AssociationReducer?.associations
   );
+  const [adress, setAdress] = useState("");
+  const [valuesSiege, setValuesSiege] = useState({
+    valideSiege: false,
+    error: false,
+  });
+  const handleClickVerifierSiege = () => {
+    verifierSiege();
+  };
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+  const verifierSiege = () => {
+    const object = {
+      siege: adress,
+    };
+    axios
+      .post(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "association/verify-siege",
+        object
+      )
+      .then((value) => {
+        setAdress([
+          (value?.data.lat).toFixed(10),
+          (value?.data.long).toFixed(10),
+        ]);
+        setValuesSiege({
+          ...valuesSiege,
+          valideSiege: true,
+          error: false,
+        });
+      })
+      .catch((err) => {
+        setValuesSiege({
+          ...valuesSiege,
+          valideSiege: false,
+          error: true,
+        });
+      });
+  };
   const Activity = useSelector((state) => state.AssociationReducer?.activity);
   const id_association = useSelector(
     (state) => state.AssociationReducer?.id_association
@@ -170,8 +215,13 @@ export default function Product() {
     (state) => state.AssociationReducer?.association_name
   );
   const posts = useSelector((state) => state.AssociationReducer?.posts);
-
   const sdg = useSelector((state) => state.ProfileReducer?.sdg);
+
+  //Open mission Model
+  const [openModel, setOpenModel] = useState();
+  const handleOpenModel = (e) => {
+    setOpenModel(true);
+  };
 
   const handlenewImage = (e) => {
     const file = e.target.files[0];
@@ -207,6 +257,16 @@ export default function Product() {
   };
   const handleCloseOPenPost = () => {
     setOpenMediapost(false);
+    handleClose();
+  };
+
+  const [openApplymission, setOpenApplyMission] = useState();
+  const handleopenApplyMission = () => {
+    setOpenApplyMission(true);
+    // handleClose();
+  };
+  const handleCloseApplymission = () => {
+    setOpenApplyMission(false);
     handleClose();
   };
 
@@ -275,13 +335,20 @@ export default function Product() {
           id
       )
       .then((value) => {
+        setInprogress(false);
         console.log("Posts", value.data);
         dispatch({
           type: "Posts",
           posts: orderByDate(value?.data),
         });
       })
-      .catch((err) => {});
+      .catch((err) => {
+        setInprogress(false);
+        dispatch({
+          type: "Posts",
+          posts: [],
+        });
+      });
   };
 
   const call_api_get_association_by_id = (id) => {
@@ -483,7 +550,6 @@ export default function Product() {
           </Button>
         </DialogActions>
       </Dialog>
-
       <Dialog
         open={openMediapost}
         onClose={() => {
@@ -591,7 +657,231 @@ export default function Product() {
           </Button>
         </DialogActions>
       </Dialog>
-
+      {/* apply in mission */}
+      <Dialog
+        open={openApplymission}
+        onClose={() => {
+          handleCloseApplymission();
+        }}
+        maxWidth="sm"
+        fullWidth
+        style={{ boxShadow: "none" }}
+      >
+        <DialogTitle id="alert-dialog-title">
+          {sessionStorage.getItem("language") === "fr"
+            ? "Apply mission"
+            : "Apply mission"}
+        </DialogTitle>
+        <Box position="absolute" top={0} right={0}>
+          <IconButton
+            onClick={() => {
+              handleCloseApplymission();
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            <Box
+              component="form"
+              // onSubmit={() => ()}
+              sx={{
+                p: 2,
+                paddingLeft: 3,
+                background: "#0000",
+                "& > :not(style)": { m: 2, width: "42.2%" },
+              }}
+              noValidate
+              autoComplete="off"
+            >
+              <TextField
+                size="small"
+                focused
+                variant="outlined"
+                color="success"
+                placeholder={
+                  sessionStorage.getItem("language") === "fr"
+                    ? "Obligatoire"
+                    : "Required"
+                }
+                label={
+                  sessionStorage.getItem("language") === "fr"
+                    ? "First Name"
+                    : "First Name"
+                }
+                // value={NumVolunteers}
+                // onChange={(e) => setNumVolunteers(e.target.value)}
+              />
+              <TextField
+                size="small"
+                focused
+                variant="outlined"
+                color="success"
+                placeholder={
+                  sessionStorage.getItem("language") === "fr"
+                    ? "Obligatoire"
+                    : "Required"
+                }
+                label={
+                  sessionStorage.getItem("language") === "fr"
+                    ? "SurName"
+                    : "SurName"
+                }
+                // value={NumVolunteers}
+                // onChange={(e) => setNumVolunteers(e.target.value)}
+              />
+              <FormControl variant="outlined" color="success" focused>
+                <InputLabel
+                  variant="outlined"
+                  color="success"
+                  size="small"
+                  InputLabelProps={{ style: { color: "black" } }}
+                >
+                  {sessionStorage.getItem("language") === "fr"
+                      ? "address"
+                      : "address"}
+                </InputLabel>
+                <OutlinedInput
+                  color="success"
+                  size="small"
+                  variant="outlined"
+                  type="text"
+                  label={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "address"
+                      : "address"
+                  }
+                  multiline
+                  rows={1}
+                  value={adress}
+                  placeholder={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "address"
+                      : "address"
+                  }
+                  onChange={(e) => setAdress(e.target.value)}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickVerifierSiege}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {valuesSiege.valideSiege ? (
+                          <CheckCircleIcon
+                            sx={{
+                              height: "20px",
+                              width: "auto",
+                              color: "green",
+                            }}
+                          />
+                        ) : valuesSiege.error ? (
+                          <ErrorIcon
+                            sx={{
+                              height: "20px",
+                              width: "auto",
+                              color: "red",
+                            }}
+                          />
+                        ) : (
+                          <CheckCircleOutlineIcon
+                            sx={{ height: "20px", width: "auto" }}
+                          />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+              </FormControl>
+              <FormControl variant="outlined" color="success" focused>
+                <Autocomplete
+                  multiple
+                  size="small"
+                  focused
+                  fullWidth
+                  variant="outlined"
+                  color="success"
+                  limitTags={1}
+                  options={[{ label: "Yes", label: "No" }]}
+                  // value={selectedActivity}
+                  onChange={(event, newValue) => {
+                    // setSelectedActivity(newValue);
+                  }}
+                  autoHighlight
+                  getOptionLabel={(option) => option.label}
+                  renderOption={(props, option) => (
+                    <Box
+                      sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                      {...props}
+                    >
+                      {option.label}
+                    </Box>
+                  )}
+                  renderTags={(value: string[], getTagProps) =>
+                    value.map((option: string[], index: number) => (
+                      <Chip
+                        variant="outlined"
+                        label={option.label}
+                        {...getTagProps({ index })}
+                      />
+                    ))
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Activity*"
+                      size="small"
+                      focused
+                      variant="outlined"
+                      color="success"
+                      placeholder={
+                        sessionStorage.getItem("language") === "fr"
+                          ? "Choose activities"
+                          : "Choose activities"
+                      }
+                      inputProps={{
+                        ...params.inputProps,
+                        // disable autocomplete and autofill
+                      }}
+                    />
+                  )}
+                />
+              </FormControl>
+            </Box>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              itemData.push({
+                img: selectedNewImage,
+                title: "new one",
+                type: "image",
+              });
+              handleCloseApplymission();
+            }}
+            variant="contained"
+            style={styleValidate}
+            color="success"
+          >
+            {sessionStorage.getItem("language") === "fr"
+              ? "Confirmer"
+              : "Confirmer"}
+          </Button>
+          <Button
+            onClick={() => {
+              handleCloseApplymission();
+            }}
+            variant="contained"
+            style={styleCancelDelete}
+          >
+            {sessionStorage.getItem("language") === "fr" ? "Cacher" : "Cacher"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <ModaladdnewMission open={openModel} setOpen={setOpenModel} />
       <div style={{ position: "relative" }}>
         <Card
           sx={{
@@ -673,9 +963,10 @@ export default function Product() {
         <Grid item xs={12} sx={{ display: "flex", justifyItems: "center" }}>
           <AntTabs value={value} onChange={handleChange}>
             <AntTab label="Posts" {...a11yProps(0)} />
-            <AntTab label="Photos" {...a11yProps(1)} />
-            <AntTab label="Video" {...a11yProps(1)} />
-            <AntTab label="Metaverse" {...a11yProps(2)} />
+            <AntTab label="Missions" {...a11yProps(1)} />
+            <AntTab label="Photos" {...a11yProps(2)} />
+            <AntTab label="Video" {...a11yProps(3)} />
+            <AntTab label="Metaverse" {...a11yProps(4)} />
           </AntTabs>
         </Grid>
       </Grid>
@@ -715,7 +1006,7 @@ export default function Product() {
                 }}
               >
                 <Divider textAlign="left" sx={{ color: "#08089C" }}>
-                  Home Adresse.
+                  Home Address.
                 </Divider>
                 <div
                   style={{
@@ -824,7 +1115,7 @@ export default function Product() {
                 </div>
                 <br />
                 <Divider textAlign="left" sx={{ color: "#08089C" }}>
-                  SDG's.
+                  Activities.
                 </Divider>
                 <div
                   style={{
@@ -893,7 +1184,7 @@ export default function Product() {
                       <div
                         style={{
                           display: "flex",
-                          flexDirection: "column",
+                          flexDirection: "rows",
                           alignItems: "center",
                           justifyContent: "center",
                           height: "100%",
@@ -913,325 +1204,489 @@ export default function Product() {
                     }
                   >
                     <Grid container spacing={0.5}>
+                      {data?.user_id === sessionStorage.getItem("user_Id") ? (
+                        <>
+                          {" "}
+                          <Grid
+                            item
+                            xs={12}
+                            sx={{ display: "flex", justifyItems: "center" }}
+                          >
+                            <Box
+                              sx={{
+                                marginLeft: "0%",
+                                marginBottom: "5px",
+                                display: "flex",
+                                width: "99%",
+                                flexDirection: "rows",
+                                alignItems: "rows",
+                                paddingY: "0.5%",
+                              }}
+                            >
+                              <img
+                                // src={
+                                //   "https://w0.peakpx.com/wallpaper/725/891/HD-wallpaper-stade-de-france-french-football-stadium-paris-france-sports-arenas-national-stadium-of-france.jpg"
+                                // }
+                                src={data?.profile_image}
+                                style={{
+                                  width: "130px",
+                                  borderRadius: "100%",
+                                  height: "70px",
+                                  padding: "10px 40px",
+                                  alignItems: "flex-start",
+                                  gap: "10px",
+                                }}
+                              />
+                              <div
+                                style={{
+                                  display: "flex",
+                                  width: "90%",
+                                  height: "100px",
+                                  // justifyContent: "center",
+                                  // alignItems: "center",
+                                  backgroundColor: "#FFFF",
+                                  flexDirection: "row",
+                                }}
+                              >
+                                <FormControl
+                                  variant="outlined"
+                                  color="success"
+                                  fullWidth
+                                  focused
+                                >
+                                  <InputLabel
+                                    variant="outlined"
+                                    color="success"
+                                    size="small"
+                                    InputLabelProps={{
+                                      style: {
+                                        fontStyle: "italic",
+                                        fontSize: 15,
+                                      },
+                                    }}
+                                  >
+                                    {sessionStorage.getItem("language") === "fr"
+                                      ? "Add New Post"
+                                      : "Add New Post"}
+                                  </InputLabel>
+                                  <OutlinedInput
+                                    color="success"
+                                    id="Password"
+                                    size="small"
+                                    variant="outlined"
+                                    type="text"
+                                    multiline
+                                    rows={4}
+                                    onChange={(e) => {
+                                      setPost(e.target.value);
+                                    }}
+                                    endAdornment={
+                                      <InputAdornment position="end">
+                                        <input
+                                          accept="image/*,video/*,.pdf"
+                                          style={{ display: "none" }}
+                                          id="image-upload"
+                                          type="file"
+                                          onChange={handlenewPostImage}
+                                        />
+                                        <label htmlFor="image-upload">
+                                          <Button
+                                            variant="contained"
+                                            color="success"
+                                            sx={{
+                                              backgroundColor: "success",
+                                              minWidth: "0%",
+                                              borderRadius: "20px",
+                                              color: "#fff",
+                                            }}
+                                            component="span"
+                                            startIcon={<CloudUploadIcon />}
+                                          >
+                                            Media
+                                          </Button>
+                                        </label>
+                                      </InputAdornment>
+                                    }
+                                    InputLabelProps={{
+                                      style: {
+                                        fontStyle: "italic",
+                                        fontSize: 15,
+                                      },
+                                    }}
+                                    label={
+                                      sessionStorage.getItem("language") ===
+                                      "fr"
+                                        ? "Add New Post"
+                                        : "Add New Post"
+                                    }
+                                  />
+                                </FormControl>
+                              </div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  backgroundColor: "#FFFF",
+                                  marginLeft: "2%",
+                                  marginBottom: "1%",
+                                }}
+                              >
+                                <Button
+                                  variant="contained"
+                                  color="success"
+                                  sx={{
+                                    backgroundColor: "success",
+                                    minWidth: "25%",
+                                    borderRadius: "20px",
+                                    color: "#fff",
+                                  }}
+                                  onClick={call_api_add_post}
+                                >
+                                  Post
+                                </Button>
+                              </div>
+                            </Box>
+                          </Grid>{" "}
+                          <Grid
+                            item
+                            xs={12}
+                            sx={{ display: "flex", justifyItems: "center" }}
+                          >
+                            {" "}
+                            <Box
+                              sx={{
+                                display: "flex",
+                                justifyItems: "center",
+                                paddingY: "2%",
+                                paddingX: "15%",
+                              }}
+                            >
+                              <div style={{ position: "relative" }}>
+                                {selectedPostImage &&
+                                  (isPDF(selectedPostImage) === true ? (
+                                    <>{console.log(selectedPostImage)}</>
+                                  ) : (
+                                    <>
+                                      <img
+                                        style={{
+                                          width: "100px",
+                                          height: "100px",
+                                          borderRadius: "20%",
+                                        }}
+                                        src={URL.createObjectURL(
+                                          selectedPostImage
+                                        )}
+                                        alt="Uploaded"
+                                      />
+                                      <CancelIcon
+                                        style={{
+                                          position: "absolute",
+                                          top: "-5",
+                                          right: "-5",
+                                          color: "#556B2F",
+                                        }}
+                                        onClick={() => {
+                                          setSelectedPostImage(null);
+                                        }}
+                                      />
+                                    </>
+                                  ))}
+                              </div>
+                            </Box>{" "}
+                          </Grid>
+                          <br />
+                          <Divider
+                            variant="middle"
+                            sx={{ width: "99%", marginTop: "20px" }}
+                          ></Divider>
+                        </>
+                      ) : (
+                        <></>
+                      )}
+
                       <Grid
                         item
                         xs={12}
                         sx={{ display: "flex", justifyItems: "center" }}
-                      >
-                        <Box
-                          sx={{
-                            marginLeft: "0%",
-                            marginBottom: "5px",
-                            display: "flex",
-                            width: "99%",
-                            flexDirection: "rows",
-                            alignItems: "rows",
-                            paddingY: "0.5%",
-                          }}
-                        >
-                          <img
-                            // src={
-                            //   "https://w0.peakpx.com/wallpaper/725/891/HD-wallpaper-stade-de-france-french-football-stadium-paris-france-sports-arenas-national-stadium-of-france.jpg"
-                            // }
-                            src={data?.profile_image}
+                      ></Grid>
+                      {inProgress ? (
+                        <>
+                          <Card
                             style={{
-                              width: "130px",
-                              borderRadius: "100%",
-                              height: "70px",
-                              padding: "10px 40px",
-                              alignItems: "flex-start",
-                              gap: "10px",
-                            }}
-                          />
-                          <div
-                            style={{
+                              borderRadius: "0px",
+                              marginTop: "10px",
+                              padding: "20px",
                               display: "flex",
-                              width: "90%",
-                              height: "100px",
-                              // justifyContent: "center",
-                              // alignItems: "center",
-                              backgroundColor: "#FFFF",
-                              flexDirection: "row",
-                            }}
-                          >
-                            <FormControl
-                              variant="outlined"
-                              color="success"
-                              fullWidth
-                              focused
-                            >
-                              <InputLabel
-                                variant="outlined"
-                                color="success"
-                                size="small"
-                                InputLabelProps={{
-                                  style: { fontStyle: "italic", fontSize: 15 },
-                                }}
-                              >
-                                {sessionStorage.getItem("language") === "fr"
-                                  ? "Add New Post"
-                                  : "Add New Post"}
-                              </InputLabel>
-                              <OutlinedInput
-                                color="success"
-                                id="Password"
-                                size="small"
-                                variant="outlined"
-                                type="text"
-                                multiline
-                                rows={4}
-                                onChange={(e) => {
-                                  setPost(e.target.value);
-                                }}
-                                endAdornment={
-                                  <InputAdornment position="end">
-                                    <input
-                                      accept="image/*,video/*,.pdf"
-                                      style={{ display: "none" }}
-                                      id="image-upload"
-                                      type="file"
-                                      onChange={handlenewPostImage}
-                                    />
-                                    <label htmlFor="image-upload">
-                                      <Button
-                                        variant="contained"
-                                        color="success"
-                                        sx={{
-                                          backgroundColor: "success",
-                                          minWidth: "0%",
-                                          borderRadius: "20px",
-                                          color: "#fff",
-                                        }}
-                                        component="span"
-                                        startIcon={<CloudUploadIcon />}
-                                      >
-                                        Media
-                                      </Button>
-                                    </label>
-                                  </InputAdornment>
-                                }
-                                InputLabelProps={{
-                                  style: { fontStyle: "italic", fontSize: 15 },
-                                }}
-                                label={
-                                  sessionStorage.getItem("language") === "fr"
-                                    ? "Add New Post"
-                                    : "Add New Post"
-                                }
-                              />
-                            </FormControl>
-                          </div>
-                          <div
-                            style={{
-                              display: "flex",
+                              width: "99%",
                               justifyContent: "center",
                               alignItems: "center",
-                              backgroundColor: "#FFFF",
-                              marginLeft: "2%",
-                              marginBottom: "1%",
                             }}
                           >
-                            <Button
-                              variant="contained"
+                            <CircularProgress
                               color="success"
+                              disableShrink
                               sx={{
-                                backgroundColor: "success",
-                                minWidth: "25%",
-                                borderRadius: "20px",
-                                color: "#fff",
+                                animationDuration: "550ms",
                               }}
-                              onClick={call_api_add_post}
-                            >
-                              Post
-                            </Button>
-                          </div>
-                        </Box>
-                      </Grid>
-                      <Grid
-                        item
-                        xs={12}
-                        sx={{ display: "flex", justifyItems: "center" }}
-                      >
-                        {" "}
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyItems: "center",
-                            paddingY: "2%",
-                            paddingX: "15%",
-                          }}
-                        >
-                          {console.log(selectedPostImage)}
-                          <div style={{ position: "relative" }}>
-                            {selectedPostImage &&
-                              (isPDF(selectedPostImage) === true ? (
-                                <>{console.log(selectedPostImage)}</>
-                              ) : (
-                                <>
-                                  <img
-                                    style={{
-                                      width: "100px",
-                                      height: "100px",
-                                      borderRadius: "20%",
-                                    }}
-                                    src={URL.createObjectURL(selectedPostImage)}
-                                    alt="Uploaded"
-                                  />
-                                  <CancelIcon
-                                    style={{
-                                      position: "absolute",
-                                      top: "-5",
-                                      right: "-5",
-                                      color: "#556B2F",
-                                    }}
-                                    onClick={() => {
-                                      setSelectedPostImage(null);
-                                    }}
-                                  />
-                                </>
-                              ))}
-                          </div>
-                        </Box>{" "}
-                      </Grid>
-                      <br />
-                      <Divider
-                        variant="middle"
-                        sx={{ width: "99%", marginTop: "20px" }}
-                      ></Divider>
-                      {posts.map((item, key) => {
-                        return (
-                          <>
-                            <Grid
-                              item
-                              xs={12}
-                              sx={{ display: "flex", justifyItems: "center" }}
-                            >
-                              <Divider
-                                textAlign="left"
-                                sx={{ color: "#08089C" }}
-                              ></Divider>
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  width: "99%",
-                                  flexDirection: "rows",
-                                  alignItems: "rows",
-                                  paddingTop: "0.5%",
-                                }}
+                              size={60}
+                              thickness={2}
+                            />
+                          </Card>
+                        </>
+                      ) : posts?.length === 0 ? (
+                        <>
+                          <Card
+                            style={{
+                              borderRadius: "0px",
+                              marginTop: "10px",
+                              padding: "20px",
+                              display: "flex",
+                              width: "99%",
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            There is no Posts for this association.
+                          </Card>
+                        </>
+                      ) : (
+                        posts.map((item, key) => {
+                          return (
+                            <>
+                              <Grid
+                                item
+                                xs={12}
+                                sx={{ display: "flex", justifyItems: "center" }}
                               >
-                                <img
-                                  // src={
-                                  //   "https://w0.peakpx.com/wallpaper/725/891/HD-wallpaper-stade-de-france-french-football-stadium-paris-france-sports-arenas-national-stadium-of-france.jpg"
-                                  // }
-                                  src={data?.profile_image}
-                                  style={{
-                                    width: "150px",
-                                    borderRadius: "100%",
-                                    height: "90px",
-                                    padding: "10px 40px",
-                                    alignItems: "flex-start",
-                                    gap: "10px",
+                                <Divider
+                                  textAlign="left"
+                                  sx={{ color: "#08089C" }}
+                                ></Divider>
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    width: "99%",
+                                    flexDirection: "rows",
+                                    alignItems: "rows",
+                                    paddingTop: "0.5%",
                                   }}
-                                />
-                                <div
-                                  style={{
-                                    width: "100%",
-                                    height: "30px",
+                                >
+                                  <img
+                                    // src={
+                                    //   "https://w0.peakpx.com/wallpaper/725/891/HD-wallpaper-stade-de-france-french-football-stadium-paris-france-sports-arenas-national-stadium-of-france.jpg"
+                                    // }
+                                    src={data?.profile_image}
+                                    style={{
+                                      width: "150px",
+                                      borderRadius: "100%",
+                                      height: "90px",
+                                      padding: "10px 40px",
+                                      alignItems: "flex-start",
+                                      gap: "10px",
+                                    }}
+                                  />
+                                  <div
+                                    style={{
+                                      width: "100%",
+                                      height: "30px",
+                                    }}
+                                  >
+                                    <Typography
+                                      gutterBottom
+                                      variant="subtitle1"
+                                      component="div"
+                                      style={{
+                                        paddingTop: "2%",
+                                      }}
+                                    >
+                                      {data?.name}
+                                    </Typography>
+                                    <Typography
+                                      variant="subtitle2"
+                                      color="text.secondary"
+                                      sx={{ paddingLeft: "0%" }}
+                                    >
+                                      {format(
+                                        new Date(item?.created_on),
+                                        "dd/MM/yyyy HH:mm"
+                                      )}
+                                    </Typography>
+                                  </div>
+                                </Box>
+                              </Grid>
+                              <Grid
+                                item
+                                xs={12}
+                                sx={{ display: "flex", justifyItems: "center" }}
+                              >
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    width: "99%",
+                                    height: "auto",
+                                    padding: "0px 40px",
+                                    backgroundColor: "#FFFF",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    justifyItems: "center",
                                   }}
                                 >
                                   <Typography
                                     gutterBottom
-                                    variant="subtitle1"
+                                    variant="body2"
                                     component="div"
                                     style={{
-                                      paddingTop: "2%",
+                                      paddingLeft: "10%",
                                     }}
                                   >
-                                    {data?.name}
+                                    {item?.description}
                                   </Typography>
-                                  <Typography
-                                    variant="subtitle2"
-                                    color="text.secondary"
-                                    sx={{ paddingLeft: "0%" }}
+                                  {/* <ListImage itemData={itemData} /> */}
+                                  <Grid
+                                    item
+                                    xs={12}
+                                    sx={{
+                                      display: "flex",
+                                      paddingX: "20%",
+                                      flexDirection: "column",
+                                      gap: "24px",
+                                      alignSelf: "stretch",
+                                      // background: "#F1FBEC",
+                                    }}
                                   >
-                                    {format(
-                                      new Date(item?.created_on),
-                                      "dd/MM/yyyy HH:mm"
+                                    {item?.links.length !== 0 && (
+                                      <ImageList
+                                        sx={{ width: "100%", height: "auto" }}
+                                        cols={2}
+                                        rowHeight={"20%"}
+                                      >
+                                        {item?.links
+                                          ?.reverse()
+                                          ?.map((i, index) => (
+                                            <ImageListItem key={index}>
+                                              <img
+                                                srcSet={`${i}`}
+                                                src={`${i}`}
+                                                width={"5%"}
+                                                height={"auto"}
+                                                alt="image"
+                                                loading="lazy"
+                                              />
+                                            </ImageListItem>
+                                          ))}
+                                      </ImageList>
                                     )}
-                                  </Typography>
-                                </div>
-                              </Box>
-                            </Grid>
-                            <Grid
-                              item
-                              xs={12}
-                              sx={{ display: "flex", justifyItems: "center" }}
-                            >
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  width: "99%",
-                                  height: "auto",
-                                  padding: "0px 40px",
-                                  backgroundColor: "#FFFF",
-                                  flexDirection: "column",
-                                  justifyContent: "center",
-                                  justifyItems: "center",
-                                }}
-                              >
-                                <Typography
-                                  gutterBottom
-                                  variant="body2"
-                                  component="div"
-                                  style={{
-                                    paddingLeft: "10%",
-                                  }}
-                                >
-                                  {item?.description}
-                                </Typography>
-                                {/* <ListImage itemData={itemData} /> */}
-                                <Grid
-                                  item
-                                  xs={12}
-                                  sx={{
-                                    display: "flex",
-                                    paddingX: "20%",
-                                    flexDirection: "column",
-                                    gap: "24px",
-                                    alignSelf: "stretch",
-                                    // background: "#F1FBEC",
-                                  }}
-                                >
-                                  {item?.links.length !== 0 && (
-                                    <ImageList
-                                      sx={{ width: "100%", height: "auto" }}
-                                      cols={2}
-                                      rowHeight={"20%"}
-                                    >
-                                      {item?.links?.reverse()?.map((i , index) => (
-                                        <ImageListItem key={index}>
-                                          <img
-                                            srcSet={`${i}`}
-                                            src={`${i}`}
-                                            width={"5%"}
-                                            height={"auto"}
-                                            alt="image"
-                                            loading="lazy"
-                                          />
-                                        </ImageListItem>
-                                      ))}
-                                    </ImageList>
-                                  )}
-                                </Grid>
-                              </Box>
-                            </Grid>
-                          </>
-                        );
-                      })}
+                                  </Grid>
+                                </Box>
+                              </Grid>
+                            </>
+                          );
+                        })
+                      )}
                     </Grid>
                   </Suspense>
                 </TabPanel>
                 <TabPanel value={value} index={1} dir={theme.direction}>
+                  <Suspense
+                    fallback={
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          height: "100%",
+                          width: "100%",
+                        }}
+                      >
+                        <CircularProgress
+                          color="success"
+                          disableShrink
+                          sx={{
+                            animationDuration: "550ms",
+                          }}
+                          size={60}
+                          thickness={2}
+                        />
+                      </div>
+                    }
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Button onClick={() => handleOpenModel()}>
+                        <Typography
+                          gutterBottom
+                          variant="h6"
+                          component="div"
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            color: "#08089C",
+                          }}
+                        >
+                          <AddBusinessIcon sx={{ color: "#08089C" }} />
+                          {"  "} &emsp;Ajouter une nouvelle mission
+                        </Typography>
+                      </Button>
+                      <br />
+                      <Divider>
+                        <Typography gutterBottom variant="h5" component="div">
+                          Missions
+                        </Typography>
+                      </Divider>
+
+                      <Card sx={{ backgroundColor: "#F2F2F2", margin: "2%" }}>
+                        <CardContent>
+                          <Typography gutterBottom variant="h5" component="div">
+                            Mission 1
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            "ABC Community Foundation is dedicated to empowering
+                            individuals and communities to achieve their full
+                            potential. We strive to foster social justice,
+                            equity, and inclusivity by providing resources,
+                            education, and support to underserved populations.
+                            Through collaboration, advocacy, and innovation, we
+                            aim to create positive systemic change and build a
+                            more just and compassionate society. Our core values
+                            of integrity, respect, diversity, and collaboration
+                            guide our efforts as we work towards a future where
+                            every person has the opportunity to thrive."
+                          </Typography>
+                        </CardContent>
+                        <CardActions sx={{ flexDirection: "row-reverse" }}>
+                          <Button
+                            variant="contained"
+                            // disabled={handleAdd()}
+                            sx={{
+                              color: "#556B2F",
+                              borderRadius: "20px",
+                              backgroundColor: "#FFF",
+                              margin: "2%",
+                            }}
+                            onClick={handleopenApplyMission}
+                          >
+                            Apply
+                          </Button>
+                          <Chip
+                            variant="contained"
+                            color="success"
+                            // disabled={handleAdd()}
+                            sx={styleValidate}
+                            label="Open application"
+                          ></Chip>
+                        </CardActions>
+                      </Card>
+                    </Box>
+                  </Suspense>
+                </TabPanel>
+                <TabPanel value={value} index={2} dir={theme.direction}>
                   <Suspense
                     fallback={
                       <div
@@ -1283,7 +1738,7 @@ export default function Product() {
                     </Box>
                   </Suspense>
                 </TabPanel>
-                <TabPanel value={value} index={2} dir={theme.direction}>
+                <TabPanel value={value} index={3} dir={theme.direction}>
                   <Suspense
                     fallback={
                       <div
@@ -1334,7 +1789,7 @@ export default function Product() {
                     </Box>
                   </Suspense>
                 </TabPanel>
-                <TabPanel value={value} index={3} dir={theme.direction}>
+                <TabPanel value={value} index={4} dir={theme.direction}>
                   <Suspense
                     fallback={
                       <div
