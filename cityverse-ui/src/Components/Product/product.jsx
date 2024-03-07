@@ -154,6 +154,10 @@ export default function Product() {
   const theme = useTheme();
   const dispatch = useDispatch();
   const history = useHistory();
+
+
+  const address = useSelector((state) => state.ProfileReducer?.address);
+
   const [inProgress, setInprogress] = useState(true);
   const [value, setValue] = React.useState(0);
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
@@ -167,7 +171,14 @@ export default function Product() {
   const association = useSelector(
     (state) => state.AssociationReducer?.associations
   );
-  const [adress, setAdress] = useState("");
+  const [adress, setAdress] = useState(address);
+  const [firstName, setfirstName] = useState();
+  const [lastName, setLastName] = useState();
+  const [permit, setPermit] = useState();
+  const [haveCar, sethaveCar] = useState();
+  const [interset, setInterest] = useState();
+  const [ about, setAbout ] = useState();
+
   const [valuesSiege, setValuesSiege] = useState({
     valideSiege: false,
     error: false,
@@ -439,7 +450,18 @@ export default function Product() {
 
     return array;
   }
-
+  const handleApplyMission = () => {
+    const object = {
+      firstName: firstName,
+      surName: lastName,
+      haveCar: haveCar,
+      permit: permit,
+      whatsInterest: about,
+      userId: sessionStorage.getItem('user_Id')
+    }
+    console.log(object)
+    handleCloseApplymission()
+  }
   return (
     <div style={{}}>
       {/* add new photos */}
@@ -700,6 +722,8 @@ export default function Product() {
                 focused
                 variant="outlined"
                 color="success"
+                value={firstName}
+                onChange={(e) => setfirstName(e.target.value)}
                 placeholder={
                   sessionStorage.getItem("language") === "fr"
                     ? "Obligatoire"
@@ -723,6 +747,8 @@ export default function Product() {
                     ? "Obligatoire"
                     : "Required"
                 }
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
                 label={
                   sessionStorage.getItem("language") === "fr"
                     ? "SurName"
@@ -797,17 +823,16 @@ export default function Product() {
               </FormControl>
               <FormControl variant="outlined" color="success" focused>
                 <Autocomplete
-                  multiple
                   size="small"
                   focused
                   fullWidth
                   variant="outlined"
                   color="success"
                   limitTags={1}
-                  options={[{ label: "Yes", label: "No" }]}
-                  // value={selectedActivity}
+                  options={[{ label: "Yes"}, {label: "No"} ]}
+                  value={haveCar}
                   onChange={(event, newValue) => {
-                    // setSelectedActivity(newValue);
+                    sethaveCar(newValue);
                   }}
                   autoHighlight
                   getOptionLabel={(option) => option.label}
@@ -831,15 +856,69 @@ export default function Product() {
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      label="Activity*"
+                      label="Have a Car*"
                       size="small"
                       focused
                       variant="outlined"
                       color="success"
                       placeholder={
                         sessionStorage.getItem("language") === "fr"
-                          ? "Choose activities"
-                          : "Choose activities"
+                          ? "You have a car"
+                          : "You have a car"
+                      }
+                      inputProps={{
+                        ...params.inputProps,
+                        // disable autocomplete and autofill
+                      }}
+                    />
+                  )}
+                />
+              </FormControl>
+              <FormControl variant="outlined" color="success" focused>
+                <Autocomplete
+                 
+                  size="small"
+                  focused
+                  fullWidth
+                  variant="outlined"
+                  color="success"
+                  limitTags={1}
+                  options={[{ label: "Yes"}, {label: "No"} ]}
+                  value={permit}
+                  onChange={(event, newValue) => {
+                    setPermit(newValue);
+                  }}
+                  autoHighlight
+                  getOptionLabel={(option) => option.label}
+                  renderOption={(props, option) => (
+                    <Box
+                      sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                      {...props}
+                    >
+                      {option.label}
+                    </Box>
+                  )}
+                  renderTags={(value: string[], getTagProps) =>
+                    value.map((option: string[], index: number) => (
+                      <Chip
+                        variant="outlined"
+                        label={option.label}
+                        {...getTagProps({ index })}
+                      />
+                    ))
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Have a driving license*"
+                      size="small"
+                      focused
+                      variant="outlined"
+                      color="success"
+                      placeholder={
+                        sessionStorage.getItem("language") === "fr"
+                          ? "You a driving license"
+                          : "You a driving license"
                       }
                       inputProps={{
                         ...params.inputProps,
@@ -850,17 +929,48 @@ export default function Product() {
                 />
               </FormControl>
             </Box>
+            <Box
+              component="form"
+              // onSubmit={() => ()}
+              sx={{
+                px: 2,
+                paddingLeft: 3,
+                background: "#0000",
+                "& > :not(style)": { mx: 2, width: "90%" },
+              }}
+              noValidate
+              autoComplete="off"
+            >
+              <TextField
+                  size="small"
+                  focused
+                  fullWidth
+                  variant="outlined"
+                  color="success"
+                  placeholder={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "Obligatoire"
+                      : "Required"
+                  }
+                  label={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "Description"
+                      : "Description"
+                  }
+                  multiline
+                  rows={4}
+                  value={about}
+                  onChange={(e) => setAbout(e.target.value)}
+                />
+
+            </Box>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button
             onClick={() => {
-              itemData.push({
-                img: selectedNewImage,
-                title: "new one",
-                type: "image",
-              });
-              handleCloseApplymission();
+
+              handleApplyMission()
             }}
             variant="contained"
             style={styleValidate}
