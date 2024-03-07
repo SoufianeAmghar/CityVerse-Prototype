@@ -9,6 +9,7 @@ from .main.controller.event_controller import api as event_ns
 from .main.controller.badge_controller import api as badge_ns
 from .main.controller.goal_controller import api as goal_ns
 from .main.controller.feed_controller import api as feed_ns
+from .main.controller.mission_controller import api as mission_ns
 
 
 
@@ -28,3 +29,4 @@ api.add_namespace(event_ns, path='/event')
 api.add_namespace(badge_ns, path='/badge')
 api.add_namespace(goal_ns, path='/goal')
 api.add_namespace(feed_ns, path='/feed')
+api.add_namespace(mission_ns, path='/mission')

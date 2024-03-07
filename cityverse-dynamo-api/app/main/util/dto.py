@@ -276,3 +276,44 @@ class FeedDto:
         'total': fields.Integer,
         'content': fields.List(fields.Nested(feed_response)),
     })
+
+class MissionDto:
+    api = Namespace('mission', description='Mission related operations')
+
+    mission = api.model('mission', {
+        'id': fields.String(description='Mission Identifier'),
+        'duration': fields.String(description='Mission Duration'),
+        'start_date': fields.String(description='Mission Start Date'),
+        'description': fields.String(description='Mission Description'),
+        'type': fields.String(description='Type of Mission'),
+        'volunteer_qualifications': fields.String(description='Volunteer Qualifications'),
+        'number_of_participants': fields.Integer(description='Number of Participants'),
+        'status': fields.String(description='Mission Status')
+    })
+
+    page_mission = api.model('mission_page', {
+        'page': fields.Integer,
+        'size': fields.Integer,
+        'total': fields.Integer,
+        'content': fields.List(fields.Nested(mission)),
+    })
+
+class ApplicationDto:
+    api = Namespace('application', description='Application related operations')
+
+    application = api.model('application', {
+        'id': fields.String(description='Application Identifier'),
+        'user_id': fields.String(description='User Identifier'),
+        'mission_id': fields.String(description='Mission Identifier'),
+        'has_a_car': fields.Boolean(description='Has a Car'),
+        'permit': fields.Boolean(description='Driving license ownership'),
+        'interests': fields.String(description='Interests'),                       
+        'status': fields.String(description='Application Status')
+    })
+
+    page_application = api.model('application_page', {
+        'page': fields.Integer,
+        'size': fields.Integer,
+        'total': fields.Integer,
+        'content': fields.List(fields.Nested(application)),
+    })
