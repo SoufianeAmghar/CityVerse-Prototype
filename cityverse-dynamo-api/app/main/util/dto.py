@@ -289,6 +289,7 @@ class MissionDto:
         'volunteer_qualifications': fields.String(description='Volunteer Qualifications'),
         'number_of_participants': fields.Integer(description='Number of Participants'),
         'approved_applications': fields.Integer(description='Approved Applications Number'),
+        'created_on': fields.String(description='date of creation'),
         'status': fields.String(description='Mission Status')
     })
 
