@@ -16,6 +16,10 @@ def apply_for_mission(mission_id,data):
         'mission_id': mission_id,
         'has_a_car': has_a_car,
         'permit': permit,
+        'address': data['address'],
+        'age': data['age'],
+        'first_name': data['first_name'],
+        'surname': data['surname'],
         'interests': interests,
         'status': 'Pending'
     }

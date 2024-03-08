@@ -309,7 +309,11 @@ class ApplicationDto:
         'mission_id': fields.String(description='Mission Identifier'),
         'has_a_car': fields.Boolean(description='Has a Car'),
         'permit': fields.Boolean(description='Driving license ownership'),
-        'interests': fields.String(description='Interests'),                       
+        'interests': fields.String(description='Interests'),    
+        'surname': fields.String(description='Surname'),
+        'first_name': fields.String(description='First Name'),
+        'age': fields.Integer(description='Age'),
+        'address': fields.String(description='Address'),                   
         'status': fields.String(description='Application Status')
     })
 
