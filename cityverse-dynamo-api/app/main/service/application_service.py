@@ -66,7 +66,7 @@ def approve_application(application_id,data):
     mission_document = Document(__TABLE_NAME__='Mission')
     mission = mission_document.get_item(mission_id)
     if mission:
-        mission['number_of_participants'] = int(mission['number_of_participants']) + 1
+        mission['approved_applications'] = int(mission['approved_applications']) + 1
         mission_document.save(item=mission)
     else:
         return {

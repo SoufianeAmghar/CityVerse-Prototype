@@ -33,7 +33,8 @@ def create_mission(data):
         'start_date': data['start_date'],
         'description': data['description'],
         'volunteer_qualifications': data['volunteer_qualifications'],
-        'number_of_participants': 0,
+        'number_of_participants': data['number_of_participants'],
+        'approved_applications': 0,
         'mission_type': data['mission_type'],
         'status': 'Open Application'  # Initially set status to Open Application
     }
