@@ -140,6 +140,9 @@ class Document:
 
         items = response.get('Items', [])
 
+        for item in items:
+            self.convert_decimals_to_float(item)
+
         return items if items else None
 
     def query_by_index_contains(self, str_index, values):
