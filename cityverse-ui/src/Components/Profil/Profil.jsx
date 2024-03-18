@@ -155,6 +155,7 @@ export default function Profile() {
   const history = useHistory();
 
   const [inProgressFeeds, setInprogressFeeds] = useState(true);
+  const [inProgressMissions, setInprogressMissions] = useState(true);
   const [value, setValue] = React.useState(0);
   const [feed, setfeed] = useState([]);
   const imageProfile = useSelector(
@@ -338,13 +339,14 @@ export default function Profile() {
         headers,
       })
       .then((value) => {
+        setInprogressMissions(false)
         dispatch({
           type: "Missions_applied_for",
           missions_applied_for: orderByDate(value?.data),
         });     
       })
       .catch((err) => {
-      
+        setInprogressMissions(false) 
       });
   };
 
@@ -1444,6 +1446,30 @@ export default function Profile() {
                       </div>
                     }
                   >
+                     {inProgressMissions ? (
+                      <>
+                        <Card
+                          style={{
+                            borderRadius: "0px",
+                            marginTop: "10px",
+                            padding: "20px",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <CircularProgress
+                            color="success"
+                            disableShrink
+                            sx={{
+                              animationDuration: "550ms",
+                            }}
+                            size={60}
+                            thickness={2}
+                          />
+                        </Card>
+                      </>
+                    ) : 
                     <Grid
                       container
                       spacing={0}
@@ -1626,7 +1652,7 @@ export default function Profile() {
                           </>
                         );
                       })}
-                    </Grid>
+                    </Grid>}
                   </Suspense>
                 </TabPanel>
                 <TabPanel value={value} index={3} dir={theme.direction}>
