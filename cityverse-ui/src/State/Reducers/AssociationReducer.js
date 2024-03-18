@@ -18,7 +18,9 @@ const initState = {
       icon: require("../../Asset/solidarity.png"),
     },
   ],
-  posts: []
+  posts: [],
+  missions: [],
+  applications: [],
 };
 
 const AssociationReducer = (state = initState, action) => {
@@ -44,10 +46,20 @@ const AssociationReducer = (state = initState, action) => {
         activity: action.activity,
       };
     case "Posts":
-        return {
-          ...state,
-          posts: action.posts,
-        };
+      return {
+        ...state,
+        posts: action.posts,
+      };
+    case "Missions":
+      return {
+        ...state,
+        missions: action.missions,
+      };
+    case "Applications":
+      return {
+        ...state,
+        applications: action.applications,
+      };
     default:
       return state;
   }

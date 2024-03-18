@@ -97,16 +97,9 @@ export default function ModaladdnewMission({ open, setOpen, goals }) {
 
   const [Name, setName] = useState("");
   const [Rna, setRna] = useState("");
-
+  const missions = useSelector((state) => state.AssociationReducer?.missions);
   const [adress, setAdress] = useState("");
   const [coor_siege, setcoor_siege] = useState([]);
-  const [fblink, setFblink] = useState("");
-  const [instagramLink, setinstagramLink] = useState("");
-  const [xLink, setXLink] = useState("");
-  const [youtubeLink, setYoutubeLink] = useState("");
-  const [selectedGoals, setSelectedGoals] = useState([]);
-  const [selectedActivity, setSelectedActivity] = useState([]);
-  const [passWord, setPassWord] = useState("");
   const [valuesRna, setValuesRna] = useState({
     valideRna: false,
     error: false,
@@ -316,27 +309,56 @@ export default function ModaladdnewMission({ open, setOpen, goals }) {
     }
   }, [openSnack]);
 
-  const call_api_get_associations = () => {
+  function orderByDate(array) {
+    // Convert object to array of key-value pairs
+    array.sort((a, b) => {
+      const dateA = new Date(a.created_on);
+      const dateB = new Date(b.created_on);
+      return dateB - dateA;
+    });
+
+    return array;
+  }
+
+  const call_api_get_all_missions = (id) => {
     axios
-      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "association/")
+      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "mission/")
       .then((value) => {
-        console.log("association", value?.data);
-        // setAssociation(value?.data)
         dispatch({
-          type: "Associations",
-          associations: value?.data,
+          type: "Missions",
+          missions: orderByDate(value?.data),
         });
+        handleClose();
       })
-      .catch((err) => {});
+      .catch((err) => {
+        dispatch({
+          type: "Missions",
+          posts: [],
+        });
+        handleClose();
+      });
   };
   const save = () => {
     const object = {
-      startDate: startDate,
+      start_date: startDate,
       description: desc,
-      numVolunteers: NumVolunteers,
-      typeMission: typeMission,
-      volunteersQualificaton: typeVolunteers,
+      number_of_participants: parseInt(NumVolunteers),
+      mission_type: typeMission,
+      volunteer_qualifications: typeVolunteers,
+      duration: missionDuration,
+      // created_on : new Date(),
     };
+    axios
+    .post(
+      process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+        "mission/",
+      object
+    )
+    .then((value) => {  
+      call_api_get_all_missions()  
+    })
+    .catch((err) => {
+    });
 
     console.log("mission", object);
   };

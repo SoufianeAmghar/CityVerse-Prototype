@@ -60,6 +60,10 @@ import SendIcon from "@mui/icons-material/Send";
 import InputAdornment from "@mui/material/InputAdornment";
 import { InputLabel, OutlinedInput } from "@mui/material";
 import Popper from "@mui/material/Popper";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+// import ModaladdnewMission from "./addNewMission";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 
 const AntTabs = styled(Tabs)({
   "& .MuiTabs-indicator": {
@@ -159,6 +163,7 @@ export default function Profile() {
   const coverProfile = useSelector(
     (state) => state.FileUploadReducer?.coverProfile
   );
+  const missions = useSelector((state) => state.AssociationReducer?.missions);
   const firstname = useSelector((state) => state.ProfileReducer?.firstname);
   const feeds = useSelector((state) => state.ProfileReducer?.feeds);
   const lastname = useSelector((state) => state.ProfileReducer?.lastname);
@@ -1417,15 +1422,189 @@ export default function Profile() {
                       </div>
                     }
                   >
-                    <Typography
-                      gutterBottom
-                      variant="h6"
-                      component="div"
-                      sx={{ display: "flex", alignItems: "center" }}
+                    <Grid
+                      container
+                      spacing={0}
+                      height="450px" // fixed the height
+                      style={{
+                        overflow: "scroll",
+                        overflowY: "scroll",
+                      }}
                     >
-                      <AddBusinessIcon sx={{ color: "#08089C" }} />
-                      {"  "} &emsp;Ajouter Nouveau Mission
-                    </Typography>
+                      <Grid item xs={12}>
+                        <Box sx={{ display: "flex", justifyContent: "center" }}>
+                          <Chip
+                            label={`Total mission's : ${missions?.length}`}
+                            sx={{ backgroundColor: "#08089C", color: "#FFF" }}
+                          />
+                        </Box>
+                      </Grid>{" "}
+                      {missions?.map((item, index) => {
+                        return (
+                          <>
+                                <Card
+                                  key={index}
+                                  sx={{
+                                    backgroundColor: "#F2F2F2",
+                                    margin: "2%",
+                                    width: "100%",
+                                  }}
+                                >
+                                  <CardContent>
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        flexDirection: "row",
+                                      }}
+                                    >
+                                      <Typography
+                                        gutterBottom
+                                        variant="h5"
+                                        component="div"
+                                        sx={{ flexGrow: 1 }}
+                                      >
+                                        Mission {index + 1}
+                                      </Typography>
+                                      {/* <LongMenu
+                                        idMission={item?.id}
+                                        mission={item}
+                                      /> */}
+                                    </Box>
+                                    <br />
+                                    <Typography
+                                      variant="body2"
+                                      color="text.secondary"
+                                    >
+                                      {item?.description}
+                                    </Typography>
+                                    <Box
+                                      sx={{
+                                        marginTop: "1%",
+                                        alignItems: "center",
+                                        display: "flex",
+                                        color: "#08089C",
+                                        width: "100%",
+                                      }}
+                                    >
+                                      <CalendarMonthIcon
+                                        sx={{ marginRight: "1%" }}
+                                      />
+                                      <Typography sx={{ marginRight: "2%" }}>
+                                        {format(
+                                          new Date(item?.start_date),
+                                          "dd/MM/yyyy"
+                                        )}
+                                      </Typography>
+                                      <Chip
+                                        variant="contained"
+                                        color="success"
+                                        // disabled={handleAdd()}
+                                        sx={{
+                                          color: "#08089C",
+                                          borderRadius: "20px",
+                                          backgroundColor: "#FFF",
+                                          margin: "0.5%",
+                                        }}
+                                        label={`Duration: ${item?.duration}`}
+                                      ></Chip>
+                                      <Chip
+                                        variant="contained"
+                                        color="success"
+                                        // disabled={handleAdd()}
+                                        sx={{
+                                          color: "#08089C",
+                                          borderRadius: "20px",
+                                          backgroundColor: "#FFF",
+                                          margin: "0.5%",
+                                        }}
+                                        label={`Type of mission: ${item?.mission_type}`}
+                                      ></Chip>
+                                      <Chip
+                                        variant="contained"
+                                        color="success"
+                                        // disabled={handleAdd()}
+                                        sx={{
+                                          color: "#08089C",
+                                          borderRadius: "20px",
+                                          backgroundColor: "#FFF",
+                                          margin: "0.5%",
+                                        }}
+                                        label={`Volunteer qualifications: ${item?.volunteer_qualifications?.label}`}
+                                      ></Chip>
+
+                                      {/* <LocationOnIcon sx={{ marginLeft: "5%" }} />
+                                <Typography>{address}</Typography> */}
+                                    </Box>
+                                    <Box
+                                      sx={{
+                                        marginTop: "1%",
+                                        alignItems: "center",
+                                        display: "flex",
+                                        color: "#08089C",
+                                      }}
+                                    >
+                                      <Chip
+                                        variant="contained"
+                                        color="success"
+                                        // disabled={handleAdd()}
+                                        sx={{
+                                          color: "#08089C",
+                                          borderRadius: "20px",
+                                          backgroundColor: "#FFF",
+                                          margin: "0.5%",
+                                        }}
+                                        label={`demanded Participants: ${item?.number_of_participants}`}
+                                      ></Chip>
+                                      <Chip
+                                        variant="contained"
+                                        color="success"
+                                        // disabled={handleAdd()}
+                                        sx={{
+                                          color: "#08089C",
+                                          borderRadius: "20px",
+                                          backgroundColor: "#FFF",
+                                          margin: "0.5%",
+                                        }}
+                                        label={`Approved Participants: ${item?.approved_applications}`}
+                                      ></Chip>
+
+                                      {/* <LocationOnIcon sx={{ marginLeft: "5%" }} />
+                                <Typography>{address}</Typography> */}
+                                    </Box>
+                                  </CardContent>
+                                  <CardActions
+                                    sx={{ flexDirection: "row-reverse" }}
+                                  >
+                                    <Button
+                                      variant="contained"
+                                      // disabled={handleAdd()}
+                                      sx={{
+                                        color: "#556B2F",
+                                        borderRadius: "20px",
+                                        backgroundColor: "#FFF",
+                                        margin: "2%",
+                                      }}
+                                      onClick={() => {
+                                        // handleopenApplyMission();
+                                        // setIdMission(item?.id);
+                                        history.push("/product" , "missions")
+                                      }}
+                                    >
+                                      checkout
+                                    </Button>
+                                    <Chip
+                                      variant="contained"
+                                      color="success"
+                                      // disabled={handleAdd()}
+                                      sx={styleValidate}
+                                      label="Open application"
+                                    ></Chip>
+                                  </CardActions>
+                                </Card>
+                          </>
+                        );
+                      })}
+                    </Grid>
                   </Suspense>
                 </TabPanel>
                 <TabPanel value={value} index={3} dir={theme.direction}>
@@ -2462,9 +2641,8 @@ function Feeds(item, key) {
       .catch((err) => {});
   };
   const already_Reacted = (id, array) => {
-    
     for (let i = 0; i < array?.length; i++) {
-      if (array[i] == sessionStorage.getItem('user_Id')) {
+      if (array[i] == sessionStorage.getItem("user_Id")) {
         return true;
       }
     }
@@ -2707,7 +2885,8 @@ function Feeds(item, key) {
                     >
                       {emojis?.love}
                     </IconButton>
-                    <IconButton  style={
+                    <IconButton
+                      style={
                         already_Reacted(
                           sessionStorage.getItem("user_Id"),
                           item?.item?.reactions
@@ -2716,10 +2895,13 @@ function Feeds(item, key) {
                         )
                           ? { fontSize: "35px" }
                           : { fontSize: "25px" }
-                      }onClick={() => angry(item?.item?.id)}>
+                      }
+                      onClick={() => angry(item?.item?.id)}
+                    >
                       {emojis?.angry}
                     </IconButton>
-                    <IconButton  style={
+                    <IconButton
+                      style={
                         already_Reacted(
                           sessionStorage.getItem("user_Id"),
                           item?.item?.reactions
@@ -2729,10 +2911,12 @@ function Feeds(item, key) {
                           ? { fontSize: "35px" }
                           : { fontSize: "25px" }
                       }
-                      onClick={() => haha(item?.item?.id)}>
+                      onClick={() => haha(item?.item?.id)}
+                    >
                       {emojis?.haha}
                     </IconButton>
-                    <IconButton style={
+                    <IconButton
+                      style={
                         already_Reacted(
                           sessionStorage.getItem("user_Id"),
                           item?.item?.reactions
@@ -2742,21 +2926,23 @@ function Feeds(item, key) {
                           ? { fontSize: "35px" }
                           : { fontSize: "25px" }
                       }
-                      onClick={() => sad(item?.item?.id)}>
+                      onClick={() => sad(item?.item?.id)}
+                    >
                       {emojis?.sad}
                     </IconButton>
-                    <IconButton 
-                    style={
-                      already_Reacted(
-                        sessionStorage.getItem("user_Id"),
-                        item?.item?.reactions
-                          .filter((item) => item.type === "wow")
-                          .map((item) => item.reacted_by)
-                      )
-                        ? { fontSize: "35px" }
-                        : { fontSize: "25px" }
-                    }
-                    onClick={() => wow(item?.item?.id)}>
+                    <IconButton
+                      style={
+                        already_Reacted(
+                          sessionStorage.getItem("user_Id"),
+                          item?.item?.reactions
+                            .filter((item) => item.type === "wow")
+                            .map((item) => item.reacted_by)
+                        )
+                          ? { fontSize: "35px" }
+                          : { fontSize: "25px" }
+                      }
+                      onClick={() => wow(item?.item?.id)}
+                    >
                       {emojis?.wow}
                     </IconButton>
                   </Box>
@@ -2791,13 +2977,13 @@ function Feeds(item, key) {
                     >
                       <span>
                         {emojis?.like}
-                        {
-                          item?.item?.reactions
-                            .filter((item) => item.type === "like")
-                            .map((item) => item.reacted_by) === [] ? "" : item?.item?.reactions
-                            .filter((item) => item.type === "like")
-                            .map((item) => item.reacted_by)?.length
-                        }
+                        {item?.item?.reactions
+                          .filter((item) => item.type === "like")
+                          .map((item) => item.reacted_by) === []
+                          ? ""
+                          : item?.item?.reactions
+                              .filter((item) => item.type === "like")
+                              .map((item) => item.reacted_by)?.length}
                       </span>
                       {emojis?.love}
                       {

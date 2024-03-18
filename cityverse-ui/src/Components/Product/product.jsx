@@ -29,6 +29,7 @@ import { styled } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import ListItemText from "@mui/material/ListItemText";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import AddLocationIcon from "@mui/icons-material/AddLocation";
@@ -65,6 +66,13 @@ import CardContent from "@mui/material/CardContent";
 import ImageListItem from "@mui/material/ImageListItem";
 import ModaladdnewMission from "./addNewMission";
 import Autocomplete from "@mui/material/Autocomplete";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import ModalUpdateMission from "./updateMission";
 
 const AntTabs = styled(Tabs)({
   "& .MuiTabs-indicator": {
@@ -155,7 +163,6 @@ export default function Product() {
   const dispatch = useDispatch();
   const history = useHistory();
 
-
   const address = useSelector((state) => state.ProfileReducer?.address);
 
   const [inProgress, setInprogress] = useState(true);
@@ -174,10 +181,11 @@ export default function Product() {
   const [adress, setAdress] = useState(address);
   const [firstName, setfirstName] = useState();
   const [lastName, setLastName] = useState();
+  const [appliquantAge, SetAppliquantAge] = useState();
   const [permit, setPermit] = useState();
   const [haveCar, sethaveCar] = useState();
   const [interset, setInterest] = useState();
-  const [ about, setAbout ] = useState();
+  const [about, setAbout] = useState();
 
   const [valuesSiege, setValuesSiege] = useState({
     valideSiege: false,
@@ -200,10 +208,10 @@ export default function Product() {
         object
       )
       .then((value) => {
-        setAdress([
-          (value?.data.lat).toFixed(10),
-          (value?.data.long).toFixed(10),
-        ]);
+        // setAdress([
+        //   (value?.data.lat).toFixed(10),
+        //   (value?.data.long).toFixed(10),
+        // ]);
         setValuesSiege({
           ...valuesSiege,
           valideSiege: true,
@@ -226,6 +234,10 @@ export default function Product() {
     (state) => state.AssociationReducer?.association_name
   );
   const posts = useSelector((state) => state.AssociationReducer?.posts);
+  const missions = useSelector((state) => state.AssociationReducer?.missions);
+  const applications = useSelector(
+    (state) => state.AssociationReducer?.applications
+  );
   const sdg = useSelector((state) => state.ProfileReducer?.sdg);
 
   //Open mission Model
@@ -334,8 +346,6 @@ export default function Product() {
     },
   ]);
 
-  useEffect(() => {}, [itemData]);
-
   const [data, setData] = useState();
 
   const call_api_get_all_posts = (id) => {
@@ -361,7 +371,38 @@ export default function Product() {
         });
       });
   };
-
+  const call_api_get_all_missions = () => {
+    axios
+      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "mission/")
+      .then((value) => {
+        dispatch({
+          type: "Missions",
+          missions: orderByDate(value?.data),
+        });
+      })
+      .catch((err) => {
+        setInprogress(false);
+        dispatch({
+          type: "Missions",
+          posts: [],
+        });
+      });
+  };
+  const call_api_get_all_applications_of_mission = () => {
+    axios
+      .get(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "mission/applications/" +
+          idMission
+      )
+      .then((value) => {
+        dispatch({
+          type: "Applications",
+          applications: value?.data,
+        });
+      })
+      .catch((err) => {});
+  };
   const call_api_get_association_by_id = (id) => {
     axios
       .get(
@@ -372,7 +413,6 @@ export default function Product() {
       })
       .catch((err) => {});
   };
-
   const call_api_add_post = () => {
     var json = new FormData();
     const object = JSON.stringify({
@@ -404,12 +444,22 @@ export default function Product() {
       })
       .catch((err) => {});
   };
+
+  const [idMission, setIdMission] = useState();
   useEffect(() => {
     if (id_association !== null && id_association !== undefined) {
       call_api_get_association_by_id(id_association);
       call_api_get_all_posts(id_association);
     }
+    call_api_get_all_missions();
   }, []);
+  useEffect(() => {
+    if (idMission !== null && idMission !== undefined) {
+      call_api_get_all_missions();
+      call_api_get_all_applications_of_mission();
+    }
+  }, [idMission]);
+
   const get_icon_activity = (label) => {
     var icon = null;
     for (let i = 0; i < Activity?.length; i++) {
@@ -452,16 +502,30 @@ export default function Product() {
   }
   const handleApplyMission = () => {
     const object = {
-      firstName: firstName,
-      surName: lastName,
-      haveCar: haveCar,
-      permit: permit,
-      whatsInterest: about,
-      userId: sessionStorage.getItem('user_Id')
-    }
-    console.log(object)
-    handleCloseApplymission()
-  }
+      first_name: firstName,
+      surname: lastName,
+      has_a_car: haveCar?.label === "Yes" ? true : false,
+      permit: permit?.label === "Yes" ? true : false,
+      age: parseInt(appliquantAge),
+      interests: about,
+      address: adress,
+      user_id: sessionStorage.getItem("user_Id"),
+    };
+    console.log(object);
+    axios
+      .post(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "mission/apply/" +
+          idMission,
+        object
+      )
+      .then((value) => {
+        call_api_get_all_applications_of_mission();
+        handleCloseApplymission();
+      })
+      .catch((err) => {});
+  };
+
   return (
     <div style={{}}>
       {/* add new photos */}
@@ -757,6 +821,23 @@ export default function Product() {
                 // value={NumVolunteers}
                 // onChange={(e) => setNumVolunteers(e.target.value)}
               />
+              <TextField
+                size="small"
+                focused
+                variant="outlined"
+                color="success"
+                type="number"
+                placeholder={
+                  sessionStorage.getItem("language") === "fr"
+                    ? "Obligatoire"
+                    : "Required"
+                }
+                value={appliquantAge}
+                onChange={(e) => SetAppliquantAge(e.target.value)}
+                label={
+                  sessionStorage.getItem("language") === "fr" ? "Age" : "Age"
+                }
+              />
               <FormControl variant="outlined" color="success" focused>
                 <InputLabel
                   variant="outlined"
@@ -765,8 +846,8 @@ export default function Product() {
                   InputLabelProps={{ style: { color: "black" } }}
                 >
                   {sessionStorage.getItem("language") === "fr"
-                      ? "address"
-                      : "address"}
+                    ? "address"
+                    : "address"}
                 </InputLabel>
                 <OutlinedInput
                   color="success"
@@ -829,7 +910,7 @@ export default function Product() {
                   variant="outlined"
                   color="success"
                   limitTags={1}
-                  options={[{ label: "Yes"}, {label: "No"} ]}
+                  options={[{ label: "Yes" }, { label: "No" }]}
                   value={haveCar}
                   onChange={(event, newValue) => {
                     sethaveCar(newValue);
@@ -876,14 +957,13 @@ export default function Product() {
               </FormControl>
               <FormControl variant="outlined" color="success" focused>
                 <Autocomplete
-                 
                   size="small"
                   focused
                   fullWidth
                   variant="outlined"
                   color="success"
                   limitTags={1}
-                  options={[{ label: "Yes"}, {label: "No"} ]}
+                  options={[{ label: "Yes" }, { label: "No" }]}
                   value={permit}
                   onChange={(event, newValue) => {
                     setPermit(newValue);
@@ -942,35 +1022,33 @@ export default function Product() {
               autoComplete="off"
             >
               <TextField
-                  size="small"
-                  focused
-                  fullWidth
-                  variant="outlined"
-                  color="success"
-                  placeholder={
-                    sessionStorage.getItem("language") === "fr"
-                      ? "Obligatoire"
-                      : "Required"
-                  }
-                  label={
-                    sessionStorage.getItem("language") === "fr"
-                      ? "Description"
-                      : "Description"
-                  }
-                  multiline
-                  rows={4}
-                  value={about}
-                  onChange={(e) => setAbout(e.target.value)}
-                />
-
+                size="small"
+                focused
+                fullWidth
+                variant="outlined"
+                color="success"
+                placeholder={
+                  sessionStorage.getItem("language") === "fr"
+                    ? "Obligatoire"
+                    : "Required"
+                }
+                label={
+                  sessionStorage.getItem("language") === "fr"
+                    ? "Description"
+                    : "Description"
+                }
+                multiline
+                rows={4}
+                value={about}
+                onChange={(e) => setAbout(e.target.value)}
+              />
             </Box>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button
             onClick={() => {
-
-              handleApplyMission()
+              handleApplyMission();
             }}
             variant="contained"
             style={styleValidate}
@@ -1697,7 +1775,12 @@ export default function Product() {
                     </Grid>
                   </Suspense>
                 </TabPanel>
-                <TabPanel value={value} index={1} dir={theme.direction}>
+                <TabPanel
+                  id="missions"
+                  value={value}
+                  index={1}
+                  dir={theme.direction}
+                >
                   <Suspense
                     fallback={
                       <div
@@ -1727,31 +1810,188 @@ export default function Product() {
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
+                        width: "98%",
                       }}
                     >
-                      <Button onClick={() => handleOpenModel()}>
-                        <Typography
-                          gutterBottom
-                          variant="h6"
-                          component="div"
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            color: "#08089C",
-                          }}
-                        >
-                          <AddBusinessIcon sx={{ color: "#08089C" }} />
-                          {"  "} &emsp;Ajouter une nouvelle mission
-                        </Typography>
-                      </Button>
+                      {data?.user_id === sessionStorage.getItem("user_Id") ? (
+                        <Button onClick={() => handleOpenModel()}>
+                          <Typography
+                            gutterBottom
+                            variant="h6"
+                            component="div"
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              color: "#08089C",
+                            }}
+                          >
+                            <AddBusinessIcon sx={{ color: "#08089C" }} />
+                            {"  "} &emsp;Ajouter une nouvelle mission
+                          </Typography>
+                        </Button>
+                      ) : (
+                        <></>
+                      )}
                       <br />
                       <Divider>
                         <Typography gutterBottom variant="h5" component="div">
                           Missions
                         </Typography>
                       </Divider>
+                      {missions?.map((item, index) => {
+                        return (
+                          <Card
+                            key={index}
+                            sx={{
+                              backgroundColor: "#F2F2F2",
+                              margin: "2%",
+                              width: "100%",
+                            }}
+                          >
+                            <CardContent>
+                              <Box
+                                sx={{ display: "flex", flexDirection: "row" }}
+                              >
+                                <Typography
+                                  gutterBottom
+                                  variant="h5"
+                                  component="div"
+                                  sx={{ flexGrow: 1 }}
+                                >
+                                  Mission {index + 1}
+                                </Typography>
+                                {data?.user_id === sessionStorage.getItem("user_Id") ? <LongMenu idMission={item?.id} mission={item} /> :<></>}
+                              </Box>
+                              <br />
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                {item?.description}
+                              </Typography>
+                              <Box
+                                sx={{
+                                  marginTop: "1%",
+                                  alignItems: "center",
+                                  display: "flex",
+                                  color: "#08089C",
+                                  width: "100%",
+                                }}
+                              >
+                                <CalendarMonthIcon sx={{ marginRight: "1%" }} />
+                                <Typography sx={{ marginRight: "2%" }}>
+                                  {format(
+                                    new Date(item?.start_date),
+                                    "dd/MM/yyyy"
+                                  )}
+                                </Typography>
+                                <Chip
+                                  variant="contained"
+                                  color="success"
+                                  // disabled={handleAdd()}
+                                  sx={{
+                                    color: "#08089C",
+                                    borderRadius: "20px",
+                                    backgroundColor: "#FFF",
+                                    margin: "0.5%",
+                                  }}
+                                  label={`Duration: ${item?.duration?.label}`}
+                                ></Chip>
+                                <Chip
+                                  variant="contained"
+                                  color="success"
+                                  // disabled={handleAdd()}
+                                  sx={{
+                                    color: "#08089C",
+                                    borderRadius: "20px",
+                                    backgroundColor: "#FFF",
+                                    margin: "0.5%",
+                                  }}
+                                  label={`Type of mission: ${item?.mission_type?.label}`}
+                                ></Chip>
+                                <Chip
+                                  variant="contained"
+                                  color="success"
+                                  // disabled={handleAdd()}
+                                  sx={{
+                                    color: "#08089C",
+                                    borderRadius: "20px",
+                                    backgroundColor: "#FFF",
+                                    margin: "0.5%",
+                                  }}
+                                  label={`Volunteer qualifications: ${item?.volunteer_qualifications?.label}`}
+                                ></Chip>
 
-                      <Card sx={{ backgroundColor: "#F2F2F2", margin: "2%" }}>
+                                {/* <LocationOnIcon sx={{ marginLeft: "5%" }} />
+                                <Typography>{address}</Typography> */}
+                              </Box>
+                              <Box
+                                sx={{
+                                  marginTop: "1%",
+                                  alignItems: "center",
+                                  display: "flex",
+                                  color: "#08089C",
+                                }}
+                              >
+                                <Chip
+                                  variant="contained"
+                                  color="success"
+                                  // disabled={handleAdd()}
+                                  sx={{
+                                    color: "#08089C",
+                                    borderRadius: "20px",
+                                    backgroundColor: "#FFF",
+                                    margin: "0.5%",
+                                  }}
+                                  label={`demanded Participants: ${item?.number_of_participants}`}
+                                ></Chip>
+                                <Chip
+                                  variant="contained"
+                                  color="success"
+                                  // disabled={handleAdd()}
+                                  sx={{
+                                    color: "#08089C",
+                                    borderRadius: "20px",
+                                    backgroundColor: "#FFF",
+                                    margin: "0.5%",
+                                  }}
+                                  label={`Approved Participants: ${item?.approved_applications}`}
+                                ></Chip>
+
+                                {/* <LocationOnIcon sx={{ marginLeft: "5%" }} />
+                                <Typography>{address}</Typography> */}
+                              </Box>
+                            </CardContent>
+                            <CardActions sx={{ flexDirection: "row-reverse" }}>
+                              <Button
+                                variant="contained"
+                                // disabled={handleAdd()}
+                                sx={{
+                                  color: "#556B2F",
+                                  borderRadius: "20px",
+                                  backgroundColor: "#FFF",
+                                  margin: "2%",
+                                }}
+                                onClick={() => {
+                                  handleopenApplyMission();
+                                  setIdMission(item?.id);
+                                }}
+                              >
+                                Apply
+                              </Button>
+                              <Chip
+                                variant="contained"
+                                color="success"
+                                // disabled={handleAdd()}
+                                sx={styleValidate}
+                                label="Open application"
+                              ></Chip>
+                            </CardActions>
+                          </Card>
+                        );
+                      })}
+
+                      {/* <Card sx={{ backgroundColor: "#F2F2F2", margin: "2%" }}>
                         <CardContent>
                           <Typography gutterBottom variant="h5" component="div">
                             Mission 1
@@ -1770,7 +2010,34 @@ export default function Product() {
                             every person has the opportunity to thrive."
                           </Typography>
                         </CardContent>
-                        <CardActions sx={{ flexDirection: "row-reverse" }}>
+                        <CardActions>
+                          <Box
+                            sx={{
+                              flexGrow: 1,
+                              margin: "2%",
+                              alignItems: "center",
+                              display: "flex",
+                              color: "#08089C",
+                            }}
+                          >
+                            <CalendarMonthIcon sx={{ marginRight: "1%" }} />
+                            <Typography>
+                              {format(
+                                new Date("2024-03-01T10:17:57.497070"),
+                                "dd/MM/yyyy"
+                              )}
+                            </Typography>
+
+                            <LocationOnIcon sx={{ marginLeft: "5%" }} />
+                            <Typography>{address}</Typography>
+                          </Box>
+                          <Chip
+                            variant="contained"
+                            color="success"
+                            // disabled={handleAdd()}
+                            sx={styleValidate}
+                            label="Open application"
+                          ></Chip>
                           <Button
                             variant="contained"
                             // disabled={handleAdd()}
@@ -1792,7 +2059,7 @@ export default function Product() {
                             label="Open application"
                           ></Chip>
                         </CardActions>
-                      </Card>
+                      </Card> */}
                     </Box>
                   </Suspense>
                 </TabPanel>
@@ -1943,3 +2210,555 @@ export default function Product() {
     </div>
   );
 }
+
+const options = ["Update Mission", "Delete Mission", "Applications"];
+
+const ITEM_HEIGHT = 48;
+
+const LongMenu = (idMission) => {
+  const dispatch = useDispatch();
+  const date = new Date();
+  const [startDate, setStartDate] = useState(date);
+  const [desc, setDesc] = useState("");
+  const [missionDuration, setMissionDuration] = useState();
+  const [typeMission, setTypeMission] = useState();
+  const [NumVolunteers, setNumVolunteers] = useState();
+  const [typeVolunteers, setTypeVolunteers] = useState();
+  const applications = useSelector(
+    (state) => state.AssociationReducer?.applications
+  );
+  const [Name, setName] = useState("");
+  const [Rna, setRna] = useState("");
+  const missions = useSelector((state) => state.AssociationReducer?.missions);
+  const [anchorEl1, setAnchorEl1] = React.useState(null);
+  const open = Boolean(anchorEl1);
+  const handleClick = (event) => {
+    setAnchorEl1(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl1(null);
+  };
+
+  // update mission
+  const [openUpdateMission, setOpenUpdateMission] = useState();
+  const handleOpenUpdateMission = () => {
+    setOpenUpdateMission(true);
+  };
+  const handleCloseUpdateMission = () => {
+    setOpenUpdateMission(false);
+  };
+  // delete mission
+  const [openDeleteMission, setOpenDeleteMission] = useState();
+  const handleOpenDeleteMission = () => {
+    setOpenDeleteMission(true);
+  };
+  const handleCloseDeleteMission = () => {
+    setOpenDeleteMission(false);
+  };
+  function orderByDate(array) {
+    // Convert object to array of key-value pairs
+    array.sort((a, b) => {
+      const dateA = new Date(a.created_on);
+      const dateB = new Date(b.created_on);
+      return dateB - dateA;
+    });
+
+    return array;
+  }
+  const call_api_get_all_missions = () => {
+    axios
+      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "mission/")
+      .then((value) => {
+        console.log("Missions", value.data);
+        dispatch({
+          type: "Missions",
+          missions: orderByDate(value?.data),
+        });
+      })
+      .catch((err) => {
+        dispatch({
+          type: "Missions",
+          posts: [],
+        });
+      });
+  };
+  const [applicationsByMission, setApplicationByMission] = useState([]);
+  const call_api_get_all_applications = () => {
+    axios
+      .get(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "mission/applications/" +
+          idMission?.idMission
+      )
+      .then((value) => {
+        dispatch({
+          type: "Applications",
+          applications: value?.data,
+        });
+        setApplicationByMission(value?.data)
+      })
+      .catch((err) => {});
+  };
+  const handledeleteMission = () => {
+    axios
+      .delete(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "mission/" +
+          idMission?.idMission
+      )
+      .then((value) => {
+        call_api_get_all_missions();
+        handleCloseDeleteMission();
+      })
+      .catch((err) => {});
+  };
+  const [openApplications, setOpenApplications] = useState();
+  const handleOpenApplications = () => {
+    setOpenApplications(true);
+  };
+  const handleCloseApplications = () => {
+    setOpenApplications(false);
+  };
+
+  useEffect(() => {
+    call_api_get_all_applications();
+  }, []);
+  const handleApprouveApplication = (object) => {
+    console.log("approuve", object);
+    axios
+      .put(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "mission/application/" +
+          object?.id,
+        object
+      )
+      .then((value) => {
+        call_api_get_all_applications();
+      })
+      .catch((err) => {});
+  };
+
+  return (
+    <div>
+      <ModalUpdateMission
+        open={openUpdateMission}
+        setOpen={setOpenUpdateMission}
+        idMission={idMission}
+      />
+      {/* delete mission */}
+      <Dialog
+        open={openDeleteMission}
+        onClose={() => {
+          handleCloseDeleteMission();
+        }}
+        maxWidth="sm"
+        fullWidth
+        style={{ boxShadow: "none" }}
+      >
+        <div className="border"></div>
+        <br></br>
+        <DialogTitle id="alert-dialog-title">
+          {sessionStorage.getItem("language") === "fr"
+            ? "Delete Mission"
+            : "Delete Mission"}
+        </DialogTitle>
+        <Box position="absolute" top={0} right={0}>
+          <IconButton
+            onClick={() => {
+              handleCloseDeleteMission();
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            <Stack direction="row" alignItems="center" spacing={2}>
+              Are you shure you want to delete this mission!
+            </Stack>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              handledeleteMission();
+            }}
+            variant="contained"
+            style={styleValidate}
+            color="success"
+          >
+            {sessionStorage.getItem("language") === "fr"
+              ? "Confirmer"
+              : "Confirmer"}
+          </Button>
+          <Button
+            onClick={() => {
+              handleCloseDeleteMission();
+            }}
+            variant="contained"
+            style={styleCancelDelete}
+          >
+            {sessionStorage.getItem("language") === "fr" ? "Cacher" : "Cacher"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {/* appliications */}
+      <Dialog
+        open={openApplications}
+        onClose={() => {
+          handleCloseApplications();
+        }}
+        maxWidth="sm"
+        fullWidth
+        style={{ boxShadow: "none" }}
+      >
+        <div className="border"></div>
+        <br></br>
+        <DialogTitle id="alert-dialog-title">
+          {sessionStorage.getItem("language") === "fr"
+            ? "Applications"
+            : "Applications"}
+        </DialogTitle>
+        <Box position="absolute" top={0} right={0}>
+          <IconButton
+            onClick={() => {
+              handleCloseApplications();
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            <Grid
+              container
+              spacing={0}
+              height="450px" // fixed the height
+              style={{
+                overflow: "scroll",
+                overflowY: "scroll",
+              }}
+            >
+              {applicationsByMission?.length === 0 || applicationsByMission === null ? (
+                <>there is no application for this mission</>
+              ) : (
+                <>
+                  <Grid item xs={12}>
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                      <Chip
+                        label={`Pending applications : ${
+                          applicationsByMission?.filter(
+                            (item) => item.status === "Pending"
+                          )?.length
+                        }`}
+                        sx={{
+                          backgroundColor: "red",
+                          color: "#FFF",
+                          marginRight: "1%",
+                        }}
+                      />
+                      <Chip
+                        label={`Total applications : ${applicationsByMission?.length}`}
+                        sx={{ backgroundColor: "#08089C", color: "#FFF" }}
+                      />
+                    </Box>
+                  </Grid>
+                  {applicationsByMission?.map((item, index) => {
+                    return (
+                      <Grid key={index} item xs={12}>
+                        <Card
+                          key={index}
+                          sx={{
+                            backgroundColor: "#F2F2F2",
+                            margin: "2%",
+                            width: "100%",
+                          }}
+                        >
+                          <CardContent>
+                            <Box sx={{ display: "flex", flexDirection: "row" }}>
+                              <Typography
+                                gutterBottom
+                                variant="h5"
+                                component="div"
+                                sx={{ flexGrow: 1 }}
+                              >
+                                Application {index + 1} : {item?.first_name}{" "}
+                                {item?.surname}
+                              </Typography>
+                            </Box>
+                            <br />
+                            <Typography variant="body2" color="text.secondary">
+                              {item?.interests}
+                            </Typography>
+                            <Box
+                              sx={{
+                                marginTop: "1%",
+                                alignItems: "center",
+                                display: "flex",
+                                color: "#08089C",
+                                width: "100%",
+                              }}
+                            >
+                              <LocationOnIcon sx={{ marginLeft: "2%" }} />
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                {item?.address}
+                              </Typography>
+                            </Box>
+                            <Box
+                              sx={{
+                                marginTop: "1%",
+                                alignItems: "center",
+                                display: "flex",
+                                color: "#08089C",
+                                width: "100%",
+                              }}
+                            >
+                              <Chip
+                                variant="contained"
+                                color="success"
+                                // disabled={handleAdd()}
+                                sx={{
+                                  color: "#08089C",
+                                  borderRadius: "20px",
+                                  backgroundColor: "#FFF",
+                                  margin: "0.5%",
+                                }}
+                                label={`Age: ${item?.age}`}
+                              ></Chip>
+                              <Chip
+                                variant="contained"
+                                color="success"
+                                // disabled={handleAdd()}
+                                sx={{
+                                  color: "#08089C",
+                                  borderRadius: "20px",
+                                  backgroundColor: "#FFF",
+                                  margin: "0.5%",
+                                }}
+                                label={`Have a Car !: ${
+                                  item?.has_a_car ? "Yes" : "No"
+                                }`}
+                              ></Chip>
+                              <Chip
+                                variant="contained"
+                                color="success"
+                                // disabled={handleAdd()}
+                                sx={{
+                                  color: "#08089C",
+                                  borderRadius: "20px",
+                                  backgroundColor: "#FFF",
+                                  margin: "0.5%",
+                                }}
+                                label={`Have a Permit !: ${
+                                  item?.permit ? "Yes" : "No"
+                                }`}
+                              ></Chip>
+                              {/* <CalendarMonthIcon sx={{ marginRight: "1%" }} />
+                                <Typography sx={{ marginRight: "2%" }}>
+                                  {format(
+                                    new Date(item?.start_date),
+                                    "dd/MM/yyyy"
+                                  )}
+                                </Typography>
+                                <Chip
+                                  variant="contained"
+                                  color="success"
+                                  // disabled={handleAdd()}
+                                  sx={{
+                                    color: "#08089C",
+                                    borderRadius: "20px",
+                                    backgroundColor: "#FFF",
+                                    margin: "0.5%",
+                                  }}
+                                  label={`Duration: ${item?.duration}`}
+                                ></Chip>
+                                <Chip
+                                  variant="contained"
+                                  color="success"
+                                  // disabled={handleAdd()}
+                                  sx={{
+                                    color: "#08089C",
+                                    borderRadius: "20px",
+                                    backgroundColor: "#FFF",
+                                    margin: "0.5%",
+                                  }}
+                                  label={`Type of mission: ${item?.mission_type}`}
+                                ></Chip>
+                                <Chip
+                                  variant="contained"
+                                  color="success"
+                                  // disabled={handleAdd()}
+                                  sx={{
+                                    color: "#08089C",
+                                    borderRadius: "20px",
+                                    backgroundColor: "#FFF",
+                                    margin: "0.5%",
+                                  }}
+                                  label={`Volunteer qualifications: ${item?.volunteer_qualifications?.label}`}
+                                ></Chip>  */}
+
+                              {/* 
+                              </Box>
+                              <Box
+                                sx={{
+                                  marginTop: "1%",
+                                  alignItems: "center",
+                                  display: "flex",
+                                  color: "#08089C",
+                                }}
+                              >
+                                <Chip
+                                  variant="contained"
+                                  color="success"
+                                  // disabled={handleAdd()}
+                                  sx={{
+                                    color: "#08089C",
+                                    borderRadius: "20px",
+                                    backgroundColor: "#FFF",
+                                    margin: "0.5%",
+                                  }}
+                                  label={`demanded Participants: ${item?.number_of_participants}`}
+                                ></Chip>
+                                <Chip
+                                  variant="contained"
+                                  color="success"
+                                  // disabled={handleAdd()}
+                                  sx={{
+                                    color: "#08089C",
+                                    borderRadius: "20px",
+                                    backgroundColor: "#FFF",
+                                    margin: "0.5%",
+                                  }}
+                                  label={`Approved Participants: ${item?.approved_applications}`}
+                                ></Chip>
+
+                                {/* <LocationOnIcon sx={{ marginLeft: "5%" }} />
+                                <Typography>{address}</Typography> */}
+                            </Box>
+                          </CardContent>
+                          <CardActions sx={{ flexDirection: "row-reverse" }}>
+                            <Button
+                              variant="contained"
+                              // disabled={handleAdd()}
+                              sx={{
+                                color: "#556B2F",
+                                borderRadius: "20px",
+                                backgroundColor: "#FFF",
+                                margin: "2%",
+                              }}
+                              disabled={item?.status !== "Pending"}
+                              onClick={() => {
+                                // handleopenApplyMission();
+                                // setIdMission(item?.id);
+                                handleApprouveApplication(item);
+                              }}
+                            >
+                              Approuve
+                            </Button>
+                            <Chip
+                              variant="contained"
+                              color="success"
+                              // disabled={handleAdd()}
+                              sx={{
+                                background:
+                                  item?.status !== "Pending"
+                                    ? "linear-gradient(180deg, rgba(190, 255, 157, 0.00) 0%, #9FFF6F 10%)"
+                                    : "yellow",
+                                color: "#556B2F",
+                                borderRadius: "20px",
+                              }}
+                              label={`${item?.status}`}
+                            ></Chip>
+                          </CardActions>
+                        </Card>
+                      </Grid>
+                    );
+                  })}
+                </>
+              )}
+            </Grid>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              handledeleteMission();
+            }}
+            variant="contained"
+            style={styleValidate}
+            color="success"
+          >
+            {sessionStorage.getItem("language") === "fr"
+              ? "Confirmer"
+              : "Confirmer"}
+          </Button>
+          <Button
+            onClick={() => {
+              handleCloseApplications();
+            }}
+            variant="contained"
+            style={styleCancelDelete}
+          >
+            {sessionStorage.getItem("language") === "fr" ? "Cacher" : "Cacher"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <IconButton
+        aria-label="more"
+        id="long-button"
+        aria-controls={open ? "long-menu" : undefined}
+        aria-expanded={open ? "true" : undefined}
+        aria-haspopup="true"
+        onClick={handleClick}
+      >
+        <MoreVertIcon />
+      </IconButton>
+      <Menu
+        id="long-menu"
+        MenuListProps={{
+          "aria-labelledby": "long-button",
+        }}
+        anchorEl={anchorEl1}
+        open={open}
+        onClose={handleClose}
+        PaperProps={{
+          style: {
+            maxHeight: ITEM_HEIGHT * 4.5,
+            width: "20ch",
+          },
+        }}
+      >
+        <MenuItem onClick={handleOpenUpdateMission}>Update Mission</MenuItem>
+        <MenuItem onClick={handleOpenDeleteMission}>Delete Mission</MenuItem>
+        <MenuItem onClick={handleOpenApplications}>
+          <ListItemText>Applications</ListItemText>
+          {applicationsByMission?.filter((item) => item.status === "Pending")?.length >
+          0 ? (
+            <div
+              style={{
+                display: "flex",
+                marginLeft: "5px",
+                justifyContent: "center",
+                borderRadius: "100%",
+                color: "white",
+                width: "20px",
+                backgroundColor: "red",
+              }}
+            >
+              {" "}
+              {
+                applicationsByMission?.filter((item) => item.status === "Pending")
+                  ?.length
+              }
+            </div>
+          ) : (
+            <></>
+          )}
+        </MenuItem>
+      </Menu>
+    </div>
+  );
+};
