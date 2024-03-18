@@ -109,6 +109,9 @@ export default function ModaladdnewMission({ open, setOpen, goals }) {
     error: false,
   });
 
+  const id_association = useSelector(
+    (state) => state.AssociationReducer?.id_association
+  );
   //message error
   const [openSnack, setopenSnack] = React.useState(false);
   const [message, setmessage] = React.useState({ msg: "", error: false });
@@ -320,24 +323,24 @@ export default function ModaladdnewMission({ open, setOpen, goals }) {
     return array;
   }
 
-  const call_api_get_all_missions = (id) => {
+  const call_api_get_all_missions = () => {
     axios
-      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "mission/")
+      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "association/missions/" + id_association)
       .then((value) => {
         dispatch({
           type: "Missions",
           missions: orderByDate(value?.data),
         });
-        handleClose();
+        handleClose()
       })
       .catch((err) => {
         dispatch({
           type: "Missions",
           posts: [],
         });
-        handleClose();
       });
   };
+ 
   const save = () => {
     const object = {
       start_date: startDate,
@@ -346,6 +349,7 @@ export default function ModaladdnewMission({ open, setOpen, goals }) {
       mission_type: typeMission,
       volunteer_qualifications: typeVolunteers,
       duration: missionDuration,
+      creator_id: id_association
       // created_on : new Date(),
     };
     axios

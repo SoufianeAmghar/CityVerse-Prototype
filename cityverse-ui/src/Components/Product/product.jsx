@@ -373,7 +373,11 @@ export default function Product() {
   };
   const call_api_get_all_missions = () => {
     axios
-      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "mission/")
+      .get(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "association/missions/" +
+          id_association
+      )
       .then((value) => {
         dispatch({
           type: "Missions",
@@ -1833,233 +1837,180 @@ export default function Product() {
                         <></>
                       )}
                       <br />
-                      <Divider>
-                        <Typography gutterBottom variant="h5" component="div">
-                          Missions
-                        </Typography>
-                      </Divider>
-                      {missions?.map((item, index) => {
-                        return (
-                          <Card
-                            key={index}
-                            sx={{
-                              backgroundColor: "#F2F2F2",
-                              margin: "2%",
-                              width: "100%",
-                            }}
-                          >
-                            <CardContent>
-                              <Box
-                                sx={{ display: "flex", flexDirection: "row" }}
-                              >
-                                <Typography
-                                  gutterBottom
-                                  variant="h5"
-                                  component="div"
-                                  sx={{ flexGrow: 1 }}
-                                >
-                                  Mission {index + 1}
-                                </Typography>
-                                {data?.user_id === sessionStorage.getItem("user_Id") ? <LongMenu idMission={item?.id} mission={item} /> :<></>}
-                              </Box>
-                              <br />
-                              <Typography
-                                variant="body2"
-                                color="text.secondary"
-                              >
-                                {item?.description}
-                              </Typography>
-                              <Box
+                      <Divider></Divider>
+                      {missions?.length === 0 || missions === null ? (
+                        <>there is no missions for this associations</>
+                      ) : (
+                        <>
+                          {missions?.map((item, index) => {
+                            return (
+                              <Card
+                                key={index}
                                 sx={{
-                                  marginTop: "1%",
-                                  alignItems: "center",
-                                  display: "flex",
-                                  color: "#08089C",
+                                  backgroundColor: "#F2F2F2",
+                                  margin: "2%",
                                   width: "100%",
                                 }}
                               >
-                                <CalendarMonthIcon sx={{ marginRight: "1%" }} />
-                                <Typography sx={{ marginRight: "2%" }}>
-                                  {format(
-                                    new Date(item?.start_date),
-                                    "dd/MM/yyyy"
-                                  )}
-                                </Typography>
-                                <Chip
-                                  variant="contained"
-                                  color="success"
-                                  // disabled={handleAdd()}
-                                  sx={{
-                                    color: "#08089C",
-                                    borderRadius: "20px",
-                                    backgroundColor: "#FFF",
-                                    margin: "0.5%",
-                                  }}
-                                  label={`Duration: ${item?.duration?.label}`}
-                                ></Chip>
-                                <Chip
-                                  variant="contained"
-                                  color="success"
-                                  // disabled={handleAdd()}
-                                  sx={{
-                                    color: "#08089C",
-                                    borderRadius: "20px",
-                                    backgroundColor: "#FFF",
-                                    margin: "0.5%",
-                                  }}
-                                  label={`Type of mission: ${item?.mission_type?.label}`}
-                                ></Chip>
-                                <Chip
-                                  variant="contained"
-                                  color="success"
-                                  // disabled={handleAdd()}
-                                  sx={{
-                                    color: "#08089C",
-                                    borderRadius: "20px",
-                                    backgroundColor: "#FFF",
-                                    margin: "0.5%",
-                                  }}
-                                  label={`Volunteer qualifications: ${item?.volunteer_qualifications?.label}`}
-                                ></Chip>
+                                <CardContent>
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      flexDirection: "row",
+                                    }}
+                                  >
+                                    <Typography
+                                      gutterBottom
+                                      variant="h5"
+                                      component="div"
+                                      sx={{ flexGrow: 1 }}
+                                    >
+                                      Mission {index + 1}
+                                    </Typography>
+                                    {data?.user_id ===
+                                    sessionStorage.getItem("user_Id") ? (
+                                      <LongMenu
+                                        idMission={item?.id}
+                                        mission={item}
+                                      />
+                                    ) : (
+                                      <></>
+                                    )}
+                                  </Box>
+                                  <br />
+                                  <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                  >
+                                    {item?.description}
+                                  </Typography>
+                                  <Box
+                                    sx={{
+                                      marginTop: "1%",
+                                      alignItems: "center",
+                                      display: "flex",
+                                      color: "#08089C",
+                                      width: "100%",
+                                    }}
+                                  >
+                                    <CalendarMonthIcon
+                                      sx={{ marginRight: "1%" }}
+                                    />
+                                    <Typography sx={{ marginRight: "2%" }}>
+                                      {format(
+                                        new Date(item?.start_date),
+                                        "dd/MM/yyyy"
+                                      )}
+                                    </Typography>
+                                    <Chip
+                                      variant="contained"
+                                      color="success"
+                                      // disabled={handleAdd()}
+                                      sx={{
+                                        color: "#08089C",
+                                        borderRadius: "20px",
+                                        backgroundColor: "#FFF",
+                                        margin: "0.5%",
+                                      }}
+                                      label={`Duration: ${item?.duration?.label}`}
+                                    ></Chip>
+                                    <Chip
+                                      variant="contained"
+                                      color="success"
+                                      // disabled={handleAdd()}
+                                      sx={{
+                                        color: "#08089C",
+                                        borderRadius: "20px",
+                                        backgroundColor: "#FFF",
+                                        margin: "0.5%",
+                                      }}
+                                      label={`Type of mission: ${item?.mission_type?.label}`}
+                                    ></Chip>
+                                    <Chip
+                                      variant="contained"
+                                      color="success"
+                                      // disabled={handleAdd()}
+                                      sx={{
+                                        color: "#08089C",
+                                        borderRadius: "20px",
+                                        backgroundColor: "#FFF",
+                                        margin: "0.5%",
+                                      }}
+                                      label={`Volunteer qualifications: ${item?.volunteer_qualifications?.label}`}
+                                    ></Chip>
 
-                                {/* <LocationOnIcon sx={{ marginLeft: "5%" }} />
+                                    {/* <LocationOnIcon sx={{ marginLeft: "5%" }} />
                                 <Typography>{address}</Typography> */}
-                              </Box>
-                              <Box
-                                sx={{
-                                  marginTop: "1%",
-                                  alignItems: "center",
-                                  display: "flex",
-                                  color: "#08089C",
-                                }}
-                              >
-                                <Chip
-                                  variant="contained"
-                                  color="success"
-                                  // disabled={handleAdd()}
-                                  sx={{
-                                    color: "#08089C",
-                                    borderRadius: "20px",
-                                    backgroundColor: "#FFF",
-                                    margin: "0.5%",
-                                  }}
-                                  label={`demanded Participants: ${item?.number_of_participants}`}
-                                ></Chip>
-                                <Chip
-                                  variant="contained"
-                                  color="success"
-                                  // disabled={handleAdd()}
-                                  sx={{
-                                    color: "#08089C",
-                                    borderRadius: "20px",
-                                    backgroundColor: "#FFF",
-                                    margin: "0.5%",
-                                  }}
-                                  label={`Approved Participants: ${item?.approved_applications}`}
-                                ></Chip>
+                                  </Box>
+                                  <Box
+                                    sx={{
+                                      marginTop: "1%",
+                                      alignItems: "center",
+                                      display: "flex",
+                                      color: "#08089C",
+                                    }}
+                                  >
+                                    <Chip
+                                      variant="contained"
+                                      color="success"
+                                      // disabled={handleAdd()}
+                                      sx={{
+                                        color: "#08089C",
+                                        borderRadius: "20px",
+                                        backgroundColor: "#FFF",
+                                        margin: "0.5%",
+                                      }}
+                                      label={`demanded Participants: ${item?.number_of_participants}`}
+                                    ></Chip>
+                                    <Chip
+                                      variant="contained"
+                                      color="success"
+                                      // disabled={handleAdd()}
+                                      sx={{
+                                        color: "#08089C",
+                                        borderRadius: "20px",
+                                        backgroundColor: "#FFF",
+                                        margin: "0.5%",
+                                      }}
+                                      label={`Approved Participants: ${item?.approved_applications}`}
+                                    ></Chip>
 
-                                {/* <LocationOnIcon sx={{ marginLeft: "5%" }} />
+                                    {/* <LocationOnIcon sx={{ marginLeft: "5%" }} />
                                 <Typography>{address}</Typography> */}
-                              </Box>
-                            </CardContent>
-                            <CardActions sx={{ flexDirection: "row-reverse" }}>
-                              <Button
-                                variant="contained"
-                                // disabled={handleAdd()}
-                                sx={{
-                                  color: "#556B2F",
-                                  borderRadius: "20px",
-                                  backgroundColor: "#FFF",
-                                  margin: "2%",
-                                }}
-                                onClick={() => {
-                                  handleopenApplyMission();
-                                  setIdMission(item?.id);
-                                }}
-                              >
-                                Apply
-                              </Button>
-                              <Chip
-                                variant="contained"
-                                color="success"
-                                // disabled={handleAdd()}
-                                sx={styleValidate}
-                                label="Open application"
-                              ></Chip>
-                            </CardActions>
-                          </Card>
-                        );
-                      })}
-
-                      {/* <Card sx={{ backgroundColor: "#F2F2F2", margin: "2%" }}>
-                        <CardContent>
-                          <Typography gutterBottom variant="h5" component="div">
-                            Mission 1
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            "ABC Community Foundation is dedicated to empowering
-                            individuals and communities to achieve their full
-                            potential. We strive to foster social justice,
-                            equity, and inclusivity by providing resources,
-                            education, and support to underserved populations.
-                            Through collaboration, advocacy, and innovation, we
-                            aim to create positive systemic change and build a
-                            more just and compassionate society. Our core values
-                            of integrity, respect, diversity, and collaboration
-                            guide our efforts as we work towards a future where
-                            every person has the opportunity to thrive."
-                          </Typography>
-                        </CardContent>
-                        <CardActions>
-                          <Box
-                            sx={{
-                              flexGrow: 1,
-                              margin: "2%",
-                              alignItems: "center",
-                              display: "flex",
-                              color: "#08089C",
-                            }}
-                          >
-                            <CalendarMonthIcon sx={{ marginRight: "1%" }} />
-                            <Typography>
-                              {format(
-                                new Date("2024-03-01T10:17:57.497070"),
-                                "dd/MM/yyyy"
-                              )}
-                            </Typography>
-
-                            <LocationOnIcon sx={{ marginLeft: "5%" }} />
-                            <Typography>{address}</Typography>
-                          </Box>
-                          <Chip
-                            variant="contained"
-                            color="success"
-                            // disabled={handleAdd()}
-                            sx={styleValidate}
-                            label="Open application"
-                          ></Chip>
-                          <Button
-                            variant="contained"
-                            // disabled={handleAdd()}
-                            sx={{
-                              color: "#556B2F",
-                              borderRadius: "20px",
-                              backgroundColor: "#FFF",
-                              margin: "2%",
-                            }}
-                            onClick={handleopenApplyMission}
-                          >
-                            Apply
-                          </Button>
-                          <Chip
-                            variant="contained"
-                            color="success"
-                            // disabled={handleAdd()}
-                            sx={styleValidate}
-                            label="Open application"
-                          ></Chip>
-                        </CardActions>
-                      </Card> */}
+                                  </Box>
+                                </CardContent>
+                                <CardActions
+                                  sx={{ flexDirection: "row-reverse" }}
+                                >
+                                  <Button
+                                    variant="contained"
+                                    // disabled={handleAdd()}
+                                    sx={{
+                                      color: "#556B2F",
+                                      borderRadius: "20px",
+                                      backgroundColor: "#FFF",
+                                      margin: "2%",
+                                    }}
+                                    onClick={() => {
+                                      handleopenApplyMission();
+                                      setIdMission(item?.id);
+                                    }}
+                                  >
+                                    Apply
+                                  </Button>
+                                  <Chip
+                                    variant="contained"
+                                    color="success"
+                                    // disabled={handleAdd()}
+                                    sx={styleValidate}
+                                    label="Open application"
+                                  ></Chip>
+                                </CardActions>
+                              </Card>
+                            );
+                          })}
+                        </>
+                      )}
                     </Box>
                   </Suspense>
                 </TabPanel>
@@ -2295,7 +2246,7 @@ const LongMenu = (idMission) => {
           type: "Applications",
           applications: value?.data,
         });
-        setApplicationByMission(value?.data)
+        setApplicationByMission(value?.data);
       })
       .catch((err) => {});
   };
@@ -2319,12 +2270,13 @@ const LongMenu = (idMission) => {
   const handleCloseApplications = () => {
     setOpenApplications(false);
   };
-
+  const [count, setCount] = useState(0)
   useEffect(() => {
     call_api_get_all_applications();
-  }, []);
+  }, [count]);
+
+
   const handleApprouveApplication = (object) => {
-    console.log("approuve", object);
     axios
       .put(
         process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
@@ -2334,6 +2286,7 @@ const LongMenu = (idMission) => {
       )
       .then((value) => {
         call_api_get_all_applications();
+        setCount(count+1)
       })
       .catch((err) => {});
   };
@@ -2735,8 +2688,8 @@ const LongMenu = (idMission) => {
         <MenuItem onClick={handleOpenDeleteMission}>Delete Mission</MenuItem>
         <MenuItem onClick={handleOpenApplications}>
           <ListItemText>Applications</ListItemText>
-          {applicationsByMission?.filter((item) => item.status === "Pending")?.length >
-          0 ? (
+          {applicationsByMission?.filter((item) => item.status === "Pending")
+            ?.length > 0 ? (
             <div
               style={{
                 display: "flex",
@@ -2750,8 +2703,9 @@ const LongMenu = (idMission) => {
             >
               {" "}
               {
-                applicationsByMission?.filter((item) => item.status === "Pending")
-                  ?.length
+                applicationsByMission?.filter(
+                  (item) => item.status === "Pending"
+                )?.length
               }
             </div>
           ) : (

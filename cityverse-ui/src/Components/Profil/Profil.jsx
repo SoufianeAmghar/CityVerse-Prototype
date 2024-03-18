@@ -185,6 +185,7 @@ export default function Profile() {
     (state) => state.AssociationReducer?.associations
   );
   const Following = useSelector((state) => state.ProfileReducer?.following);
+  const missions_applied_for = useSelector((state) => state.ProfileReducer?.missions_applied_for);
   const handleCoverChange = (e) => {
     const filecover = e.target.files[0];
     setSelectedImage(e.target.files[0]);
@@ -328,9 +329,30 @@ export default function Profile() {
       });
   };
 
+  const call_api_get_missions_by_id = (id, n) => {
+    const headers = {
+      UserAgent: sessionStorage.getItem("user_Id"),
+    };
+    axios
+      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "user/" + sessionStorage.getItem("user_Id") + "/missions", {
+        headers,
+      })
+      .then((value) => {
+        dispatch({
+          type: "Missions_applied_for",
+          missions_applied_for: orderByDate(value?.data),
+        });     
+      })
+      .catch((err) => {
+      
+      });
+  };
+
+
   useEffect(() => {
     call_api_get_user_info();
     call_api_get_feed_by_id();
+    call_api_get_missions_by_id();
     if (
       !(
         imageProfile !==
@@ -1434,12 +1456,12 @@ export default function Profile() {
                       <Grid item xs={12}>
                         <Box sx={{ display: "flex", justifyContent: "center" }}>
                           <Chip
-                            label={`Total mission's : ${missions?.length}`}
+                            label={`Total mission's : ${missions_applied_for?.length}`}
                             sx={{ backgroundColor: "#08089C", color: "#FFF" }}
                           />
                         </Box>
                       </Grid>{" "}
-                      {missions?.map((item, index) => {
+                      {missions_applied_for?.map((item, index) => {
                         return (
                           <>
                                 <Card

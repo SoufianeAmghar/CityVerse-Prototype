@@ -14,6 +14,7 @@ const initState = {
   goals: [],
   following: [],
   feeds: [],
+  missions_applied_for: [],
 };
 
 const ProfileReducer = (state = initState, action) => {
@@ -97,6 +98,11 @@ const ProfileReducer = (state = initState, action) => {
       return {
         ...state,
         feeds: action.feeds,
+      };
+    case "Missions_applied_for":
+      return {
+        ...state,
+        missions_applied_for: action.missions_applied_for,
       };
 
     default:
