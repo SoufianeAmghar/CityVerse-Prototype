@@ -23,6 +23,20 @@ def get_all_associations():
 
     return associations
 
+def get_association_missions(association_id):
+    document = Document(__TABLE_NAME__='Mission')
+    all_missions = document.get_all()
+    association_missions = []
+    
+    for mission in all_missions:
+        if mission.get('creator_id') == association_id:
+            association_missions.append(mission)
+    
+    if not association_missions:
+        logging.warning(f"No missions found for association with ID {association_id}.")
+    
+    return association_missions
+
 
 def get_association_posts(association_id):
     document = Document(__TABLE_NAME__='Posts')

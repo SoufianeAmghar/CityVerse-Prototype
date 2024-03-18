@@ -477,6 +477,34 @@ def unfollow_association(user_id, association_id, data):
         'message': 'No user or association with the provided ID found.',
     }, 409
 
+def get_user_missions(user_id):
+    document_mission = Document(__TABLE_NAME__='Mission')
+    document_application = Document(__TABLE_NAME__='Application')
+    
+    missions_for_user = []
+
+    # Retrieve all applications completed by the user
+    user_applications = document_application.query(
+        index='user_id-index',
+        condition='user_id = :user_id',
+        value={':user_id': user_id}
+    )
+    
+    if not user_applications:
+        logging.warning(f"No applications found for user with ID {user_id}.")
+        return missions_for_user
+    
+    # Extract mission IDs from the user's applications
+    mission_ids = [app['mission_id'] for app in user_applications]
+
+    # Retrieve missions associated with these mission IDs
+    for mission_id in mission_ids:
+        mission = document_mission.get_item(mission_id)
+        if mission:
+            missions_for_user.append(mission)
+
+    return missions_for_user
+
 
 def add_user_event(user_id, event_id):
     document = Document(__TABLE_NAME__='User')

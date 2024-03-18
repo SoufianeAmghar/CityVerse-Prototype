@@ -36,6 +36,7 @@ def create_mission(data):
         'number_of_participants': data['number_of_participants'],
         'approved_applications': 0,
         'mission_type': data['mission_type'],
+        'creator_id': data['creator_id'],
         'created_on': datetime.utcnow().isoformat(),
         'status': 'Open Application'  # Initially set status to Open Application
     }

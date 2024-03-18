@@ -14,7 +14,8 @@ from ..service.association_service import (
     check_siege_exists,
     verify_rna_number,
     create_post,
-    get_association_posts
+    get_association_posts,
+    get_association_missions
 )
 
 api = AssociationDto.api
@@ -114,4 +115,11 @@ class AssociationPosts(Resource):
         """Get all association posts"""
         return get_association_posts(association_id)
 
+@api.route('/missions/<association_id>')
+class AssociationPosts(Resource):
+    @api.expect(_post, validate=True)
+    @api.doc('Get all association posts')
+    def get(self,association_id):
+        """Get all association posts"""
+        return get_association_missions(association_id)
 
