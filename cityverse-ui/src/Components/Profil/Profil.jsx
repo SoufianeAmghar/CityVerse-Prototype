@@ -1633,9 +1633,12 @@ export default function Profile() {
                                         margin: "2%",
                                       }}
                                       onClick={() => {
-                                        // handleopenApplyMission();
-                                        // setIdMission(item?.id);
                                         history.push("/product" , "missions")
+                                        dispatch({
+                                          type: "Id_association",
+                                          id_association: item?.creator_id,
+                                        });
+                                        console.log('id', item?.creator_id)
                                       }}
                                     >
                                       checkout

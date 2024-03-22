@@ -73,6 +73,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import ModalUpdateMission from "./updateMission";
+import { Alert, Collapse } from "@mui/material";
 
 const AntTabs = styled(Tabs)({
   "& .MuiTabs-indicator": {
@@ -164,7 +165,6 @@ export default function Product() {
   const history = useHistory();
 
   const address = useSelector((state) => state.ProfileReducer?.address);
-
   const [inProgress, setInprogress] = useState(true);
   const [value, setValue] = React.useState(0);
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
@@ -186,6 +186,19 @@ export default function Product() {
   const [haveCar, sethaveCar] = useState();
   const [interset, setInterest] = useState();
   const [about, setAbout] = useState();
+
+
+  // Notifications
+  const [openPostCreated, setOpenPostCreated ] = useState(false);
+  const [openPostUpdated, setOpenPostUpdated ] = useState(false);
+  const [openPostDeleted, setOpenPostDeleted ] = useState(false);
+
+  const [openMissionCreated, setOpenMissionCreated ] = useState(false);
+  const [openMissionUpdated, setOpenMissionUpdated ] = useState(false);
+  const [openMissionDeleted, setOpenMissionDeleted ] = useState(false);
+
+
+ 
 
   const [valuesSiege, setValuesSiege] = useState({
     valideSiege: false,
@@ -424,9 +437,6 @@ export default function Product() {
       created_by: sessionStorage.getItem("user_Id"),
       modified_by: sessionStorage.getItem("user_Id"),
       description: post,
-      // 'creator_id': data['creator_id'],
-      // 'reactions': reactions_data,
-      // 'comments': comments_data
     });
     json.append("json", object);
     json.append("img", selectedPostImage);
@@ -445,6 +455,10 @@ export default function Product() {
       )
       .then((value) => {
         call_api_get_all_posts(id_association);
+        setOpenPostCreated(true);
+        setTimeout(() => {
+          setOpenPostCreated(false);
+        }, 3000);
       })
       .catch((err) => {});
   };
@@ -2158,6 +2172,50 @@ export default function Product() {
           </Grid>
         </Grid>
       </Grid>
+      <div className="absolute">
+              <Collapse in={openPostCreated}>
+                <Alert
+                  severity="info"
+                  action={
+                    <IconButton
+                      aria-label="close"
+                      color="inherit"
+                      size="small"
+                      onClick={() => {
+                        setOpenPostCreated(false);
+                      }}
+                    >
+                      <CloseIcon fontSize="inherit" />
+                    </IconButton>
+                  }
+                >
+                  {sessionStorage.getItem("language") === "fr"
+                    ? "un nouveau post a été crée"
+                    : "Post created successfully"}
+                </Alert>
+              </Collapse>
+              <Collapse in={openMissionCreated}>
+                <Alert
+                  severity="info"
+                  action={
+                    <IconButton
+                      aria-label="close"
+                      color="inherit"
+                      size="small"
+                      onClick={() => {
+                        setOpenMissionCreated(false);
+                      }}
+                    >
+                      <CloseIcon fontSize="inherit" />
+                    </IconButton>
+                  }
+                >
+                  {sessionStorage.getItem("language") === "fr"
+                    ? "une mission a été crée"
+                    : "mission created successfully"}
+                </Alert>
+              </Collapse>
+            </div>
     </div>
   );
 }

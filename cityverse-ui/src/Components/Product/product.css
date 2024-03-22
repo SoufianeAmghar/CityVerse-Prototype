@@ -2,3 +2,12 @@
     border-top: 4px solid rgb(17, 255, 0);
     width: 100%;
   }
+
+  .absolute{
+    position: absolute;
+    z-index: 100000;
+    right: 0%;
+    margin-right: 40px;
+    top: 10%;
+    transform: translateY(650px);
+}
