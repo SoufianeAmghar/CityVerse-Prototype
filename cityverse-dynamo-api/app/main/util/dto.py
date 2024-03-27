@@ -253,6 +253,7 @@ class DonationDto:
         'tax_reduction': fields.Integer(description='Tax reduction percentage'),
         'purpose': fields.String(description='Donation campaign description goal', required=True),
         'link': fields.String(description='URL of donation platform', required=True),
+        'links': fields.List(fields.String, description='List of media links'),
         'is_reduction_eligible': fields.Boolean(description='If donation is eligible for tax reduction'),
         'created_on': fields.String(description='Created on'),
         'modified_on': fields.String(description='Modified on')
