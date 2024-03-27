@@ -25,8 +25,11 @@ class Donation(Resource):
     
     @api.doc('create_donation')
     def post(self):
-        data = request.json
-        return create_donation(data)
+        json_data_str = request.form.get('json')
+        data = json.loads(json_data_str) if json_data_str else {}
+        img_files = request.files.getlist('img')
+        video_files = request.files.getlist('video')
+        return create_donation(data,img_files,video_files)
 
 @api.route('/<donation_id>')
 @api.param('donation_id', 'The Donation identifier')
