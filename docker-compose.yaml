@@ -26,7 +26,7 @@ services:
       - 443:443
     env_file:
       - ./cityverse-ui/.env
-    volumes:
-     - /home/ubuntu/cityverse-proto/CityVerse-Prototype/certs:/etc/nginx/certs
+    # volumes:
+    #  - /home/ubuntu/cityverse-proto/CityVerse-Prototype/certs:/etc/nginx/certs
     
     
