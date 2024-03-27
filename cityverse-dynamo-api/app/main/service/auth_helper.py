@@ -199,7 +199,8 @@ class Auth:
                         **({'social_links': user.social_links} if user.social_links is not None else {}),
                         **({'sdg': document.convert_dynamodb_item_to_string(item=user.sdg)} if user.sdg is not None else {}),
                         **({'followings': document.convert_dynamodb_item_to_string(item=user.followings)} if user.followings is not None else {}),
-                        **({'total_followed': document.convert_dynamodb_item_to_string(item=user.total_followed)} if user.total_followed is not None else {})
+                        **({'total_followed': document.convert_dynamodb_item_to_string(item=user.total_followed)} if user.total_followed is not None else {}),
+                         **({'badge': document.convert_dynamodb_item_to_string(item=user.badge)} if user.badge is not None else {})
 
 
 

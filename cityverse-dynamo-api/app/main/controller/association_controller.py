@@ -3,7 +3,7 @@ from flask import request
 from flask_restplus import Resource
 
 from app.main.util.decorator import token_required
-from ..util.dto import AssociationDto, ProductDto
+from ..util.dto import AssociationDto, ProductDto, DonationDto
 from ..service.association_service import (
     create_association,
     edit_association,
@@ -15,12 +15,14 @@ from ..service.association_service import (
     verify_rna_number,
     create_post,
     get_association_posts,
-    get_association_missions
+    get_association_missions,
+    get_association_donations
 )
 
 api = AssociationDto.api
 _association = AssociationDto.association
 _post = ProductDto.post
+_donation = DonationDto.donation
 
 
 @api.route('/')
@@ -116,10 +118,17 @@ class AssociationPosts(Resource):
         return get_association_posts(association_id)
 
 @api.route('/missions/<association_id>')
-class AssociationPosts(Resource):
-    @api.expect(_post, validate=True)
-    @api.doc('Get all association posts')
+class AssociationMissions(Resource):
+    @api.doc('Get all association missions')
     def get(self,association_id):
         """Get all association posts"""
         return get_association_missions(association_id)
+    
+@api.route('/donations/<association_id>')
+class AssociationDonations(Resource):
+    @api.doc('Get all association donation campaigns')
+    @api.marshal_with(_donation)
+    def get(self,association_id):
+        """Get all association posts"""
+        return get_association_donations(association_id)
 

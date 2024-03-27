@@ -244,6 +244,27 @@ class BadgeDto:
         'content': fields.List(fields.Nested(badge)),
     })
 
+class DonationDto:
+    api = Namespace('donation', description='Donation campaigns related operations')
+    donation = api.model('donation', {
+        'id': fields.String(description='Donation Identifier', required=True),
+        'creator_id': fields.String(description='Association Identifier', required=True),
+        'name': fields.String(description='Donation Name', required=True),
+        'tax_reduction': fields.Integer(description='Tax reduction percentage'),
+        'purpose': fields.String(description='Donation campaign description goal', required=True),
+        'link': fields.String(description='URL of donation platform', required=True),
+        'is_reduction_eligible': fields.Boolean(description='If donation is eligible for tax reduction'),
+        'created_on': fields.String(description='Created on'),
+        'modified_on': fields.String(description='Modified on')
+    })
+
+    page_donation = api.model('flow page', {
+        'page': fields.Integer,
+        'size': fields.Integer,
+        'total': fields.Integer,
+        'content': fields.List(fields.Nested(donation)),
+    })
+
 class FeedDto:
     api = Namespace('feed', description='user feed related operations')
 
