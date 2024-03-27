@@ -434,7 +434,7 @@ def follow_association(user_id, association_id, data):
         else:
             return {'status': 'fail',
                     'message': 'Association already followed',
-            }, 409
+                    }, 409
     return {
         'status': 'fail',
         'message': 'No user or association with the provided ID found.',
@@ -477,10 +477,11 @@ def unfollow_association(user_id, association_id, data):
         'message': 'No user or association with the provided ID found.',
     }, 409
 
+
 def get_user_missions(user_id):
     document_mission = Document(__TABLE_NAME__='Mission')
     document_application = Document(__TABLE_NAME__='Application')
-    
+
     missions_for_user = []
 
     # Retrieve all applications completed by the user
@@ -489,11 +490,11 @@ def get_user_missions(user_id):
         condition='user_id = :user_id',
         value={':user_id': user_id}
     )
-    
+
     if not user_applications:
         logging.warning(f"No applications found for user with ID {user_id}.")
         return missions_for_user
-    
+
     # Extract mission IDs from the user's applications
     mission_ids = [app['mission_id'] for app in user_applications]
 
@@ -578,3 +579,40 @@ def get_user_by_email(email):
         return True
     else:
         return False
+
+
+def update_user_badge(user_id, data):
+    document = Document(__TABLE_NAME__='User')
+    user = get_a_user(user_id)
+    if user:
+
+        if 'badge' not in user or not isinstance(user['badge'], list):
+            user['badge'] = []
+
+        data_type = data.get('type', '').lower()
+
+        if data_type == "nft":
+            user['score'] = int(user.get('score', 0)) + 1500
+            user['badge'].append("https://cityverse-profilepics.s3.us-east-2.amazonaws.com/Badge+Donation.png")
+        elif data_type == "trocadero":
+            user['score'] = int(user.get('score', 0)) + 700
+            user['badge'].append("https://cityverse-profilepics.s3.us-east-2.amazonaws.com/Badge+Trocad%C3%A9ro.png")
+        elif data_type == "mission":
+            user['score'] = int(user.get('score', 0)) + 900
+            user['badge'].append("https://cityverse-profilepics.s3.us-east-2.amazonaws.com/Virtual+Badge+Mission.png")
+
+        user['modified_on'] = datetime.utcnow().isoformat()
+        document.save(item=user)
+
+
+        document.save(item=user)
+        return {
+            'status': 'success',
+            'message': 'Badges updated successfully.',
+        }, 200
+    else:
+
+        return {
+            'status': 'fail',
+            'message': 'No user with the provided ID found.',
+        }, 409

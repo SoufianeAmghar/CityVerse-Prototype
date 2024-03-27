@@ -37,6 +37,20 @@ def get_association_missions(association_id):
     
     return association_missions
 
+def get_association_donations(association_id):
+    document = Document(__TABLE_NAME__='Donation')
+    all_donations = document.get_all()
+    association_donations = []
+    
+    for donation in all_donations:
+        if donation.get('creator_id') == association_id:
+            association_donations.append(donation)
+    
+    if not association_donations:
+        logging.warning(f"No donations found for association with ID {association_id}.")
+    
+    return association_donations
+
 
 def get_association_posts(association_id):
     document = Document(__TABLE_NAME__='Posts')

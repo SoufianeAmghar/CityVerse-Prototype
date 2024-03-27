@@ -4,7 +4,7 @@ from flask_restplus import Resource
 
 from app.main.util.decorator import token_required
 from ..util.dto import UserDto
-from ..service.user_service import save_new_user, get_all_users, get_a_user, delete_user, update_user, update_user_description, update_user_banner, update_password, get_user_by_email, add_user_event, add_user_place, update_user_social, update_user_sdg, update_user_profile, follow_association, unfollow_association, get_user_missions
+from ..service.user_service import save_new_user, get_all_users, get_a_user, delete_user, update_user, update_user_description, update_user_banner, update_password, get_user_by_email, add_user_event, add_user_place, update_user_social, update_user_sdg, update_user_profile, follow_association, unfollow_association, get_user_missions, update_user_badge
 import logging
 
 api = UserDto.api
@@ -184,11 +184,11 @@ class UserMissionResource(Resource):
        
         return get_user_missions(public_id)
 
-# @api.route('/<public_id>/badges/<badge_id>')
-# class UserBadgeResource(Resource):
-#     @api.response(201, 'User Banner successfully changed.')
-#     @api.doc('update user badge')
-#     def put(self, public_id, badge_id):
-#         """Update a User's badge"""
-#         data = request.json
-#         return update_user_event_count(public_id, badge_id)
+@api.route('/<public_id>/badges')
+class UserBadgeResource(Resource):
+    @api.response(201, 'User Badge successfully changed.')
+    @api.doc('update user badge')
+    def put(self, public_id):
+        """Update a User's badge"""
+        data = request.json
+        return update_user_badge(public_id, data)

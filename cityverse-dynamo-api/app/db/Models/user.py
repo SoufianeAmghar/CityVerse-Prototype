@@ -33,6 +33,7 @@ class User(Document):
     description = None
     social_links = None
     sdg = None
+    badge = None
 
     @staticmethod
     def parse_datetime(date_str):
