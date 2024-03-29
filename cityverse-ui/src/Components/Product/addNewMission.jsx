@@ -747,44 +747,6 @@ export default function ModaladdnewMission({ open, setOpen, goals }) {
           </Card>
         </Box>
       </Modal>
-      <Modal
-        open={openChild}
-        onClose={handleCloseChild}
-        aria-labelledby="child-modal-title"
-        aria-describedby="child-modal-description"
-      >
-        <Box
-          sx={{
-            ...style,
-            width: 500,
-            height: 500,
-            padding: "2%",
-            display: "flex",
-            justifyContent: "center",
-            alignContent: "center",
-          }}
-        >
-          <MapContainer
-            center={[0, 0]}
-            zoom={16}
-            scrollWheelZoom={true}
-            style={{ height: "90%", width: "90%", borderRadius: "2%" }}
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            {/* <GeoSearchField /> */}
-            <SetViewToCurrentLocation
-              location={location}
-              setLocation={setLocation}
-            />
-            {location.lat && location.lng && (
-              <CustomizeMarker location={location} setLocation={setLocation} />
-            )}
-          </MapContainer>
-        </Box>
-      </Modal>
     </div>
   );
 }
