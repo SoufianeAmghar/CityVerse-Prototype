@@ -345,3 +345,23 @@ class ApplicationDto:
         'total': fields.Integer,
         'content': fields.List(fields.Nested(application)),
     })
+
+class ContributionDto:
+    api = Namespace('contributions', description='User contributions operations')
+
+    contribution = api.model('contribution', {
+        'id': fields.String(description='Contribution Identifier'),
+        'user_id': fields.String(description='User Identifier'),
+        'donation_id': fields.String(description='Donation Campaign Identifier'),
+        'first_name': fields.String(description='First Name'),
+        'age': fields.Integer(description='Age'),
+        'address': fields.String(description='Address'),
+        'amount': fields.Integer(description='Amount')
+    })
+
+    page_contribution = api.model('contribution_page', {
+        'page': fields.Integer,
+        'size': fields.Integer,
+        'total': fields.Integer,
+        'content': fields.List(fields.Nested(contribution)),
+    })

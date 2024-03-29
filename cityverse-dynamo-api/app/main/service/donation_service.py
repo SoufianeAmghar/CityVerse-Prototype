@@ -24,7 +24,8 @@ def get_all_donations():
             'status': 'fail',
             'message': 'Donation campaigns dont exist',
         }, 500
-    
+
+
 def get_donation(donation_id):
     document = Document(__TABLE_NAME__='Donation')
     donation = document.get_item(donation_id)
@@ -33,8 +34,8 @@ def get_donation(donation_id):
     return donation
 
 
-def create_donation(data,image_files,video_files):
-    document = Document(__TABLE_NAME__='Donation',__BUCKET_NAME__='cityverse-videos',
+def create_donation(data, image_files, video_files):
+    document = Document(__TABLE_NAME__='Donation', __BUCKET_NAME__='cityverse-videos',
                         __S3_OBJECT_PREFIX__='media-posts/')
 
     image_urls = []
@@ -67,7 +68,7 @@ def create_donation(data,image_files,video_files):
         'creator_id': data['creator_id'],
         'name': data['name'],
         'purpose': data['purpose'],
-        'tax_reduction': data.get('tax_reduction',0),
+        'tax_reduction': data.get('tax_reduction', 0),
         'is_reduction_eligible': data.get('is_reduction_eligible', False),
         'modified_on': datetime.utcnow().isoformat(),
         'created_on': datetime.utcnow().isoformat(),
@@ -109,3 +110,52 @@ def edit_donation(donation_id, data):
             'status': 'fail',
             'message': 'Donation campaign not found.',
         }, 404
+
+
+def donate(donation_id, data):
+    donations_document = Document(__TABLE_NAME__='Donations')
+    user_document = Document(__TABLE_NAME__='User')
+
+    donation_item = {
+        'id': generate_id(),
+        'user_id': data['user_id'],
+        'donation_id': donation_id,
+        'address': data.get('address',''),
+        'age': data.get('age',0),
+        'first_name': data.get('first_name',''),
+        'surname': data.get('surname',''),
+        'amount': data.get('amount',0)
+    }
+
+    try:
+        user = user_document.get_item(data['user_id'])
+        if user:
+            if 'badge' not in user or not isinstance(user['badge'], list):
+                user['badge'] = []
+            badge = "https://cityverse-profilepics.s3.us-east-2.amazonaws.com/Badge+Donation.png"
+
+            if badge not in user['badge']:
+                user['modified_on'] = datetime.utcnow().isoformat()
+                user['score'] = int(user.get('score', 0)) + 1500
+                user['badge'].append(badge)
+        donations_document.save(item=donation_item)
+        user_document.save(item=user)
+        return {
+            'status': 'success',
+            'message': 'Donation successfully added.',
+        }, 201
+    except Exception as e:
+        logging.error(f"Failed to add donation: {str(e)}")
+        return {
+            'status': 'fail',
+            'message': f'Failed to add donation: {str(e)}'
+        }, 500
+    
+def get_donations_for_donation(donation_id):
+    document = Document(__TABLE_NAME__='Donations')
+    donations = document.query(
+        index='donation_id-index',
+        condition='donation_id = :donation_id',
+        value={':donation_id': donation_id}
+    )
+    return donations

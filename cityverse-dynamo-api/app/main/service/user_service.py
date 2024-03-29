@@ -506,6 +506,34 @@ def get_user_missions(user_id):
 
     return missions_for_user
 
+def get_user_donations(user_id):
+    document_donation = Document(__TABLE_NAME__='Donation')
+    document_donations = Document(__TABLE_NAME__='Donations')
+
+    donation_for_user = []
+
+    # Retrieve all donations of the user
+    user_donations = document_donations.query(
+        index='user_id-index',
+        condition='user_id = :user_id',
+        value={':user_id': user_id}
+    )
+
+    if not user_donations:
+        logging.warning(f"No donations found for user with ID {user_id}.")
+        return donation_for_user
+
+    # Extract mission IDs from the user's applications
+    donation_ids = [don['donation_id'] for don in user_donations]
+
+    # Retrieve missions associated with these mission IDs
+    for donation_id in donation_ids:
+        donation = document_donation.get_item(donation_id)
+        if donation:
+            donation_for_user.append(donation)
+
+    return donation_for_user
+
 
 def add_user_event(user_id, event_id):
     document = Document(__TABLE_NAME__='User')

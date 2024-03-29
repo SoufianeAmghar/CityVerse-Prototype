@@ -1,6 +1,7 @@
 from app.db.dynamodb_document import Document
 from app.main.util.strings import generate_id
 import logging
+from datetime import datetime
 
 
 def apply_for_mission(mission_id,data):
@@ -51,7 +52,17 @@ def approve_application(application_id,data):
     mission_id = data.get('mission_id')
 
     application_document = Document(__TABLE_NAME__='Application')
+    user_document = Document(__TABLE_NAME__='User')
     application = application_document.get_item(application_id)
+    user = user_document.get_item(application['user_id'])
+    if user:
+        if 'badge' not in user or not isinstance(user['badge'], list):
+            user['badge'] = []
+    else:
+        return {
+            'status': 'fail',
+            'message': 'User not found.',
+        }, 404
     if application:
         if application['status'] == 'Approved':
             return {
@@ -59,6 +70,15 @@ def approve_application(application_id,data):
                 'message': 'Application is already approved.',
             }, 400
         application['status'] = 'Approved'
+
+        badge = "https://cityverse-profilepics.s3.us-east-2.amazonaws.com/Virtual+Badge+Mission.png"
+
+        if badge not in user['badge']:
+          user['modified_on'] = datetime.utcnow().isoformat()
+          user['score'] = int(user.get('score', 0)) + 900
+          user['badge'].append(badge)
+
+        user_document.save(item=user)
         application_document.save(item=application)
     else:
         return {

@@ -3,17 +3,20 @@ from flask import request
 from flask_restplus import Resource
 
 from app.main.util.decorator import token_required
-from ..util.dto import DonationDto
+from ..util.dto import DonationDto, ContributionDto
 from ..service.donation_service import (
     get_all_donations,
     create_donation,
-    edit_donation
+    edit_donation,
+    donate,
+    get_donations_for_donation
 )
 
 
 api = DonationDto.api
 _donation = DonationDto.donation
 page_donation = DonationDto.page_donation
+_contribution = ContributionDto.contribution
 
 @api.route('/')
 class Donation(Resource):
@@ -39,5 +42,25 @@ class DonationPost(Resource):
         "Edit a comment on a post"
         data = request.json
         return edit_donation(donation_id, data)
+
+@api.route('/donate/<donation_id>')
+@api.param('donation_id', 'The Mission identifier')
+class ApplyForDonation(Resource):
+    @api.expect(_contribution, validate=True)
+    @api.response(201, 'Contribution successfully added.')
+    @api.doc('contribute to donation campaign')
+    def post(self,donation_id):
+        """Apply for a mission"""
+        data = request.json
+        return donate(donation_id,data)
+
+@api.route('/donations/<donation_id>')
+@api.param('donation_id', 'The Donation identifier')
+class DonationsForDonationCampaign(Resource):
+    @api.doc('get_applications_for_mission')
+    @api.marshal_with(_contribution)
+    def get(self, donation_id):
+        """Get all applications for a mission"""
+        return get_donations_for_donation(donation_id)
     
    

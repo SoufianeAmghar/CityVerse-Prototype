@@ -3,12 +3,13 @@ from flask import request
 from flask_restplus import Resource
 
 from app.main.util.decorator import token_required
-from ..util.dto import UserDto
-from ..service.user_service import save_new_user, get_all_users, get_a_user, delete_user, update_user, update_user_description, update_user_banner, update_password, get_user_by_email, add_user_event, add_user_place, update_user_social, update_user_sdg, update_user_profile, follow_association, unfollow_association, get_user_missions, update_user_badge
+from ..util.dto import UserDto, DonationDto
+from ..service.user_service import save_new_user, get_all_users, get_a_user, delete_user, update_user, update_user_description, update_user_banner, update_password, get_user_by_email, add_user_event, add_user_place, update_user_social, update_user_sdg, update_user_profile, follow_association, unfollow_association, get_user_missions, update_user_badge, get_user_donations
 import logging
 
 api = UserDto.api
 _user = UserDto.user
+_donation = DonationDto.donation
 
 logging.basicConfig(
     level=logging.INFO,
@@ -183,6 +184,16 @@ class UserMissionResource(Resource):
     def get(self, public_id):
        
         return get_user_missions(public_id)
+    
+@api.route('/<public_id>/donations')
+@api.param('public_id', 'The Public identifier of the user')
+class UserDonationResource(Resource):
+    @api.response(204, 'Donations successfully retrieved')
+    @api.doc('get user donations')
+    @api.marshal_with(_donation)
+    def get(self, public_id):
+       
+        return get_user_donations(public_id)
 
 @api.route('/<public_id>/badges')
 class UserBadgeResource(Resource):
