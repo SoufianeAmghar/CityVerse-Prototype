@@ -103,6 +103,9 @@ export default function ModaladdnewDonation({ open, setOpen, goals }) {
   const id_association = useSelector(
     (state) => state.AssociationReducer?.id_association
   );
+
+  const donations = useSelector((state) => state.AssociationReducer?.donations);
+
   //message error
   const [openSnack, setopenSnack] = React.useState(false);
   const [message, setmessage] = React.useState({ msg: "", error: false });
@@ -143,35 +146,62 @@ export default function ModaladdnewDonation({ open, setOpen, goals }) {
     return array;
   }
 
-  const save = () => {
-    const object = {
-      donationCompaignName: donationName,
-      donationPurpose: donationPorpose,
-      donationLink: donationLink,
-      taxReduction: taxReduction,
-      isDonEligibleTax: isDonEligibleTax,  
-      media: selectedNewImage,
-      creator_id: id_association
-    };
-    console.log('donation', object)
-    // axios
-    //   .post(
-    //     process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "mission/",
-    //     object
-    //   )
-    //   .then((value) => {
-    //     // call_api_get_all_missions()
-    //   })
-    //   .catch((err) => {});
+  const call_api_get_all_donations = () => {
+    axios
+      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "donation/")
+      .then((value) => {
+        dispatch({
+          type: "Donations",
+          donations: orderByDate(value?.data),
+        });
+        handleClose();
+      })
+      .catch((err) => {
+        dispatch({
+          type: "Donations",
+          donations: [],
+        });
+      });
   };
-  
+
+  const save = () => {
+    var json = new FormData();   
+    const object = JSON.stringify({
+      creator_id: id_association,
+      name: donationName,
+      purpose: donationPorpose,
+      link: donationLink,
+      tax_reduction: taxReduction,
+      is_reduction_eligible: isDonEligibleTax?.value, 
+    });
+    json.append("json", object);
+    json.append("img", selectedNewImage);
+    axios
+      .post(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "donation/",
+        json,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Accept: "application/json",
+            type: "formData",
+          },
+        }
+      )
+      .then((value) => {
+        call_api_get_all_donations();
+      })
+      .catch((err) => {});
+  };
+
   const TrueFalseOptions = [
     { id: 1, label: "Yes", value: true },
     { id: 2, label: "No", value: false },
   ];
-  
+
   return (
     <div>
+      {console.log('don', donations)}
       <Modal
         open={open}
         onClose={handleClose}
@@ -267,10 +297,10 @@ export default function ModaladdnewDonation({ open, setOpen, goals }) {
                   }
                   multiline
                   rows={3}
-                  value={donationName}
-                  onChange={(e) => setDonationName(e.target.value)}
+                  value={donationPorpose}
+                  onChange={(e) => setDonationPorpose(e.target.value)}
                 />
-              </Box>             
+              </Box>
               <Box
                 component="form"
                 // onSubmit={() => ()}
@@ -391,7 +421,7 @@ export default function ModaladdnewDonation({ open, setOpen, goals }) {
                   onChange={(e) => setDonationLink(e.target.value)}
                 />
               </Box>
-              <br/>
+              <br />
               <Box
                 component="form"
                 sx={{
@@ -404,58 +434,58 @@ export default function ModaladdnewDonation({ open, setOpen, goals }) {
                 noValidate
                 autoComplete="off"
               >
-              <Stack direction="row" alignItems="center" spacing={2}>
-              <input
-                accept="image/*,video/*"
-                style={{ display: "none" }}
-                id="image-upload"
-                type="file"
-                onChange={handlenewImage}
-              />
-              <label htmlFor="image-upload">
-                <Button
-                  variant="contained"
-                  color="success"
-                  sx={{
-                    backgroundColor: "success",
-                    minWidth: "25%",
-                    borderRadius: "20px",
-                    color: "#fff",
-                  }}
-                  component="span"
-                  startIcon={<CloudUploadIcon />}
-                >
-                  Upload media
-                </Button>
-              </label>
-              <div style={{ position: "relative" }}>
-                {selectedNewImage && (
-                  <>
-                    <img
-                      style={{
-                        width: "200px",
-                        height: "100px",
-                        borderRadius: "5%",
+                <Stack direction="row" alignItems="center" spacing={2}>
+                  <input
+                    accept="image/*,video/*"
+                    style={{ display: "none" }}
+                    id="image-upload"
+                    type="file"
+                    onChange={handlenewImage}
+                  />
+                  <label htmlFor="image-upload">
+                    <Button
+                      variant="contained"
+                      color="success"
+                      sx={{
+                        backgroundColor: "success",
+                        minWidth: "25%",
+                        borderRadius: "20px",
+                        color: "#fff",
                       }}
-                      src={URL.createObjectURL(selectedNewImage)}
-                      alt="Uploaded"
-                    />
-                    <CancelIcon
-                      style={{
-                        position: "absolute",
-                        top: "0",
-                        right: "0",
-                        color: "#556B2F",
-                      }}
-                      onClick={() => {
-                        setSelectedNewImage(null);
-                      }}
-                    />
-                  </>
-                )}
-              </div>
-            </Stack>
-            </Box>
+                      component="span"
+                      startIcon={<CloudUploadIcon />}
+                    >
+                      Upload media
+                    </Button>
+                  </label>
+                  <div style={{ position: "relative" }}>
+                    {selectedNewImage && (
+                      <>
+                        <img
+                          style={{
+                            width: "200px",
+                            height: "100px",
+                            borderRadius: "5%",
+                          }}
+                          src={URL.createObjectURL(selectedNewImage)}
+                          alt="Uploaded"
+                        />
+                        <CancelIcon
+                          style={{
+                            position: "absolute",
+                            top: "0",
+                            right: "0",
+                            color: "#556B2F",
+                          }}
+                          onClick={() => {
+                            setSelectedNewImage(null);
+                          }}
+                        />
+                      </>
+                    )}
+                  </div>
+                </Stack>
+              </Box>
               <Box
                 component="form"
                 sx={{

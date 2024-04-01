@@ -340,6 +340,7 @@ export default function ModaladdnewMission({ open, setOpen, goals }) {
         });
       });
   };
+  
  
   const save = () => {
     const object = {

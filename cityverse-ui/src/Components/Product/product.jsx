@@ -74,6 +74,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import ModalUpdateMission from "./updateMission";
+import ModalUpdateDonation from "./updateDonation";
 import { Alert, Collapse } from "@mui/material";
 
 const AntTabs = styled(Tabs)({
@@ -179,6 +180,7 @@ export default function Product() {
   const association = useSelector(
     (state) => state.AssociationReducer?.associations
   );
+  const donations = useSelector((state) => state.AssociationReducer?.donations);
   const [adress, setAdress] = useState(address);
   const [firstName, setfirstName] = useState();
   const [lastName, setLastName] = useState();
@@ -187,18 +189,7 @@ export default function Product() {
   const [haveCar, sethaveCar] = useState();
   const [interset, setInterest] = useState();
   const [about, setAbout] = useState();
-
-  const [donations, setdonations] = useState([
-    {
-      id: "0001", // compaign id
-      creator_id: "000889", // association id
-      user_id: "5555555", // user id
-      donationLink: "test donations",
-      taxReduction: "2",
-      isDonEligibleTax: true,
-      media: "http://....",
-    },
-  ]);
+  const [amount, setAmount] = useState();
 
   // Notifications
   const [openPostCreated, setOpenPostCreated] = useState(false);
@@ -310,7 +301,7 @@ export default function Product() {
     setOpenMediapost(false);
     handleClose();
   };
-
+  // apply for a mission
   const [openApplymission, setOpenApplyMission] = useState();
   const handleopenApplyMission = () => {
     setOpenApplyMission(true);
@@ -318,7 +309,18 @@ export default function Product() {
   };
   const handleCloseApplymission = () => {
     setOpenApplyMission(false);
-    handleClose();
+    // handleClose();
+  };
+
+  // donate for a compaign
+  const [openDonateCompaign, setOpenDonateCompaign] = useState();
+  const handleopenDonateCompaign = () => {
+    setOpenDonateCompaign(true);
+    // handleClose();
+  };
+  const handleCloseDonateCompaign = () => {
+    setOpenDonateCompaign(false);
+    // handleClose();
   };
 
   const handlenewPost = (e) => {
@@ -416,7 +418,24 @@ export default function Product() {
         setInprogress(false);
         dispatch({
           type: "Missions",
-          posts: [],
+          missions: [],
+        });
+      });
+  };
+  const call_api_get_all_donations = () => {
+    axios
+      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "donation/")
+      .then((value) => {
+        dispatch({
+          type: "Donations",
+          donations: orderByDate(value?.data),
+        });
+        handleClose();
+      })
+      .catch((err) => {
+        dispatch({
+          type: "Donations",
+          donations: [],
         });
       });
   };
@@ -479,12 +498,14 @@ export default function Product() {
   };
 
   const [idMission, setIdMission] = useState();
+  const [idDonation, setIdDonation] = useState();
   useEffect(() => {
     if (id_association !== null && id_association !== undefined) {
       call_api_get_association_by_id(id_association);
       call_api_get_all_posts(id_association);
     }
     call_api_get_all_missions();
+    call_api_get_all_donations();
   }, []);
   useEffect(() => {
     if (idMission !== null && idMission !== undefined) {
@@ -555,6 +576,29 @@ export default function Product() {
       .then((value) => {
         call_api_get_all_applications_of_mission();
         handleCloseApplymission();
+      })
+      .catch((err) => {});
+  };
+  const handleApplyDonation = () => {
+    const object = {
+      first_name: firstName,
+      surname: lastName,
+      age: parseInt(appliquantAge),
+      address: adress,
+      amount: parseInt(amount),
+      user_id: sessionStorage.getItem("user_Id"),
+    };
+    console.log(object);
+    axios
+      .post(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "donation/donate/" +
+          idDonation,
+        object
+      )
+      .then((value) => {
+        // call_api_get_all_applications_of_mission();
+        handleCloseDonateCompaign();
       })
       .catch((err) => {});
   };
@@ -1102,6 +1146,331 @@ export default function Product() {
           </Button>
         </DialogActions>
       </Dialog>
+      {/* Donate in a compaign */}
+      <Dialog
+        open={openDonateCompaign}
+        onClose={() => {
+          handleCloseDonateCompaign();
+        }}
+        maxWidth="sm"
+        fullWidth
+        style={{ boxShadow: "none" }}
+      >
+        <DialogTitle id="alert-dialog-title">
+          {sessionStorage.getItem("language") === "fr"
+            ? "Donate for this compaign"
+            : "Donate for this compaign"}
+        </DialogTitle>
+        <Box position="absolute" top={0} right={0}>
+          <IconButton
+            onClick={() => {
+              handleCloseDonateCompaign();
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            <Box
+              component="form"
+              // onSubmit={() => ()}
+              sx={{
+                p: 2,
+                paddingLeft: 3,
+                background: "#0000",
+                "& > :not(style)": { m: 2, width: "42.2%" },
+              }}
+              noValidate
+              autoComplete="off"
+            >
+              <TextField
+                size="small"
+                focused
+                variant="outlined"
+                color="success"
+                value={firstName}
+                onChange={(e) => setfirstName(e.target.value)}
+                placeholder={
+                  sessionStorage.getItem("language") === "fr"
+                    ? "Obligatoire"
+                    : "Required"
+                }
+                label={
+                  sessionStorage.getItem("language") === "fr"
+                    ? "First Name"
+                    : "First Name"
+                }
+                // value={NumVolunteers}
+                // onChange={(e) => setNumVolunteers(e.target.value)}
+              />
+              <TextField
+                size="small"
+                focused
+                variant="outlined"
+                color="success"
+                placeholder={
+                  sessionStorage.getItem("language") === "fr"
+                    ? "Obligatoire"
+                    : "Required"
+                }
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                label={
+                  sessionStorage.getItem("language") === "fr"
+                    ? "SurName"
+                    : "SurName"
+                }
+                // value={NumVolunteers}
+                // onChange={(e) => setNumVolunteers(e.target.value)}
+              />
+              <TextField
+                size="small"
+                focused
+                variant="outlined"
+                color="success"
+                type="number"
+                placeholder={
+                  sessionStorage.getItem("language") === "fr"
+                    ? "Obligatoire"
+                    : "Required"
+                }
+                value={appliquantAge}
+                onChange={(e) => SetAppliquantAge(e.target.value)}
+                label={
+                  sessionStorage.getItem("language") === "fr" ? "Age" : "Age"
+                }
+              />
+              <FormControl variant="outlined" color="success" focused>
+                <InputLabel
+                  variant="outlined"
+                  color="success"
+                  size="small"
+                  InputLabelProps={{ style: { color: "black" } }}
+                >
+                  {sessionStorage.getItem("language") === "fr"
+                    ? "address"
+                    : "address"}
+                </InputLabel>
+                <OutlinedInput
+                  color="success"
+                  size="small"
+                  variant="outlined"
+                  type="text"
+                  label={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "address"
+                      : "address"
+                  }
+                  multiline
+                  rows={1}
+                  value={adress}
+                  placeholder={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "address"
+                      : "address"
+                  }
+                  onChange={(e) => setAdress(e.target.value)}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickVerifierSiege}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {valuesSiege.valideSiege ? (
+                          <CheckCircleIcon
+                            sx={{
+                              height: "20px",
+                              width: "auto",
+                              color: "green",
+                            }}
+                          />
+                        ) : valuesSiege.error ? (
+                          <ErrorIcon
+                            sx={{
+                              height: "20px",
+                              width: "auto",
+                              color: "red",
+                            }}
+                          />
+                        ) : (
+                          <CheckCircleOutlineIcon
+                            sx={{ height: "20px", width: "auto" }}
+                          />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+              </FormControl>
+              {/* <FormControl variant="outlined" color="success" focused>
+                <Autocomplete
+                  size="small"
+                  focused
+                  fullWidth
+                  variant="outlined"
+                  color="success"
+                  limitTags={1}
+                  options={[{ label: "Yes" }, { label: "No" }]}
+                  value={haveCar}
+                  onChange={(event, newValue) => {
+                    sethaveCar(newValue);
+                  }}
+                  autoHighlight
+                  getOptionLabel={(option) => option.label}
+                  renderOption={(props, option) => (
+                    <Box
+                      sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                      {...props}
+                    >
+                      {option.label}
+                    </Box>
+                  )}
+                  renderTags={(value: string[], getTagProps) =>
+                    value.map((option: string[], index: number) => (
+                      <Chip
+                        variant="outlined"
+                        label={option.label}
+                        {...getTagProps({ index })}
+                      />
+                    ))
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Have a Car*"
+                      size="small"
+                      focused
+                      variant="outlined"
+                      color="success"
+                      placeholder={
+                        sessionStorage.getItem("language") === "fr"
+                          ? "You have a car"
+                          : "You have a car"
+                      }
+                      inputProps={{
+                        ...params.inputProps,
+                        // disable autocomplete and autofill
+                      }}
+                    />
+                  )}
+                />
+              </FormControl>
+              <FormControl variant="outlined" color="success" focused>
+                <Autocomplete
+                  size="small"
+                  focused
+                  fullWidth
+                  variant="outlined"
+                  color="success"
+                  limitTags={1}
+                  options={[{ label: "Yes" }, { label: "No" }]}
+                  value={permit}
+                  onChange={(event, newValue) => {
+                    setPermit(newValue);
+                  }}
+                  autoHighlight
+                  getOptionLabel={(option) => option.label}
+                  renderOption={(props, option) => (
+                    <Box
+                      sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                      {...props}
+                    >
+                      {option.label}
+                    </Box>
+                  )}
+                  renderTags={(value: string[], getTagProps) =>
+                    value.map((option: string[], index: number) => (
+                      <Chip
+                        variant="outlined"
+                        label={option.label}
+                        {...getTagProps({ index })}
+                      />
+                    ))
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Have a driving license*"
+                      size="small"
+                      focused
+                      variant="outlined"
+                      color="success"
+                      placeholder={
+                        sessionStorage.getItem("language") === "fr"
+                          ? "You a driving license"
+                          : "You a driving license"
+                      }
+                      inputProps={{
+                        ...params.inputProps,
+                        // disable autocomplete and autofill
+                      }}
+                    />
+                  )}
+                />
+              </FormControl> */}
+            </Box>
+            <Box
+              component="form"
+              // onSubmit={() => ()}
+              sx={{
+                px: 2,
+                paddingLeft: 3,
+                background: "#0000",
+                "& > :not(style)": { mx: 2, width: "90%" },
+              }}
+              noValidate
+              autoComplete="off"
+            >
+              <TextField
+                size="small"
+                focused
+                fullWidth
+                variant="outlined"
+                color="success"
+                placeholder={
+                  sessionStorage.getItem("language") === "fr"
+                    ? "Obligatoire"
+                    : "Required"
+                }
+                label={
+                  sessionStorage.getItem("language") === "fr"
+                    ? "Amount"
+                    : "Amount"
+                }
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+              />
+            </Box>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              handleApplyDonation();
+            }}
+            variant="contained"
+            style={styleValidate}
+            color="success"
+          >
+            {sessionStorage.getItem("language") === "fr"
+              ? "Confirmer"
+              : "Confirmer"}
+          </Button>
+          <Button
+            onClick={() => {
+              handleCloseDonateCompaign();
+            }}
+            variant="contained"
+            style={styleCancelDelete}
+          >
+            {sessionStorage.getItem("language") === "fr" ? "Cacher" : "Cacher"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <ModaladdnewMission open={openModel} setOpen={setOpenModel} />
       <ModaladdnewDonation
         open={openModelDonation}
@@ -1630,12 +1999,6 @@ export default function Product() {
                       ) : (
                         <></>
                       )}
-
-                      <Grid
-                        item
-                        xs={12}
-                        sx={{ display: "flex", justifyItems: "center" }}
-                      ></Grid>
                       {inProgress ? (
                         <>
                           <Card
@@ -1677,138 +2040,159 @@ export default function Product() {
                           </Card>
                         </>
                       ) : (
-                        posts.map((item, key) => {
-                          return (
-                            <>
-                              <Grid
-                                item
-                                xs={12}
-                                sx={{ display: "flex", justifyItems: "center" }}
-                              >
-                                <Divider
-                                  textAlign="left"
-                                  sx={{ color: "#08089C" }}
-                                ></Divider>
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    width: "99%",
-                                    flexDirection: "rows",
-                                    alignItems: "rows",
-                                    paddingTop: "0.5%",
-                                  }}
-                                >
-                                  <img
-                                    // src={
-                                    //   "https://w0.peakpx.com/wallpaper/725/891/HD-wallpaper-stade-de-france-french-football-stadium-paris-france-sports-arenas-national-stadium-of-france.jpg"
-                                    // }
-                                    src={data?.profile_image}
-                                    style={{
-                                      width: "150px",
-                                      borderRadius: "100%",
-                                      height: "90px",
-                                      padding: "10px 40px",
-                                      alignItems: "flex-start",
-                                      gap: "10px",
-                                    }}
-                                  />
-                                  <div
-                                    style={{
-                                      width: "100%",
-                                      height: "30px",
-                                    }}
-                                  >
-                                    <Typography
-                                      gutterBottom
-                                      variant="subtitle1"
-                                      component="div"
-                                      style={{
-                                        paddingTop: "2%",
-                                      }}
-                                    >
-                                      {data?.name}
-                                    </Typography>
-                                    <Typography
-                                      variant="subtitle2"
-                                      color="text.secondary"
-                                      sx={{ paddingLeft: "0%" }}
-                                    >
-                                      {format(
-                                        new Date(item?.created_on),
-                                        "dd/MM/yyyy HH:mm"
-                                      )}
-                                    </Typography>
-                                  </div>
-                                </Box>
-                              </Grid>
-                              <Grid
-                                item
-                                xs={12}
-                                sx={{ display: "flex", justifyItems: "center" }}
-                              >
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    width: "99%",
-                                    height: "auto",
-                                    padding: "0px 40px",
-                                    backgroundColor: "#FFFF",
-                                    flexDirection: "column",
-                                    justifyContent: "center",
-                                    justifyItems: "center",
-                                  }}
-                                >
-                                  <Typography
-                                    gutterBottom
-                                    variant="body2"
-                                    component="div"
-                                    style={{
-                                      paddingLeft: "10%",
-                                    }}
-                                  >
-                                    {item?.description}
-                                  </Typography>
-                                  {/* <ListImage itemData={itemData} /> */}
+                        <div className="datasheetGridscrollBar">
+                          <Grid
+                            container
+                            spacing={0}
+                            height="500px" // fixed the height
+                            style={{
+                              overflow: "scroll",
+                              overflowY: "scroll",
+                            }}
+                          >
+                            {posts.map((item, key) => {
+                              return (
+                                <>
                                   <Grid
                                     item
                                     xs={12}
                                     sx={{
                                       display: "flex",
-                                      paddingX: "20%",
-                                      flexDirection: "column",
-                                      gap: "24px",
-                                      alignSelf: "stretch",
-                                      // background: "#F1FBEC",
+                                      justifyItems: "center",
                                     }}
                                   >
-                                    {item?.links.length !== 0 && (
-                                      <ImageList
-                                        sx={{ width: "100%", height: "auto" }}
-                                        cols={2}
-                                        rowHeight={"20%"}
+                                    <Divider
+                                      textAlign="left"
+                                      sx={{ color: "#08089C" }}
+                                    ></Divider>
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        width: "99%",
+                                        flexDirection: "rows",
+                                        alignItems: "rows",
+                                        paddingTop: "0.5%",
+                                      }}
+                                    >
+                                      <img
+                                        // src={
+                                        //   "https://w0.peakpx.com/wallpaper/725/891/HD-wallpaper-stade-de-france-french-football-stadium-paris-france-sports-arenas-national-stadium-of-france.jpg"
+                                        // }
+                                        src={data?.profile_image}
+                                        style={{
+                                          width: "150px",
+                                          borderRadius: "100%",
+                                          height: "90px",
+                                          padding: "10px 40px",
+                                          alignItems: "flex-start",
+                                          gap: "10px",
+                                        }}
+                                      />
+                                      <div
+                                        style={{
+                                          width: "100%",
+                                          height: "30px",
+                                        }}
                                       >
-                                        {item?.links
-                                          ?.reverse()
-                                          ?.map((i, index) => (
-                                            <ImageListItem key={index}>
-                                              <img
-                                                srcSet={`${i}`}
-                                                src={`${i}`}
-                                                width={"5%"}
-                                                height={"auto"}
-                                                alt="image"
-                                                loading="lazy"
-                                              />
-                                            </ImageListItem>
-                                          ))}
-                                      </ImageList>
-                                    )}
+                                        <Typography
+                                          gutterBottom
+                                          variant="subtitle1"
+                                          component="div"
+                                          style={{
+                                            paddingTop: "2%",
+                                          }}
+                                        >
+                                          {data?.name}
+                                        </Typography>
+                                        <Typography
+                                          variant="subtitle2"
+                                          color="text.secondary"
+                                          sx={{ paddingLeft: "0%" }}
+                                        >
+                                          {format(
+                                            new Date(item?.created_on),
+                                            "dd/MM/yyyy HH:mm"
+                                          )}
+                                        </Typography>
+                                      </div>
+                                    </Box>
                                   </Grid>
-                                </Box>
-                              </Grid>
-                            </>
-                          );
-                        })
+                                  <Grid
+                                    item
+                                    xs={12}
+                                    sx={{
+                                      display: "flex",
+                                      justifyItems: "center",
+                                    }}
+                                  >
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        width: "99%",
+                                        height: "auto",
+                                        padding: "0px 40px",
+                                        backgroundColor: "#FFFF",
+                                        flexDirection: "column",
+                                        justifyContent: "center",
+                                        justifyItems: "center",
+                                      }}
+                                    >
+                                      <Typography
+                                        gutterBottom
+                                        variant="body2"
+                                        component="div"
+                                        style={{
+                                          paddingLeft: "10%",
+                                        }}
+                                      >
+                                        {item?.description}
+                                      </Typography>
+                                      {/* <ListImage itemData={itemData} /> */}
+                                      <Grid
+                                        item
+                                        xs={12}
+                                        sx={{
+                                          display: "flex",
+                                          paddingX: "20%",
+                                          flexDirection: "column",
+                                          gap: "24px",
+                                          alignSelf: "stretch",
+                                          // background: "#F1FBEC",
+                                        }}
+                                      >
+                                        {item?.links.length !== 0 && (
+                                          <ImageList
+                                            sx={{
+                                              width: "100%",
+                                              height: "auto",
+                                            }}
+                                            cols={2}
+                                            rowHeight={"20%"}
+                                          >
+                                            {item?.links
+                                              ?.reverse()
+                                              ?.map((i, index) => (
+                                                <ImageListItem key={index}>
+                                                  <img
+                                                    srcSet={`${i}`}
+                                                    src={`${i}`}
+                                                    width={"5%"}
+                                                    height={"auto"}
+                                                    alt="image"
+                                                    loading="lazy"
+                                                  />
+                                                </ImageListItem>
+                                              ))}
+                                          </ImageList>
+                                        )}
+                                      </Grid>
+                                    </Box>
+                                  </Grid>
+                                </>
+                              );
+                            })}
+                          </Grid>
+                        </div>
                       )}
                     </Grid>
                   </Suspense>
@@ -1875,175 +2259,185 @@ export default function Product() {
                       {missions?.length === 0 || missions === null ? (
                         <>there is no missions for this associations</>
                       ) : (
-                        <>
-                          {missions?.map((item, index) => {
-                            return (
-                              <Card
-                                key={index}
-                                sx={{
-                                  backgroundColor: "#F2F2F2",
-                                  margin: "2%",
-                                  width: "100%",
-                                }}
-                              >
-                                <CardContent>
-                                  <Box
-                                    sx={{
-                                      display: "flex",
-                                      flexDirection: "row",
-                                    }}
-                                  >
-                                    <Typography
-                                      gutterBottom
-                                      variant="h5"
-                                      component="div"
-                                      sx={{ flexGrow: 1 }}
-                                    >
-                                      Mission {index + 1}
-                                    </Typography>
-                                    {data?.user_id ===
-                                    sessionStorage.getItem("user_Id") ? (
-                                      <LongMenu
-                                        idMission={item?.id}
-                                        mission={item}
-                                      />
-                                    ) : (
-                                      <></>
-                                    )}
-                                  </Box>
-                                  <br />
-                                  <Typography
-                                    variant="body2"
-                                    color="text.secondary"
-                                  >
-                                    {item?.description}
-                                  </Typography>
-                                  <Box
-                                    sx={{
-                                      marginTop: "1%",
-                                      alignItems: "center",
-                                      display: "flex",
-                                      color: "#08089C",
-                                      width: "100%",
-                                    }}
-                                  >
-                                    <CalendarMonthIcon
-                                      sx={{ marginRight: "1%" }}
-                                    />
-                                    <Typography sx={{ marginRight: "2%" }}>
-                                      {format(
-                                        new Date(item?.start_date),
-                                        "dd/MM/yyyy"
-                                      )}
-                                    </Typography>
-                                    <Chip
-                                      variant="contained"
-                                      color="success"
-                                      // disabled={handleAdd()}
-                                      sx={{
-                                        color: "#08089C",
-                                        borderRadius: "20px",
-                                        backgroundColor: "#FFF",
-                                        margin: "0.5%",
-                                      }}
-                                      label={`Duration: ${item?.duration?.label}`}
-                                    ></Chip>
-                                    <Chip
-                                      variant="contained"
-                                      color="success"
-                                      // disabled={handleAdd()}
-                                      sx={{
-                                        color: "#08089C",
-                                        borderRadius: "20px",
-                                        backgroundColor: "#FFF",
-                                        margin: "0.5%",
-                                      }}
-                                      label={`Type of mission: ${item?.mission_type?.label}`}
-                                    ></Chip>
-                                    <Chip
-                                      variant="contained"
-                                      color="success"
-                                      // disabled={handleAdd()}
-                                      sx={{
-                                        color: "#08089C",
-                                        borderRadius: "20px",
-                                        backgroundColor: "#FFF",
-                                        margin: "0.5%",
-                                      }}
-                                      label={`Volunteer qualifications: ${item?.volunteer_qualifications?.label}`}
-                                    ></Chip>
-
-                                    {/* <LocationOnIcon sx={{ marginLeft: "5%" }} />
-                                <Typography>{address}</Typography> */}
-                                  </Box>
-                                  <Box
-                                    sx={{
-                                      marginTop: "1%",
-                                      alignItems: "center",
-                                      display: "flex",
-                                      color: "#08089C",
-                                    }}
-                                  >
-                                    <Chip
-                                      variant="contained"
-                                      color="success"
-                                      // disabled={handleAdd()}
-                                      sx={{
-                                        color: "#08089C",
-                                        borderRadius: "20px",
-                                        backgroundColor: "#FFF",
-                                        margin: "0.5%",
-                                      }}
-                                      label={`demanded Participants: ${item?.number_of_participants}`}
-                                    ></Chip>
-                                    <Chip
-                                      variant="contained"
-                                      color="success"
-                                      // disabled={handleAdd()}
-                                      sx={{
-                                        color: "#08089C",
-                                        borderRadius: "20px",
-                                        backgroundColor: "#FFF",
-                                        margin: "0.5%",
-                                      }}
-                                      label={`Approved Participants: ${item?.approved_applications}`}
-                                    ></Chip>
-
-                                    {/* <LocationOnIcon sx={{ marginLeft: "5%" }} />
-                                <Typography>{address}</Typography> */}
-                                  </Box>
-                                </CardContent>
-                                <CardActions
-                                  sx={{ flexDirection: "row-reverse" }}
+                        <div className="datasheetGridscrollBar">
+                          <Grid
+                            container
+                            spacing={0}
+                            height="500px" // fixed the height
+                            style={{
+                              overflow: "scroll",
+                              overflowY: "scroll",
+                            }}
+                          >
+                            {missions?.map((item, index) => {
+                              return (
+                                <Card
+                                  key={index}
+                                  sx={{
+                                    backgroundColor: "#F2F2F2",
+                                    margin: "2%",
+                                    width: "100%",
+                                  }}
                                 >
-                                  <Button
-                                    variant="contained"
-                                    // disabled={handleAdd()}
-                                    sx={{
-                                      color: "#556B2F",
-                                      borderRadius: "20px",
-                                      backgroundColor: "#FFF",
-                                      margin: "2%",
-                                    }}
-                                    onClick={() => {
-                                      handleopenApplyMission();
-                                      setIdMission(item?.id);
-                                    }}
+                                  <CardContent>
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        flexDirection: "row",
+                                      }}
+                                    >
+                                      <Typography
+                                        gutterBottom
+                                        variant="h5"
+                                        component="div"
+                                        sx={{ flexGrow: 1 }}
+                                      >
+                                        Mission {index + 1}
+                                      </Typography>
+                                      {data?.user_id ===
+                                      sessionStorage.getItem("user_Id") ? (
+                                        <LongMenu
+                                          idMission={item?.id}
+                                          mission={item}
+                                        />
+                                      ) : (
+                                        <></>
+                                      )}
+                                    </Box>
+                                    <br />
+                                    <Typography
+                                      variant="body2"
+                                      color="text.secondary"
+                                    >
+                                      {item?.description}
+                                    </Typography>
+                                    <Box
+                                      sx={{
+                                        marginTop: "1%",
+                                        alignItems: "center",
+                                        display: "flex",
+                                        color: "#08089C",
+                                        width: "100%",
+                                      }}
+                                    >
+                                      <CalendarMonthIcon
+                                        sx={{ marginRight: "1%" }}
+                                      />
+                                      <Typography sx={{ marginRight: "2%" }}>
+                                        {format(
+                                          new Date(item?.start_date),
+                                          "dd/MM/yyyy"
+                                        )}
+                                      </Typography>
+                                      <Chip
+                                        variant="contained"
+                                        color="success"
+                                        // disabled={handleAdd()}
+                                        sx={{
+                                          color: "#08089C",
+                                          borderRadius: "20px",
+                                          backgroundColor: "#FFF",
+                                          margin: "0.5%",
+                                        }}
+                                        label={`Duration: ${item?.duration?.label}`}
+                                      ></Chip>
+                                      <Chip
+                                        variant="contained"
+                                        color="success"
+                                        // disabled={handleAdd()}
+                                        sx={{
+                                          color: "#08089C",
+                                          borderRadius: "20px",
+                                          backgroundColor: "#FFF",
+                                          margin: "0.5%",
+                                        }}
+                                        label={`Type of mission: ${item?.mission_type?.label}`}
+                                      ></Chip>
+                                      <Chip
+                                        variant="contained"
+                                        color="success"
+                                        // disabled={handleAdd()}
+                                        sx={{
+                                          color: "#08089C",
+                                          borderRadius: "20px",
+                                          backgroundColor: "#FFF",
+                                          margin: "0.5%",
+                                        }}
+                                        label={`Volunteer qualifications: ${item?.volunteer_qualifications?.label}`}
+                                      ></Chip>
+
+                                      {/* <LocationOnIcon sx={{ marginLeft: "5%" }} />
+                                <Typography>{address}</Typography> */}
+                                    </Box>
+                                    <Box
+                                      sx={{
+                                        marginTop: "1%",
+                                        alignItems: "center",
+                                        display: "flex",
+                                        color: "#08089C",
+                                      }}
+                                    >
+                                      <Chip
+                                        variant="contained"
+                                        color="success"
+                                        // disabled={handleAdd()}
+                                        sx={{
+                                          color: "#08089C",
+                                          borderRadius: "20px",
+                                          backgroundColor: "#FFF",
+                                          margin: "0.5%",
+                                        }}
+                                        label={`demanded Participants: ${item?.number_of_participants}`}
+                                      ></Chip>
+                                      <Chip
+                                        variant="contained"
+                                        color="success"
+                                        // disabled={handleAdd()}
+                                        sx={{
+                                          color: "#08089C",
+                                          borderRadius: "20px",
+                                          backgroundColor: "#FFF",
+                                          margin: "0.5%",
+                                        }}
+                                        label={`Approved Participants: ${item?.approved_applications}`}
+                                      ></Chip>
+
+                                      {/* <LocationOnIcon sx={{ marginLeft: "5%" }} />
+                                <Typography>{address}</Typography> */}
+                                    </Box>
+                                  </CardContent>
+                                  <CardActions
+                                    sx={{ flexDirection: "row-reverse" }}
                                   >
-                                    Apply
-                                  </Button>
-                                  <Chip
-                                    variant="contained"
-                                    color="success"
-                                    // disabled={handleAdd()}
-                                    sx={styleValidate}
-                                    label="Open application"
-                                  ></Chip>
-                                </CardActions>
-                              </Card>
-                            );
-                          })}
-                        </>
+                                    <Button
+                                      variant="contained"
+                                      // disabled={handleAdd()}
+                                      sx={{
+                                        color: "#556B2F",
+                                        borderRadius: "20px",
+                                        backgroundColor: "#FFF",
+                                        margin: "2%",
+                                      }}
+                                      onClick={() => {
+                                        handleopenApplyMission();
+                                        setIdMission(item?.id);
+                                      }}
+                                    >
+                                      Apply
+                                    </Button>
+                                    <Chip
+                                      variant="contained"
+                                      color="success"
+                                      // disabled={handleAdd()}
+                                      sx={styleValidate}
+                                      label="Open application"
+                                    ></Chip>
+                                  </CardActions>
+                                </Card>
+                              );
+                            })}
+                          </Grid>
+                        </div>
                       )}
                     </Box>
                   </Suspense>
@@ -2103,172 +2497,169 @@ export default function Product() {
                       )}
                       <br />
                       <Divider />
-                      {missions?.length === 0 || missions === null ? (
-                        <>there is no compaign donations for this associations</>
-                      ) : (
+                      {donations?.length === 0 || donations === null ? (
                         <>
-                          {missions?.map((item, index) => {
-                            return (
-                              <Card
-                                key={index}
-                                sx={{
-                                  backgroundColor: "#F2F2F2",
-                                  margin: "2%",
-                                  width: "100%",
-                                }}
-                              >
-                                <CardContent>
-                                  <Box
-                                    sx={{
-                                      display: "flex",
-                                      flexDirection: "row",
-                                    }}
-                                  >
-                                    <Typography
-                                      gutterBottom
-                                      variant="h5"
-                                      component="div"
-                                      sx={{ flexGrow: 1 }}
-                                    >
-                                      Compaign {index + 1}
-                                    </Typography>
-                                    {data?.user_id ===
-                                    sessionStorage.getItem("user_Id") ? (
-                                      <LongMenu
-                                        idMission={item?.id}
-                                        mission={item}
-                                      />
-                                    ) : (
-                                      <></>
-                                    )}
-                                  </Box>
-                                  <br />
-                                  {/* <Typography
-                                    variant="body2"
-                                    color="text.secondary"
-                                  >
-                                    {item?.description}
-                                  </Typography>
-                                  <Box
-                                    sx={{
-                                      marginTop: "1%",
-                                      alignItems: "center",
-                                      display: "flex",
-                                      color: "#08089C",
-                                      width: "100%",
-                                    }}
-                                  >
-                                    <CalendarMonthIcon
-                                      sx={{ marginRight: "1%" }}
-                                    />
-                                    <Typography sx={{ marginRight: "2%" }}>
-                                      {format(
-                                        new Date(item?.start_date),
-                                        "dd/MM/yyyy"
-                                      )}
-                                    </Typography>
-                                    <Chip
-                                      variant="contained"
-                                      color="success"
-                                      // disabled={handleAdd()}
-                                      sx={{
-                                        color: "#08089C",
-                                        borderRadius: "20px",
-                                        backgroundColor: "#FFF",
-                                        margin: "0.5%",
-                                      }}
-                                      label={`Duration: ${item?.duration?.label}`}
-                                    ></Chip>
-                                    <Chip
-                                      variant="contained"
-                                      color="success"
-                                      // disabled={handleAdd()}
-                                      sx={{
-                                        color: "#08089C",
-                                        borderRadius: "20px",
-                                        backgroundColor: "#FFF",
-                                        margin: "0.5%",
-                                      }}
-                                      label={`Type of mission: ${item?.mission_type?.label}`}
-                                    ></Chip>
-                                    <Chip
-                                      variant="contained"
-                                      color="success"
-                                      // disabled={handleAdd()}
-                                      sx={{
-                                        color: "#08089C",
-                                        borderRadius: "20px",
-                                        backgroundColor: "#FFF",
-                                        margin: "0.5%",
-                                      }}
-                                      label={`Volunteer qualifications: ${item?.volunteer_qualifications?.label}`}
-                                    ></Chip>
-                                  </Box>
-                                  <Box
-                                    sx={{
-                                      marginTop: "1%",
-                                      alignItems: "center",
-                                      display: "flex",
-                                      color: "#08089C",
-                                    }}
-                                  >
-                                    <Chip
-                                      variant="contained"
-                                      color="success"
-                                      // disabled={handleAdd()}
-                                      sx={{
-                                        color: "#08089C",
-                                        borderRadius: "20px",
-                                        backgroundColor: "#FFF",
-                                        margin: "0.5%",
-                                      }}
-                                      label={`demanded Participants: ${item?.number_of_participants}`}
-                                    ></Chip>
-                                    <Chip
-                                      variant="contained"
-                                      color="success"
-                                      // disabled={handleAdd()}
-                                      sx={{
-                                        color: "#08089C",
-                                        borderRadius: "20px",
-                                        backgroundColor: "#FFF",
-                                        margin: "0.5%",
-                                      }}
-                                      label={`Approved Participants: ${item?.approved_applications}`}
-                                    ></Chip>
-                                  </Box> */}
-                                </CardContent>
-                                <CardActions
-                                  sx={{ flexDirection: "row-reverse" }}
+                          there is no compaign donations for this associations
+                        </>
+                      ) : (
+                        <div className="datasheetGridscrollBar">
+                          <Grid
+                            container
+                            spacing={0}
+                            height="500px" // fixed the height
+                            style={{
+                              overflow: "scroll",
+                              overflowY: "scroll",
+                            }}
+                          >
+                            {donations?.map((item, index) => {
+                              return (
+                                <Card
+                                  key={index}
+                                  sx={{
+                                    backgroundColor: "#F2F2F2",
+                                    margin: "2%",
+                                    width: "100%",
+                                  }}
                                 >
-                                  <Button
-                                    variant="contained"
-                                    // disabled={handleAdd()}
-                                    sx={{
-                                      color: "#556B2F",
-                                      borderRadius: "20px",
-                                      backgroundColor: "#FFF",
-                                      margin: "2%",
-                                    }}
-                                    onClick={() => {
-                                      // handleopenApplyMission();
-                                      // setIdMission(item?.id);
-                                    }}
+                                  <CardContent>
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        flexDirection: "row",
+                                      }}
+                                    >
+                                      <Typography
+                                        gutterBottom
+                                        variant="h5"
+                                        component="div"
+                                        sx={{ flexGrow: 1 , color:  "#08089C"}}
+                                      >
+                                        {item?.name}
+                                      </Typography>
+                                      {data?.user_id ===
+                                      sessionStorage.getItem("user_Id") ? (
+                                        <LongMenuDonations
+                                          idDonation={item?.id}
+                                          mission={item}
+                                        />
+                                      ) : (
+                                        <></>
+                                      )}
+                                    </Box>
+                                    <br />
+                                    <Typography
+                                      variant="body2"
+                                      color="text.secondary"
+                                    >
+                                      {item?.purpose}
+                                    </Typography>
+
+                                    <Box
+                                      className="datasheetGridscrollBar"
+                                      sx={{
+                                        marginTop: "1%",
+                                        alignItems: "center",
+                                        display: "flex",
+                                        color: "#08089C",
+                                      }}
+                                    >
+                                      <ImageList
+                                        sx={{ width: "100%", height: "90%" }}
+                                        cols={2}
+                                        rowHeight={200}
+                                      >
+                                        {item?.links !== null &&
+                                          item?.links?.map((item) => (
+                                            <ImageListItem key={item}>
+                                              <img
+                                                srcSet={`${item}`}
+                                                src={`${item}`}
+                                                width="auto"
+                                                height="auto"
+                                                // alt={item.title}
+                                                loading="lazy"
+                                              />
+                                            </ImageListItem>
+                                          ))}
+                                      </ImageList>
+                                    </Box>
+                                    <Box
+                                      sx={{
+                                        marginTop: "1%",
+                                        alignItems: "center",
+                                        display: "flex",
+                                        color: "#08089C",
+                                        width: "100%",
+                                      }}
+                                    >
+                                      <CalendarMonthIcon
+                                        sx={{ marginRight: "1%" }}
+                                      />
+                                      <Typography sx={{ marginRight: "2%" }}>
+                                        {format(
+                                          new Date(item?.created_on),
+                                          "dd/MM/yyyy"
+                                        )}
+                                      </Typography>
+                                      <Chip
+                                        variant="contained"
+                                        color="success"
+                                        // disabled={handleAdd()}
+                                        sx={{
+                                          color: "#08089C",
+                                          borderRadius: "20px",
+                                          backgroundColor: "#FFF",
+                                          margin: "0.5%",
+                                        }}
+                                        label={`Tax: ${item?.tax_reduction}`}
+                                      ></Chip>
+                                      <Chip
+                                        variant="contained"
+                                        color="success"
+                                        // disabled={handleAdd()}
+                                        sx={{
+                                          color: "#08089C",
+                                          borderRadius: "20px",
+                                          backgroundColor: "#FFF",
+                                          margin: "0.5%",
+                                        }}
+                                        label={`donation eligible for tax reduction: ${item?.is_reduction_eligible}`}
+                                      ></Chip>
+                                    </Box>
+                                  </CardContent>
+                                  <CardActions
+                                    sx={{ flexDirection: "row-reverse" }}
                                   >
-                                    donate
-                                  </Button>
-                                  {/* <Chip
+                                    <Button
+                                      variant="contained"
+                                      // disabled={handleAdd()}
+                                      sx={{
+                                        color: "#556B2F",
+                                        borderRadius: "20px",
+                                        backgroundColor: "#FFF",
+                                        margin: "2%",
+                                      }}
+                                      onClick={() => {
+                                        handleopenDonateCompaign();
+                                        setIdDonation(item?.id);
+                                      }}
+                                    >
+                                      donate
+                                    </Button>
+                                    {/* <Chip
                                     variant="contained"
                                     color="success"
                                     // disabled={handleAdd()}
                                     sx={styleValidate}
                                     label="Open application"
                                   ></Chip> */}
-                                </CardActions>
-                              </Card>
-                            );
-                          })}
-                        </>
+                                  </CardActions>
+                                </Card>
+                              );
+                            })}
+                          </Grid>
+                        </div>
                       )}
                     </Box>
                   </Suspense>
@@ -2484,6 +2875,7 @@ const LongMenu = (idMission) => {
   const [Name, setName] = useState("");
   const [Rna, setRna] = useState("");
   const missions = useSelector((state) => state.AssociationReducer?.missions);
+  const donations = useSelector((state) => state.AssociationReducer?.donations);
   const [anchorEl1, setAnchorEl1] = React.useState(null);
   const open = Boolean(anchorEl1);
   const handleClick = (event) => {
@@ -2686,6 +3078,7 @@ const LongMenu = (idMission) => {
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             <Grid
+              className="datasheetGridscrollBar"
               container
               spacing={0}
               height="450px" // fixed the height
@@ -2811,7 +3204,7 @@ const LongMenu = (idMission) => {
                                 label={`Have a Permit !: ${
                                   item?.permit ? "Yes" : "No"
                                 }`}
-                              ></Chip>      
+                              ></Chip>
                             </Box>
                           </CardContent>
                           <CardActions sx={{ flexDirection: "row-reverse" }}>
@@ -2934,6 +3327,423 @@ const LongMenu = (idMission) => {
             <></>
           )}
         </MenuItem>
+      </Menu>
+    </div>
+  );
+};
+
+const LongMenuDonations = (idDonation) => {
+  const dispatch = useDispatch();
+  const date = new Date();
+  const [startDate, setStartDate] = useState(date);
+  const [desc, setDesc] = useState("");
+  const [missionDuration, setMissionDuration] = useState();
+  const [typeMission, setTypeMission] = useState();
+  const [NumVolunteers, setNumVolunteers] = useState();
+  const [typeVolunteers, setTypeVolunteers] = useState();
+  const applications = useSelector(
+    (state) => state.AssociationReducer?.applications
+  );
+  const [Name, setName] = useState("");
+  const [Rna, setRna] = useState("");
+  const missions = useSelector((state) => state.AssociationReducer?.missions);
+  const donations = useSelector((state) => state.AssociationReducer?.donations);
+  const [anchorEl1, setAnchorEl1] = React.useState(null);
+  const open = Boolean(anchorEl1);
+  const handleClick = (event) => {
+    setAnchorEl1(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl1(null);
+  };
+
+  // update mission
+  const [openUpdateMission, setOpenUpdateMission] = useState();
+  const handleOpenUpdateMission = () => {
+    setOpenUpdateMission(true);
+  };
+  const handleCloseUpdateMission = () => {
+    setOpenUpdateMission(false);
+  };
+  // delete mission
+  const [openDeleteMission, setOpenDeleteMission] = useState();
+  const handleOpenDeleteMission = () => {
+    setOpenDeleteMission(true);
+  };
+  const handleCloseDeleteMission = () => {
+    setOpenDeleteMission(false);
+  };
+  function orderByDate(array) {
+    // Convert object to array of key-value pairs
+    array.sort((a, b) => {
+      const dateA = new Date(a.created_on);
+      const dateB = new Date(b.created_on);
+      return dateB - dateA;
+    });
+
+    return array;
+  }
+  const call_api_get_all_missions = () => {
+    axios
+      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "mission/")
+      .then((value) => {
+        console.log("Missions", value.data);
+        dispatch({
+          type: "Missions",
+          missions: orderByDate(value?.data),
+        });
+      })
+      .catch((err) => {
+        dispatch({
+          type: "Missions",
+          posts: [],
+        });
+      });
+  };
+  const [donationsByCompaign, setDonations] = useState([]);
+  const call_api_get_all_donations = () => {
+    axios
+      .get(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "donation/donations/" +
+          idDonation?.idDonation
+      )
+      .then((value) => {
+        // dispatch({
+        //   type: "Applications",
+        //   applications: value?.data,
+        // });
+        setDonations(value?.data);
+      })
+      .catch((err) => {});
+  };
+  const handledeleteMission = () => {
+    axios
+      .delete(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "donation/" +
+          idDonation?.idDonation
+      )
+      .then((value) => {
+        call_api_get_all_missions();
+        handleCloseDeleteMission();
+      })
+      .catch((err) => {});
+  };
+  const [openApplications, setOpenApplications] = useState();
+  const handleOpenApplications = () => {
+    setOpenApplications(true);
+  };
+  const handleCloseApplications = () => {
+    setOpenApplications(false);
+  };
+  useEffect(() => {
+    call_api_get_all_donations();
+  }, []);
+
+  const handleApprouveApplication = (object) => {
+    axios
+      .put(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "mission/application/" +
+          object?.id,
+        object
+      )
+      .then((value) => {
+        // call_api_get_all_applications();
+        // setCount(count + 1);
+      })
+      .catch((err) => {});
+  };
+
+  return (
+    <div>
+      <ModalUpdateDonation
+        open={openUpdateMission}
+        setOpen={setOpenUpdateMission}
+        idDonation={idDonation?.idDonation}
+      />
+      {/* delete mission */}
+      <Dialog
+        open={openDeleteMission}
+        onClose={() => {
+          handleCloseDeleteMission();
+        }}
+        maxWidth="sm"
+        fullWidth
+        style={{ boxShadow: "none" }}
+      >
+        <div className="border"></div>
+        <br></br>
+        <DialogTitle id="alert-dialog-title">
+          {sessionStorage.getItem("language") === "fr"
+            ? "Delete Mission"
+            : "Delete Mission"}
+        </DialogTitle>
+        <Box position="absolute" top={0} right={0}>
+          <IconButton
+            onClick={() => {
+              handleCloseDeleteMission();
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            <Stack direction="row" alignItems="center" spacing={2}>
+              Are you shure you want to delete this mission!
+            </Stack>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              handledeleteMission();
+            }}
+            variant="contained"
+            style={styleValidate}
+            color="success"
+          >
+            {sessionStorage.getItem("language") === "fr"
+              ? "Confirmer"
+              : "Confirmer"}
+          </Button>
+          <Button
+            onClick={() => {
+              handleCloseDeleteMission();
+            }}
+            variant="contained"
+            style={styleCancelDelete}
+          >
+            {sessionStorage.getItem("language") === "fr" ? "Cacher" : "Cacher"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {/* appliications */}
+      <Dialog
+        open={openApplications}
+        onClose={() => {
+          handleCloseApplications();
+        }}
+        maxWidth="sm"
+        fullWidth
+        style={{ boxShadow: "none" }}
+      >
+        <div className="border"></div>
+        <br></br>
+        <DialogTitle id="alert-dialog-title">
+          {sessionStorage.getItem("language") === "fr"
+            ? "Donations"
+            : "Donations"}
+        </DialogTitle>
+        <Box position="absolute" top={0} right={0}>
+          <IconButton
+            onClick={() => {
+              handleCloseApplications();
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            <Grid
+              className="datasheetGridscrollBar"
+              container
+              spacing={0}
+              height="450px" // fixed the height
+              style={{
+                overflow: "scroll",
+                overflowY: "scroll",
+              }}
+            >
+              {donationsByCompaign?.length === 0 ||
+              donationsByCompaign === null ? (
+                <>there is no Donations for this Compaign</>
+              ) : (
+                <>
+                  <Grid item xs={12}>
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                      <Chip
+                        label={`Total donations : ${Array.isArray(donationsByCompaign) ? donationsByCompaign?.length : 0}`}
+                        sx={{ backgroundColor: "#08089C", color: "#FFF" }}
+                      />
+                    </Box>
+                  </Grid>
+                  {Array.isArray(donationsByCompaign) && donationsByCompaign?.map((item, index) => {
+                    return (
+                      <Grid key={index} item xs={12}>
+                        <Card
+                          key={index}
+                          sx={{
+                            backgroundColor: "#F2F2F2",
+                            margin: "2%",
+                            width: "100%",
+                          }}
+                        >
+                          <CardContent>
+                            <Box sx={{ display: "flex", flexDirection: "row" }}>
+                              <Typography
+                                gutterBottom
+                                variant="h5"
+                                component="div"
+                                sx={{ flexGrow: 1 }}
+                              >
+                                Donation {index + 1} : {item?.first_name}{" "}
+                                {item?.surname}
+                              </Typography>
+                            </Box>
+                            <br />
+                            <Box
+                              sx={{
+                                marginTop: "0.25%",
+                                alignItems: "center",
+                                display: "flex",
+                                color: "#08089C",
+                                width: "100%",
+                              }}
+                            >
+                              <LocationOnIcon sx={{ marginLeft: "2%" }} />
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                {item?.address}
+                              </Typography>
+                            </Box>
+                            <Box
+                              sx={{
+                                marginTop: "1%",
+                                alignItems: "center",
+                                display: "flex",
+                                color: "#08089C",
+                                width: "100%",
+                              }}
+                            >
+                              <Chip
+                                variant="contained"
+                                color="success"
+                                // disabled={handleAdd()}
+                                sx={{
+                                  color: "#08089C",
+                                  borderRadius: "20px",
+                                  backgroundColor: "#FFF",
+                                  margin: "0.5%",
+                                }}
+                                label={`Age: ${item?.age}`}
+                              ></Chip>
+                              <Chip
+                                variant="contained"
+                                color="success"
+                                // disabled={handleAdd()}
+                                sx={{
+                                  color: "#08089C",
+                                  borderRadius: "20px",
+                                  backgroundColor: "#FFF",
+                                  margin: "0.5%",
+                                }}
+                                label={`Amount !: ${
+                                  item?.amount 
+                                }`}
+                              ></Chip>
+                            </Box>
+                          </CardContent>
+                          {/* <CardActions sx={{ flexDirection: "row-reverse" }}>
+                            <Button
+                              variant="contained"
+                              // disabled={handleAdd()}
+                              sx={{
+                                color: "#556B2F",
+                                borderRadius: "20px",
+                                backgroundColor: "#FFF",
+                                margin: "2%",
+                              }}
+                              disabled={item?.status !== "Pending"}
+                              onClick={() => {
+                                // handleopenApplyMission();
+                                // setIdMission(item?.id);
+                                handleApprouveApplication(item);
+                              }}
+                            >
+                              Approuve
+                            </Button>
+                            <Chip
+                              variant="contained"
+                              color="success"
+                              // disabled={handleAdd()}
+                              sx={{
+                                background:
+                                  item?.status !== "Pending"
+                                    ? "linear-gradient(180deg, rgba(190, 255, 157, 0.00) 0%, #9FFF6F 10%)"
+                                    : "yellow",
+                                color: "#556B2F",
+                                borderRadius: "20px",
+                              }}
+                              label={`${item?.status}`}
+                            ></Chip>
+                          </CardActions> */}
+                        </Card>
+                      </Grid>
+                    );
+                  })}
+                </>
+              )}
+            </Grid>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          {/* <Button
+            onClick={() => {
+              handleCloseApplications();
+            }}
+            variant="contained"
+            style={styleValidate}
+            color="success"
+          >
+            {sessionStorage.getItem("language") === "fr"
+              ? "Confirmer"
+              : "Confirmer"}
+          </Button> */}
+          <Button
+            onClick={() => {
+              handleCloseApplications();
+            }}
+            variant="contained"
+            style={styleCancelDelete}
+          >
+            {sessionStorage.getItem("language") === "fr" ? "Cacher" : "Cacher"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <IconButton
+        aria-label="more"
+        id="long-button"
+        aria-controls={open ? "long-menu" : undefined}
+        aria-expanded={open ? "true" : undefined}
+        aria-haspopup="true"
+        onClick={handleClick}
+      >
+        <MoreVertIcon />
+      </IconButton>
+      <Menu
+        id="long-menu"
+        MenuListProps={{
+          "aria-labelledby": "long-button",
+        }}
+        anchorEl={anchorEl1}
+        open={open}
+        onClose={handleClose}
+        PaperProps={{
+          style: {
+            maxHeight: ITEM_HEIGHT * 4.5,
+            width: "20ch",
+          },
+        }}
+      >
+        <MenuItem onClick={handleOpenUpdateMission}>Update Compaign</MenuItem>
+        <MenuItem onClick={handleOpenDeleteMission}>Delete Compaign</MenuItem>
+        <MenuItem onClick={handleOpenApplications}>Donations</MenuItem>
       </Menu>
     </div>
   );

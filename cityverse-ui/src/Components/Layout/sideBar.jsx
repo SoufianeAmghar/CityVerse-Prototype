@@ -179,6 +179,9 @@ const Sidebar = ({ children }) => {
   const Following = useSelector(
     (state) => state.ProfileReducer?.following
   );
+  const badges = useSelector(
+    (state) => state.ProfileReducer?.badges
+  );
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -267,6 +270,10 @@ const Sidebar = ({ children }) => {
         dispatch({
           type: "Following",
           following: value?.data?.data?.followings?.L,
+        });
+        dispatch({
+          type: "Badges",
+          badges: value?.data?.data?.badge?.L,
         });
         setdata(value.data.data);   
         sessionStorage.setItem("user_Id", value.data?.data.id.S);

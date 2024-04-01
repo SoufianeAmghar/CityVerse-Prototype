@@ -15,6 +15,7 @@ const initState = {
   following: [],
   feeds: [],
   missions_applied_for: [],
+  badges : [],
 };
 
 const ProfileReducer = (state = initState, action) => {
@@ -104,6 +105,11 @@ const ProfileReducer = (state = initState, action) => {
         ...state,
         missions_applied_for: action.missions_applied_for,
       };
+      case "Badges":
+        return {
+          ...state,
+          badges: action.badges,
+        };
 
     default:
       return state;
