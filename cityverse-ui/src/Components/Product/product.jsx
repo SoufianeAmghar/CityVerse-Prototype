@@ -454,6 +454,20 @@ export default function Product() {
       })
       .catch((err) => {});
   };
+  const call_api_get_all_applications = (id) => {
+    axios
+      .get(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "mission/applications/" +
+          id
+      )
+      .then((value) => {
+        return value?.data
+      })
+      .catch((err) => {
+        return []
+      });
+  };
   const call_api_get_association_by_id = (id) => {
     axios
       .get(
@@ -554,6 +568,20 @@ export default function Product() {
 
     return array;
   }
+  function searchIdInItems(id) {
+    // Iterate through each item in the array
+    if (Array.isArray(missions)) {
+      for (let i = 0; i < missions.length; i++) {
+        // Check if the current item has an attribute containing the ID
+        if (missions[i].hasOwnProperty('id') && missions[i].id === sessionStorage.getItem("id_mission")) {
+            // If the ID is found, return true
+            return true;
+        }
+    }
+    }
+    // If the ID is not found in any item, return false
+    return false;
+}
   const handleApplyMission = () => {
     const object = {
       first_name: firstName,
@@ -2409,6 +2437,29 @@ export default function Product() {
                                   <CardActions
                                     sx={{ flexDirection: "row-reverse" }}
                                   >
+                                    {'exist',console.log(searchIdInItems(sessionStorage.getItem('user_id'),sessionStorage.getItem('id_mission')), applications)}
+                                    {/* { searchIdInItems(sessionStorage.getItem('user_id'),applications) ? <Chip
+                                      variant="contained"
+                                      color="success"
+                                      // disabled={handleAdd()}
+                                      sx={styleValidate}
+                                      label="Already applied for"
+                                    ></Chip> : <Button
+                                      variant="contained"
+                                      // disabled={handleAdd()}
+                                      sx={{
+                                        color: "#556B2F",
+                                        borderRadius: "20px",
+                                        backgroundColor: "#FFF",
+                                        margin: "2%",
+                                      }}
+                                      onClick={() => {
+                                        handleopenApplyMission();
+                                        setIdMission(item?.id);
+                                      }}
+                                    >
+                                      Apply
+                                    </Button>} */}
                                     <Button
                                       variant="contained"
                                       // disabled={handleAdd()}
