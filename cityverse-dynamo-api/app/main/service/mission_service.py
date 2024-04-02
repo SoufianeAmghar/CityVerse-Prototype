@@ -71,7 +71,13 @@ def delete_mission(mission_id):
 
             # Delete related applications
             for application in applications:
-                application_document.delete(application['id'])
+                if application:
+                    application_document.delete(application['id'])
+                else:
+                    return {
+                        'status': 'success',
+                        'message': 'Mission and its related applications successfully deleted.',
+                    }, 200
 
             return {
                 'status': 'success',
