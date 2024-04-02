@@ -3476,10 +3476,12 @@ const LongMenuDonations = (idDonation) => {
           idDonation?.idDonation
       )
       .then((value) => {
-        call_api_get_all_missions();
+        call_api_get_all_donations();
         handleCloseDeleteMission();
       })
-      .catch((err) => {});
+      .catch((err) => {
+        handleCloseDeleteMission();
+      });
   };
   const [openApplications, setOpenApplications] = useState();
   const handleOpenApplications = () => {
@@ -3544,7 +3546,7 @@ const LongMenuDonations = (idDonation) => {
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             <Stack direction="row" alignItems="center" spacing={2}>
-              Are you shure you want to delete this mission!
+              Are you shure you want to delete this compaign!
             </Stack>
           </DialogContentText>
         </DialogContent>
