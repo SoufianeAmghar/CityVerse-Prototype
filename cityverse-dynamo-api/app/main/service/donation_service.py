@@ -33,6 +33,7 @@ def get_donation(donation_id):
         logging.warning(f"Donation with ID {donation_id} not found.")
     return donation
 
+
 def delete_donation(donation_id):
     donation_document = Document(__TABLE_NAME__='Donation')
     contribution_document = Document(__TABLE_NAME__='Donations')
@@ -49,7 +50,13 @@ def delete_donation(donation_id):
 
             # Delete related applications
             for contribution in donations:
-                contribution_document.delete(contribution['id'])
+                if contribution:
+                    contribution_document.delete(contribution['id'])
+                else:
+                    return {
+                        'status': 'success',
+                        'message': 'Donation and its related donations successfully deleted.',
+                    }, 200
 
             return {
                 'status': 'success',
@@ -155,11 +162,11 @@ def donate(donation_id, data):
         'id': generate_id(),
         'user_id': data['user_id'],
         'donation_id': donation_id,
-        'address': data.get('address',''),
-        'age': data.get('age',0),
-        'first_name': data.get('first_name',''),
-        'surname': data.get('surname',''),
-        'amount': data.get('amount',0)
+        'address': data.get('address', ''),
+        'age': data.get('age', 0),
+        'first_name': data.get('first_name', ''),
+        'surname': data.get('surname', ''),
+        'amount': data.get('amount', 0)
     }
 
     try:
@@ -185,7 +192,8 @@ def donate(donation_id, data):
             'status': 'fail',
             'message': f'Failed to add donation: {str(e)}'
         }, 500
-    
+
+
 def get_donations_for_donation(donation_id):
     document = Document(__TABLE_NAME__='Donations')
     donations = document.query(
