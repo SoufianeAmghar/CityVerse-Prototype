@@ -2648,10 +2648,10 @@ export default function Product() {
                                         sx={{ marginRight: "1%" }}
                                       />
                                       <Typography sx={{ marginRight: "2%" }}>
-                                        {format(
+                                        {/* {format(
                                           new Date(item?.created_on),
                                           "dd/MM/yyyy"
-                                        )}
+                                        )} */}
                                       </Typography>
                                       <Chip
                                         variant="contained"
@@ -2926,7 +2926,6 @@ const LongMenu = (idMission) => {
   const [Name, setName] = useState("");
   const [Rna, setRna] = useState("");
   const missions = useSelector((state) => state.AssociationReducer?.missions);
-  const donations = useSelector((state) => state.AssociationReducer?.donations);
   const [anchorEl1, setAnchorEl1] = React.useState(null);
   const open = Boolean(anchorEl1);
   const handleClick = (event) => {
@@ -3460,13 +3459,26 @@ const LongMenuDonations = (idDonation) => {
           idDonation?.idDonation
       )
       .then((value) => {
-        // dispatch({
-        //   type: "Applications",
-        //   applications: value?.data,
-        // });
         setDonations(value?.data);
       })
       .catch((err) => {});
+  };
+  const call_api_get_all_donations_for_a_compaign = () => {
+    axios
+      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "donation/")
+      .then((value) => {
+        dispatch({
+          type: "Donations",
+          donations: orderByDate(value?.data),
+        });
+        handleClose();
+      })
+      .catch((err) => {
+        dispatch({
+          type: "Donations",
+          donations: [],
+        });
+      });
   };
   const handledeleteMission = () => {
     axios
@@ -3476,10 +3488,12 @@ const LongMenuDonations = (idDonation) => {
           idDonation?.idDonation
       )
       .then((value) => {
-        call_api_get_all_missions();
+        call_api_get_all_donations_for_a_compaign();
         handleCloseDeleteMission();
       })
-      .catch((err) => {});
+      .catch((err) => {
+        handleCloseDeleteMission();
+      });
   };
   const [openApplications, setOpenApplications] = useState();
   const handleOpenApplications = () => {
@@ -3544,7 +3558,7 @@ const LongMenuDonations = (idDonation) => {
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             <Stack direction="row" alignItems="center" spacing={2}>
-              Are you shure you want to delete this mission!
+              Are you shure you want to delete this compaign!
             </Stack>
           </DialogContentText>
         </DialogContent>
