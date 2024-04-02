@@ -167,21 +167,14 @@ const Sidebar = ({ children }) => {
   const [openItems, setOpenItems] = React.useState(false);
   const { isAuthenticated, setisAuthenticated } = useContext(UserLoginContext);
 
-
   //profile infos
 
   const imageProfile = useSelector(
     (state) => state.FileUploadReducer?.imageProfile
   );
-  const Score = useSelector(
-    (state) => state.ProfileReducer?.score
-  );
-  const Following = useSelector(
-    (state) => state.ProfileReducer?.following
-  );
-  const badges = useSelector(
-    (state) => state.ProfileReducer?.badges
-  );
+  const Score = useSelector((state) => state.ProfileReducer?.score);
+  const Following = useSelector((state) => state.ProfileReducer?.following);
+  const badges = useSelector((state) => state.ProfileReducer?.badges);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -252,13 +245,15 @@ const Sidebar = ({ children }) => {
           type: "Lastname",
           lastname: value?.data?.data?.last_name?.S,
         });
-        (value?.data?.data?.score?.S === undefined ? dispatch({
-          type: "Score",
-          score: value?.data?.data?.score?.N,
-        }) : dispatch({
-          type: "Score",
-          score: value?.data?.data?.score?.S,
-        }))
+        value?.data?.data?.score?.S === undefined
+          ? dispatch({
+              type: "Score",
+              score: value?.data?.data?.score?.N,
+            })
+          : dispatch({
+              type: "Score",
+              score: value?.data?.data?.score?.S,
+            });
         dispatch({
           type: "Description",
           description: value?.data?.data?.description?.S,
@@ -275,12 +270,11 @@ const Sidebar = ({ children }) => {
           type: "Badges",
           badges: value?.data?.data?.badge?.L,
         });
-        setdata(value.data.data);   
+        setdata(value.data.data);
         sessionStorage.setItem("user_Id", value.data?.data.id.S);
-       
       })
       .catch((err) => {
-         deconnexion();
+        deconnexion();
       });
   };
   const call_api_get_SDG_goals = () => {
@@ -402,19 +396,30 @@ const Sidebar = ({ children }) => {
                     }}
                   >
                     {data && (
-                      <>
+                      <div sx={{ display: "flex", justifyContent: "center", alignItems: "center",flexDirection: "row"}}>
                         <Typography
                           variant="h6"
                           sx={{
                             color: "#1e1e82",
                             display: "flex",
                             alignItems: "center",
+                            justifyContent: "center"
                           }}
                         >
-                          {data?.first_name?.S} {data?.last_name?.S} {Score}{" "}
-                          <StarIcon sx={{ color: "#FFD700" }} />          
+                          {data?.first_name?.S} {data?.last_name?.S}
                         </Typography>
-                      </>
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            color: "#1e1e82",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
+                          }}
+                        >
+                          {Score} <StarIcon sx={{ color: "#FFD700" }} />{" "}
+                        </Typography>
+                      </div>
                     )}
                   </div>
                 </>

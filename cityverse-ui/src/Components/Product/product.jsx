@@ -3484,6 +3484,7 @@ const LongMenuDonations = (idDonation) => {
   const [openApplications, setOpenApplications] = useState();
   const handleOpenApplications = () => {
     setOpenApplications(true);
+    call_api_get_all_donations();
   };
   const handleCloseApplications = () => {
     setOpenApplications(false);
