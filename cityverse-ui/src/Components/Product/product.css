@@ -11,3 +11,9 @@
     top: 10%;
     transform: translateY(650px);
 }
+
+.datasheetGridscrollBar  ::-webkit-scrollbar-thumb {
+  background: rgb(161, 160, 160);
+  border-radius: 10px;
+  display: block;
+}

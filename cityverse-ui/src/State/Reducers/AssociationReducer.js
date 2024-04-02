@@ -22,6 +22,7 @@ const initState = {
   missions: [],
   applications: [],
   donations: [],
+  donations_users: [],
 };
 
 const AssociationReducer = (state = initState, action) => {
@@ -64,7 +65,12 @@ const AssociationReducer = (state = initState, action) => {
     case "Donations":
       return {
         ...state,
-        applications: action.donations,
+        donations: action.donations,
+      };
+    case "Donations_users":
+      return {
+        ...state,
+        donations_users: action.donations,
       };
     default:
       return state;

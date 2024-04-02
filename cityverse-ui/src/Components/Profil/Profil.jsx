@@ -186,7 +186,10 @@ export default function Profile() {
     (state) => state.AssociationReducer?.associations
   );
   const Following = useSelector((state) => state.ProfileReducer?.following);
-  const missions_applied_for = useSelector((state) => state.ProfileReducer?.missions_applied_for);
+  const missions_applied_for = useSelector(
+    (state) => state.ProfileReducer?.missions_applied_for
+  );
+  const badges = useSelector((state) => state.ProfileReducer?.badges);
   const handleCoverChange = (e) => {
     const filecover = e.target.files[0];
     setSelectedImage(e.target.files[0]);
@@ -261,6 +264,40 @@ export default function Profile() {
     });
     handleClose();
   };
+
+  const update_profile_image = () => {
+    var json = new FormData();
+    json.append("profile_image", selectedProfileImage);
+    axios
+      .put(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "user/profile/" +
+          sessionStorage.getItem("user_Id"),
+        json
+      )
+      .then((value) => {
+        call_api_get_user_info();
+      
+      })
+      .catch((err) => {});
+  };
+  const update_banner_image = () => {
+    var json = new FormData();
+    json.append("banner_image", selectedImage);
+    axios
+      .put(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "user/banner/" +
+          sessionStorage.getItem("user_Id"),
+        json
+      )
+      .then((value) => {
+        call_api_get_user_info();     
+      })
+      .catch((err) => {});
+  };
+
+
   const [data, setdata] = useState([]);
   const headers = {
     Authorization: sessionStorage.getItem("acces_token")?.toString(),
@@ -335,21 +372,45 @@ export default function Profile() {
       UserAgent: sessionStorage.getItem("user_Id"),
     };
     axios
-      .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "user/" + sessionStorage.getItem("user_Id") + "/missions", {
-        headers,
-      })
+      .get(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "user/" +
+          sessionStorage.getItem("user_Id") +
+          "/missions",
+        {
+          headers,
+        }
+      )
       .then((value) => {
-        setInprogressMissions(false)
+        setInprogressMissions(false);
         dispatch({
           type: "Missions_applied_for",
           missions_applied_for: orderByDate(value?.data),
-        });     
+        });
       })
       .catch((err) => {
-        setInprogressMissions(false) 
+        setInprogressMissions(false);
       });
   };
-
+  // const call_api_get_badges_by_id = (id, n) => {
+  //   const headers = {
+  //     UserAgent: sessionStorage.getItem("user_Id"),
+  //   };
+  //   axios
+  //     .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "user/" + sessionStorage.getItem("user_Id") + "/missions", {
+  //       headers,
+  //     })
+  //     .then((value) => {
+  //       // setInprogressMissions(false)
+  //       // dispatch({
+  //       //   type: "Missions_applied_for",
+  //       //   missions_applied_for: orderByDate(value?.data),
+  //       // });
+  //     })
+  //     .catch((err) => {
+  //       // setInprogressMissions(false)
+  //     });
+  // };
 
   useEffect(() => {
     call_api_get_user_info();
@@ -420,7 +481,7 @@ export default function Profile() {
                   component="span"
                   startIcon={<CloudUploadIcon />}
                 >
-                  Upload Profile Image
+                  Upload cover Image
                 </Button>
               </label>
               <div style={{ position: "relative" }}>
@@ -432,7 +493,7 @@ export default function Profile() {
                         height: "100px",
                         borderRadius: "1%",
                       }}
-                      src={selectedImage}
+                      src={URL.createObjectURL(selectedImage)}
                       alt="Uploaded"
                     />
                     <CancelIcon
@@ -455,9 +516,10 @@ export default function Profile() {
         <DialogActions>
           <Button
             onClick={() => {
+              update_banner_image();
               dispatch({
                 type: "CoverProfile",
-                coverProfile: selectedImage,
+                coverProfile:  URL.createObjectURL(selectedImage),
               });
               handleCloseCoverImage();
             }}
@@ -538,7 +600,7 @@ export default function Profile() {
                         height: "100px",
                         borderRadius: "100%",
                       }}
-                      src={selectedProfileImage}
+                      src={URL.createObjectURL(selectedProfileImage)}
                       alt="Uploaded"
                     />
                     <CancelIcon
@@ -561,9 +623,10 @@ export default function Profile() {
         <DialogActions>
           <Button
             onClick={() => {
+              update_profile_image();
               dispatch({
                 type: "ImageProfile",
-                imageProfile: selectedProfileImage,
+                imageProfile: URL.createObjectURL(selectedProfileImage),
               });
               handleCloseProfileImage();
             }}
@@ -746,171 +809,14 @@ export default function Profile() {
                   // onChange={(e) => setFirstName(e.target.value)}
                 />
               </Grid>
-              {/* <Grid item xs={6}>
-                <Stack direction="columns" alignItems="center" spacing={2}>
-                  <input
-                    accept="image/*"
-                    style={{ display: "none" }}
-                    id="image-upload"
-                    type="file"
-                    onChange={handleProfileImageChange}
-                  />
-                  <label htmlFor="image-upload">
-                    <Button
-                      variant="contained"
-                      color="success"
-                      sx={{
-                        backgroundColor: "success",
-                        minWidth: "25%",
-                        borderRadius: "20px",
-                        color: "#fff",
-                      }}
-                      component="span"
-                      startIcon={<CloudUploadIcon />}
-                    >
-                      Upload Profile Image
-                    </Button>
-                  </label>
-                  <div style={{ position: "relative" }}>
-                    {selectedProfileImage && (
-                      <>
-                        <img
-                          style={{
-                            width: "100px",
-                            height: "100px",
-                            borderRadius: "100%",
-                          }}
-                          src={selectedProfileImage}
-                          alt="Uploaded"
-                        />
-                        <CancelIcon
-                          style={{
-                            position: "absolute",
-                            top: "0",
-                            right: "0",
-                            color: "#556B2F",
-                          }}
-                          onClick={() => {
-                            setSelectedProfileImage(null);
-                          }}
-                        />
-                      </>
-                    )}
-                  </div>
-                </Stack>
-              </Grid>
-              <Grid item xs={6}>
-                <input
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  id="image-upload"
-                  type="file"
-                  onChange={handleCoverChange}
-                />
-                <label htmlFor="image-upload">
-                  <Button
-                    variant="contained"
-                    color="success"
-                    sx={{
-                      backgroundColor: "success",
-                      minWidth: "25%",
-                      borderRadius: "20px",
-                      color: "#fff",
-                    }}
-                    component="span"
-                    startIcon={<CloudUploadIcon />}
-                  >
-                    Upload Cover Image
-                  </Button>
-                </label>
-                <div style={{ position: "relative" }}>
-                  {selectedImage && (
-                    <>
-                      <img
-                        style={{
-                          width: "300px",
-                          height: "100px",
-                          borderRadius: "1%",
-                        }}
-                        src={selectedImage}
-                        alt="Uploaded"
-                      />
-                      <CancelIcon
-                        style={{
-                          position: "absolute",
-                          top: "-10",
-                          right: "-10",
-                          color: "#556B2F",
-                        }}
-                        onClick={() => {
-                          setSelectedImage(null);
-                        }}
-                      />
-                    </>
-                  )}
-                </div>
-              </Grid> */}
+              
             </Grid>
-            {/* <Stack direction="row" alignItems="center" spacing={2}>
-              <input
-                accept="image/*"
-                style={{ display: "none" }}
-                id="image-upload"
-                type="file"
-                onChange={handleCoverChange}
-              />
-              <label htmlFor="image-upload">
-                <Button
-                  variant="contained"
-                  color="success"
-                  sx={{
-                    backgroundColor: "success",
-                    minWidth: "25%",
-                    borderRadius: "20px",
-                    color: "#fff",
-                  }}
-                  component="span"
-                  startIcon={<CloudUploadIcon />}
-                >
-                  Upload Profile Image
-                </Button>
-              </label>
-              <div style={{ position: "relative" }}>
-                {selectedImage && (
-                  <>
-                    <img
-                      style={{
-                        width: "300px",
-                        height: "100px",
-                        borderRadius: "1%",
-                      }}
-                      src={selectedImage}
-                      alt="Uploaded"
-                    />
-                    <CancelIcon
-                      style={{
-                        position: "absolute",
-                        top: "-10",
-                        right: "-10",
-                        color: "#556B2F",
-                      }}
-                      onClick={() => {
-                        setSelectedImage(null);
-                      }}
-                    />
-                  </>
-                )}
-              </div>
-            </Stack> */}
+           
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button
             onClick={() => {
-              // dispatch({
-              //   type: "CoverProfile",
-              //   coverProfile: selectedImage,
-              // });
               handleCloseProfile();
             }}
             variant="contained"
@@ -1121,7 +1027,6 @@ export default function Profile() {
               <AntTab label="Associations" {...a11yProps(1)} />
               <AntTab label="Missions" {...a11yProps(2)} />
               <AntTab label="Badges" {...a11yProps(3)} />
-              <AntTab label="Challenges" {...a11yProps(4)} />
             </AntTabs>
           </div>
         </div>
@@ -1446,7 +1351,7 @@ export default function Profile() {
                       </div>
                     }
                   >
-                     {inProgressMissions ? (
+                    {inProgressMissions ? (
                       <>
                         <Card
                           style={{
@@ -1469,193 +1374,196 @@ export default function Profile() {
                           />
                         </Card>
                       </>
-                    ) : 
-                    <Grid
-                      container
-                      spacing={0}
-                      height="450px" // fixed the height
-                      style={{
-                        overflow: "scroll",
-                        overflowY: "scroll",
-                      }}
-                    >
-                      <Grid item xs={12}>
-                        <Box sx={{ display: "flex", justifyContent: "center" }}>
-                          <Chip
-                            label={`Total mission's : ${missions_applied_for?.length}`}
-                            sx={{ backgroundColor: "#08089C", color: "#FFF" }}
-                          />
-                        </Box>
-                      </Grid>{" "}
-                      {missions_applied_for?.map((item, index) => {
-                        return (
-                          <>
-                                <Card
-                                  key={index}
-                                  sx={{
-                                    backgroundColor: "#F2F2F2",
-                                    margin: "2%",
-                                    width: "100%",
-                                  }}
-                                >
-                                  <CardContent>
-                                    <Box
-                                      sx={{
-                                        display: "flex",
-                                        flexDirection: "row",
-                                      }}
+                    ) : (
+                      <Grid
+                        container
+                        spacing={0}
+                        height="450px" // fixed the height
+                        style={{
+                          overflow: "scroll",
+                          overflowY: "scroll",
+                        }}
+                      >
+                        <Grid item xs={12}>
+                          <Box
+                            sx={{ display: "flex", justifyContent: "center" }}
+                          >
+                            <Chip
+                              label={`Total mission's : ${missions_applied_for?.length}`}
+                              sx={{ backgroundColor: "#08089C", color: "#FFF" }}
+                            />
+                          </Box>
+                        </Grid>{" "}
+                        {missions_applied_for?.map((item, index) => {
+                          return (
+                            <>
+                              <Card
+                                key={index}
+                                sx={{
+                                  backgroundColor: "#F2F2F2",
+                                  margin: "2%",
+                                  width: "100%",
+                                }}
+                              >
+                                <CardContent>
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      flexDirection: "row",
+                                    }}
+                                  >
+                                    <Typography
+                                      gutterBottom
+                                      variant="h5"
+                                      component="div"
+                                      sx={{ flexGrow: 1 }}
                                     >
-                                      <Typography
-                                        gutterBottom
-                                        variant="h5"
-                                        component="div"
-                                        sx={{ flexGrow: 1 }}
-                                      >
-                                        Mission {index + 1}
-                                      </Typography>
-                                      {/* <LongMenu
+                                      Mission {index + 1}
+                                    </Typography>
+                                    {/* <LongMenu
                                         idMission={item?.id}
                                         mission={item}
                                       /> */}
-                                    </Box>
-                                    <br />
-                                    <Typography
-                                      variant="body2"
-                                      color="text.secondary"
-                                    >
-                                      {item?.description}
-                                    </Typography>
-                                    <Box
-                                      sx={{
-                                        marginTop: "1%",
-                                        alignItems: "center",
-                                        display: "flex",
-                                        color: "#08089C",
-                                        width: "100%",
-                                      }}
-                                    >
-                                      <CalendarMonthIcon
-                                        sx={{ marginRight: "1%" }}
-                                      />
-                                      <Typography sx={{ marginRight: "2%" }}>
-                                        {format(
-                                          new Date(item?.start_date),
-                                          "dd/MM/yyyy"
-                                        )}
-                                      </Typography>
-                                      <Chip
-                                        variant="contained"
-                                        color="success"
-                                        // disabled={handleAdd()}
-                                        sx={{
-                                          color: "#08089C",
-                                          borderRadius: "20px",
-                                          backgroundColor: "#FFF",
-                                          margin: "0.5%",
-                                        }}
-                                        label={`Duration: ${item?.duration}`}
-                                      ></Chip>
-                                      <Chip
-                                        variant="contained"
-                                        color="success"
-                                        // disabled={handleAdd()}
-                                        sx={{
-                                          color: "#08089C",
-                                          borderRadius: "20px",
-                                          backgroundColor: "#FFF",
-                                          margin: "0.5%",
-                                        }}
-                                        label={`Type of mission: ${item?.mission_type}`}
-                                      ></Chip>
-                                      <Chip
-                                        variant="contained"
-                                        color="success"
-                                        // disabled={handleAdd()}
-                                        sx={{
-                                          color: "#08089C",
-                                          borderRadius: "20px",
-                                          backgroundColor: "#FFF",
-                                          margin: "0.5%",
-                                        }}
-                                        label={`Volunteer qualifications: ${item?.volunteer_qualifications?.label}`}
-                                      ></Chip>
-
-                                      {/* <LocationOnIcon sx={{ marginLeft: "5%" }} />
-                                <Typography>{address}</Typography> */}
-                                    </Box>
-                                    <Box
-                                      sx={{
-                                        marginTop: "1%",
-                                        alignItems: "center",
-                                        display: "flex",
-                                        color: "#08089C",
-                                      }}
-                                    >
-                                      <Chip
-                                        variant="contained"
-                                        color="success"
-                                        // disabled={handleAdd()}
-                                        sx={{
-                                          color: "#08089C",
-                                          borderRadius: "20px",
-                                          backgroundColor: "#FFF",
-                                          margin: "0.5%",
-                                        }}
-                                        label={`demanded Participants: ${item?.number_of_participants}`}
-                                      ></Chip>
-                                      <Chip
-                                        variant="contained"
-                                        color="success"
-                                        // disabled={handleAdd()}
-                                        sx={{
-                                          color: "#08089C",
-                                          borderRadius: "20px",
-                                          backgroundColor: "#FFF",
-                                          margin: "0.5%",
-                                        }}
-                                        label={`Approved Participants: ${item?.approved_applications}`}
-                                      ></Chip>
-
-                                      {/* <LocationOnIcon sx={{ marginLeft: "5%" }} />
-                                <Typography>{address}</Typography> */}
-                                    </Box>
-                                  </CardContent>
-                                  <CardActions
-                                    sx={{ flexDirection: "row-reverse" }}
+                                  </Box>
+                                  <br />
+                                  <Typography
+                                    variant="body2"
+                                    color="text.secondary"
                                   >
-                                    <Button
-                                      variant="contained"
-                                      // disabled={handleAdd()}
-                                      sx={{
-                                        color: "#556B2F",
-                                        borderRadius: "20px",
-                                        backgroundColor: "#FFF",
-                                        margin: "2%",
-                                      }}
-                                      onClick={() => {
-                                        history.push("/product" , "missions")
-                                        dispatch({
-                                          type: "Id_association",
-                                          id_association: item?.creator_id,
-                                        });
-                                        console.log('id', item?.creator_id)
-                                      }}
-                                    >
-                                      checkout
-                                    </Button>
+                                    {item?.description}
+                                  </Typography>
+                                  <Box
+                                    sx={{
+                                      marginTop: "1%",
+                                      alignItems: "center",
+                                      display: "flex",
+                                      color: "#08089C",
+                                      width: "100%",
+                                    }}
+                                  >
+                                    <CalendarMonthIcon
+                                      sx={{ marginRight: "1%" }}
+                                    />
+                                    <Typography sx={{ marginRight: "2%" }}>
+                                      {format(
+                                        new Date(item?.start_date),
+                                        "dd/MM/yyyy"
+                                      )}
+                                    </Typography>
                                     <Chip
                                       variant="contained"
                                       color="success"
                                       // disabled={handleAdd()}
-                                      sx={styleValidate}
-                                      label="Open application"
+                                      sx={{
+                                        color: "#08089C",
+                                        borderRadius: "20px",
+                                        backgroundColor: "#FFF",
+                                        margin: "0.5%",
+                                      }}
+                                      label={`Duration: ${item?.duration}`}
                                     ></Chip>
-                                  </CardActions>
-                                </Card>
-                          </>
-                        );
-                      })}
-                    </Grid>}
+                                    <Chip
+                                      variant="contained"
+                                      color="success"
+                                      // disabled={handleAdd()}
+                                      sx={{
+                                        color: "#08089C",
+                                        borderRadius: "20px",
+                                        backgroundColor: "#FFF",
+                                        margin: "0.5%",
+                                      }}
+                                      label={`Type of mission: ${item?.mission_type}`}
+                                    ></Chip>
+                                    <Chip
+                                      variant="contained"
+                                      color="success"
+                                      // disabled={handleAdd()}
+                                      sx={{
+                                        color: "#08089C",
+                                        borderRadius: "20px",
+                                        backgroundColor: "#FFF",
+                                        margin: "0.5%",
+                                      }}
+                                      label={`Volunteer qualifications: ${item?.volunteer_qualifications?.label}`}
+                                    ></Chip>
+
+                                    {/* <LocationOnIcon sx={{ marginLeft: "5%" }} />
+                                <Typography>{address}</Typography> */}
+                                  </Box>
+                                  <Box
+                                    sx={{
+                                      marginTop: "1%",
+                                      alignItems: "center",
+                                      display: "flex",
+                                      color: "#08089C",
+                                    }}
+                                  >
+                                    <Chip
+                                      variant="contained"
+                                      color="success"
+                                      // disabled={handleAdd()}
+                                      sx={{
+                                        color: "#08089C",
+                                        borderRadius: "20px",
+                                        backgroundColor: "#FFF",
+                                        margin: "0.5%",
+                                      }}
+                                      label={`demanded Participants: ${item?.number_of_participants}`}
+                                    ></Chip>
+                                    <Chip
+                                      variant="contained"
+                                      color="success"
+                                      // disabled={handleAdd()}
+                                      sx={{
+                                        color: "#08089C",
+                                        borderRadius: "20px",
+                                        backgroundColor: "#FFF",
+                                        margin: "0.5%",
+                                      }}
+                                      label={`Approved Participants: ${item?.approved_applications}`}
+                                    ></Chip>
+
+                                    {/* <LocationOnIcon sx={{ marginLeft: "5%" }} />
+                                <Typography>{address}</Typography> */}
+                                  </Box>
+                                </CardContent>
+                                <CardActions
+                                  sx={{ flexDirection: "row-reverse" }}
+                                >
+                                  <Button
+                                    variant="contained"
+                                    // disabled={handleAdd()}
+                                    sx={{
+                                      color: "#556B2F",
+                                      borderRadius: "20px",
+                                      backgroundColor: "#FFF",
+                                      margin: "2%",
+                                    }}
+                                    onClick={() => {
+                                      history.push("/product", "missions");
+                                      dispatch({
+                                        type: "Id_association",
+                                        id_association: item?.creator_id,
+                                      });
+                                      sessionStorage.setItem('id_mission' , item?.id)
+                                    }}
+                                  >
+                                    checkout
+                                  </Button>
+                                  <Chip
+                                    variant="contained"
+                                    color="success"
+                                    // disabled={handleAdd()}
+                                    sx={styleValidate}
+                                    label="Open application"
+                                  ></Chip>
+                                </CardActions>
+                              </Card>
+                            </>
+                          );
+                        })}
+                      </Grid>
+                    )}
                   </Suspense>
                 </TabPanel>
                 <TabPanel value={value} index={3} dir={theme.direction}>
@@ -1683,15 +1591,54 @@ export default function Profile() {
                       </div>
                     }
                   >
-                    <Typography
-                      gutterBottom
-                      variant="h6"
-                      component="div"
-                      sx={{ display: "flex", alignItems: "center" }}
+                    <Grid
+                      container
+                      spacing={0}
+                      height="500px" // fixed the height
+                      sx={{ display: "flex", justifyContent: "center"}}
                     >
-                      <AddBusinessIcon sx={{ color: "#08089C" }} />
-                      {"  "} &emsp;Ajouter Nouveau Badge
-                    </Typography>
+                      <Grid item xs={12}>
+                        <Box sx={{ display: "flex", justifyContent: "center" }}>
+                          <Typography
+                            gutterBottom
+                            variant="h6"
+                            component="div"
+                            color="success"
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              color: "#08089C",
+                              margin: '2%'
+                            }}
+                          >
+                            Earned Bagdes
+                          </Typography>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} sx={{ display: "flex", justifyContent: "center"}}>
+                       
+                          <ImageList
+                            sx={{ display: "flex", justifyContent: "center", width: "90%", height: "90%" }}
+                            cols={badges?.length}
+                            rowHeight={400}
+                          >
+                            {badges !== null &&
+                              badges?.map((item) => (
+                                <ImageListItem key={item}>
+                                  <img
+                                    srcSet={`${item}`}
+                                    src={`${item}`}
+                                    width="50px"
+                                    height="50px"
+                                    // alt={item.title}
+                                    loading="lazy"
+                                  />
+                                </ImageListItem>
+                              ))}
+                          </ImageList>
+                        
+                      </Grid>
+                    </Grid>
                   </Suspense>
                 </TabPanel>
                 <TabPanel value={value} index={4} dir={theme.direction}>

@@ -84,14 +84,14 @@ export default function DateCalendarServerRequest() {
   React.useEffect(() => {
     fetchHighlightedDays(initialValue);
     // abort request on unmount
-    return () => requestAbortController.current?.abort();
+    return () => requestAbortController?.current?.abort();
   }, []);
 
   const handleMonthChange = (date) => {
     if (requestAbortController.current) {
       // make sure that you are aborting useless requests
       // because it is possible to switch between months pretty quickly
-      requestAbortController.current.abort();
+      requestAbortController?.current?.abort();
     }
 
     setIsLoading(true);
