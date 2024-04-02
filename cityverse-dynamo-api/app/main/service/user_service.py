@@ -506,6 +506,7 @@ def get_user_missions(user_id):
 
     return missions_for_user
 
+
 def get_user_donations(user_id):
     document_donation = Document(__TABLE_NAME__='Donation')
     document_donations = Document(__TABLE_NAME__='Donations')
@@ -609,7 +610,7 @@ def get_user_by_email(email):
         return False
 
 
-def update_user_badge(user_id, data):
+def update_user_badge(user_id):
     document = Document(__TABLE_NAME__='User')
     user = get_a_user(user_id)
     if user:
@@ -617,26 +618,24 @@ def update_user_badge(user_id, data):
         if 'badge' not in user or not isinstance(user['badge'], list):
             user['badge'] = []
 
-        data_type = data.get('type', '').lower()
+        badge = "https://cityverse-profilepics.s3.us-east-2.amazonaws.com/Badge+Trocad%C3%A9ro.png"
 
-        if data_type == "nft":
-            user['score'] = int(user.get('score', 0)) + 1500
-            user['badge'].append("https://cityverse-profilepics.s3.us-east-2.amazonaws.com/Badge+Donation.png")
-        elif data_type == "trocadero":
-            user['score'] = int(user.get('score', 0)) + 700
-            user['badge'].append("https://cityverse-profilepics.s3.us-east-2.amazonaws.com/Badge+Trocad%C3%A9ro.png")
-        elif data_type == "mission":
-            user['score'] = int(user.get('score', 0)) + 900
-            user['badge'].append("https://cityverse-profilepics.s3.us-east-2.amazonaws.com/Virtual+Badge+Mission.png")
+        if badge not in user['badge']:
+            user['modified_on'] = datetime.utcnow().isoformat()
+            user['score'] = int(user.get('score', 0)) + 800
+            user['badge'].append(badge)
+        else:
+            return {
+                'status': 'no content',
+                'message': 'User already have the added badge.',
+            }, 204
 
         user['modified_on'] = datetime.utcnow().isoformat()
         document.save(item=user)
 
-
-        document.save(item=user)
         return {
             'status': 'success',
-            'message': 'Badges updated successfully.',
+            'message': 'Trocadero badge updated successfully.',
         }, 200
     else:
 

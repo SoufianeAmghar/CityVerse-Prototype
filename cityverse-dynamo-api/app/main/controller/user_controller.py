@@ -195,11 +195,10 @@ class UserDonationResource(Resource):
        
         return get_user_donations(public_id)
 
-@api.route('/<public_id>/badges')
+@api.route('/<public_id>/badge')
 class UserBadgeResource(Resource):
     @api.response(201, 'User Badge successfully changed.')
     @api.doc('update user badge')
     def put(self, public_id):
         """Update a User's badge"""
-        data = request.json
-        return update_user_badge(public_id, data)
+        return update_user_badge(public_id)

@@ -9,7 +9,9 @@ from ..service.donation_service import (
     create_donation,
     edit_donation,
     donate,
-    get_donations_for_donation
+    get_donations_for_donation,
+    get_donation,
+    delete_donation
 )
 
 
@@ -42,6 +44,15 @@ class DonationPost(Resource):
         "Edit a comment on a post"
         data = request.json
         return edit_donation(donation_id, data)
+    
+    @api.doc('get donation campaign by id')
+    @api.marshal_with(_donation)
+    def get(self,donation_id):
+        return get_donation(donation_id)
+    
+    @api.doc('delete donation by id')
+    def delete(self,donation_id):
+        return delete_donation(donation_id)
 
 @api.route('/donate/<donation_id>')
 @api.param('donation_id', 'The Mission identifier')

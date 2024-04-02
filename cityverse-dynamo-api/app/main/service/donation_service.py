@@ -33,6 +33,41 @@ def get_donation(donation_id):
         logging.warning(f"Donation with ID {donation_id} not found.")
     return donation
 
+def delete_donation(donation_id):
+    donation_document = Document(__TABLE_NAME__='Donation')
+    contribution_document = Document(__TABLE_NAME__='Donations')
+
+    try:
+        donation = get_donation(donation_id)
+
+        if donation:
+            # Retrieve all contributions associated with donation
+            donations = get_donations_for_donation(donation_id)
+
+            # Delete the mission
+            donation_document.delete(donation_id)
+
+            # Delete related applications
+            for contribution in donations:
+                contribution_document.delete(contribution['id'])
+
+            return {
+                'status': 'success',
+                'message': 'Donation and its related donations successfully deleted.',
+            }, 200
+        else:
+            return {
+                'status': 'fail',
+                'message': 'Donation campaign not found.',
+            }, 404
+
+    except Exception as e:
+        logging.error(f"Failed to delete donation campaign: {str(e)}")
+        return {
+            'status': 'fail',
+            'message': f'Failed to delete donation campaign: {str(e)}'
+        }, 500
+
 
 def create_donation(data, image_files, video_files):
     document = Document(__TABLE_NAME__='Donation', __BUCKET_NAME__='cityverse-videos',
