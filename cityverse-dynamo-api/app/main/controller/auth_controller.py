@@ -53,13 +53,3 @@ class InfoAPI(Resource):
     @api.doc('Get logged in user')
     def get(self):
         return Auth.get_logged_in_user(request)
-    
-@api.route('/verify-token')
-class UserToken(Resource):
-    """
-    Token Resource
-    """
-    @api.doc('Verify user token')
-    def post(self):
-        # get auth token
-        return Auth.verify_token(request)

@@ -1,7 +1,7 @@
-
-import boto3
+from app.db.dynamodb_document import Document
 from botocore.exceptions import NoCredentialsError
 import datetime
+import logging
 
 
 class BlacklistToken:
@@ -36,9 +36,7 @@ class BlacklistToken:
 
     @staticmethod
     def check_blacklist(token_id, table_name):
-        dynamodb = boto3.resource('dynamodb')
-        table = dynamodb.Table(table_name)
-        response = table.get_item(Key={'token': token_id})
-        item = response.get('Item')
-        return bool(item)
+        blacklist_document = Document(__TABLE_NAME__=table_name)
+        response = blacklist_document.get_token(token_id)
+        return bool(response)
        

@@ -164,15 +164,39 @@ def update_user(user_id, data, profile_image):
     }, 201
 
 
-def update_login_time_and_score(user_id, hours_spent, last_login):
+def update_login_time(user_id, last_login):
     document = Document(__TABLE_NAME__='User')
     user = get_a_user(user_id)
 
     if user:
-        if hours_spent > 0:
-            user['hours_spent'] = int(hours_spent)
         if last_login:
             user['last_login'] = last_login
+        user['id'] = str(user_id)
+        user.update({
+            'modified_on': datetime.utcnow().isoformat()
+        })
+
+        document.save(item=user)
+
+        return {
+            'status': 'success',
+            'message': 'User successfully updated.',
+        }, 201
+
+    return {
+        'status': 'fail',
+        'message': 'No user with the provided ID found.',
+    }, 409
+
+def update_logout_time_and_score(user_id, hours_spent, last_logout):
+    document = Document(__TABLE_NAME__='User')
+    user = get_a_user(user_id)
+
+    if user:
+        if hours_spent >= 0:
+            user['hours_spent'] = int(hours_spent)
+        if last_logout:
+            user['last_logout'] = last_logout
         user['id'] = str(user_id)
         user.update({
             'score': calculate_user_score(user),
@@ -581,19 +605,11 @@ def remove_user_event(user_id, event_id):
 def calculate_user_score(user_data):
 
     hours_spent = user_data.get('hours_spent', 0)
-    products_created = int(user_data.get('products_created', 0))
-    events_joined = int(user_data.get('events_joined', 0))
 
-    # Weightage for each factor (you can adjust these based on your preferences)
     weightage_hours_spent = 2
-    weightage_products_created = 10
-    weightage_events_joined = 4
-
-    # Calculate composite score
+ 
     user_score = (
-        weightage_hours_spent * hours_spent +
-        weightage_products_created * products_created +
-        weightage_events_joined * events_joined
+        weightage_hours_spent * hours_spent 
     ) + int(user_data.get('score'))
 
     return user_score
