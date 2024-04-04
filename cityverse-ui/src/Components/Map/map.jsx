@@ -150,6 +150,7 @@ export default function MapCart() {
   const [openMetaVerse, setOpenMetaVerse] = useState(false);
   const [openPointInterset, setopenPointInterset] = useState(false);
   const [goal, setgoal] = useState();
+  const [fav, setFav] = useState(false);
   const [selectedActivity, setselecteDAcitivity] = useState();
   const [selectedGoals, setSelectedGoals] = useState([]);
   const [selectedActivities, setSelectedActivities] = useState([]);
@@ -766,6 +767,21 @@ export default function MapCart() {
     return stringArray.map((str) => Number(str));
   }
 
+  const call_api_badge = () => {
+    axios
+      .put(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "user/" +
+          sessionStorage.getItem("user_Id") +
+          "/badge" 
+      )
+      .then((value) => {
+        call_api_get_user_info();
+        handleClose();
+      })
+      .catch((err) => {});
+  };
+
   return (
     <>
       <Dialog
@@ -1114,6 +1130,7 @@ export default function MapCart() {
                   <IconButton
                     onClick={() => {
                       setSwitch3d(!switch3d);
+                      call_api_badge();
                     }}
                   >
                     <ViewInArIcon fontSize="large" />
