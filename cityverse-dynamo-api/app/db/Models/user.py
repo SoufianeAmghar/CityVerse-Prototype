@@ -33,6 +33,8 @@ class User(Document):
     description = None
     social_links = None
     sdg = None
+    followings = None
+    total_followed = None
     badge = None
 
     @staticmethod
@@ -52,15 +54,15 @@ class User(Document):
     def calculate_hours_spent(user):
        
         last_login_time = datetime.utcnow()
+        last_logout_time = str(datetime.utcnow())
         hours_spent = 0
         try:
             last_login_str = user.get('last_login', user['created_on'])
             last_login_time = User.parse_datetime(last_login_str)
-            current_time = datetime.utcnow()
-            hours_spent_this_session = round((current_time - last_login_time).total_seconds() / 3600)
-           # logging.info('Hours spent: %s', hours_spent_this_session)
-            existing_hours_spent = int(user.get('hours_spent', 0))
-            hours_spent = existing_hours_spent + hours_spent_this_session
+            last_logout_str = user.get('last_logout', last_logout_time)
+            last_logout_time = User.parse_datetime(last_logout_str)
+            hours_spent_this_session = round((last_logout_time - last_login_time).total_seconds() / 3600) 
+            hours_spent = hours_spent_this_session
         except ValueError as e:
             print(f"Error parsing date string: {e}")
             # Handle the error or log it as needed
@@ -109,7 +111,7 @@ class User(Document):
             if is_blacklisted_token:
                 return 'Token blacklisted. Please log in again.'
             else:
-                return dict(token=payload['sub'])
+                return dict(token=payload['sub'],jti=payload.get('jti'))
         except jwt.ExpiredSignatureError:
             return 'Signature expired. Please log in again.'
         except jwt.InvalidTokenError:

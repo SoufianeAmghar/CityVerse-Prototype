@@ -8,7 +8,7 @@ import json
 from decimal import Decimal
 from ..service.blacklist_service import save_token
 from app.db.dynamodb_document import Document
-from ..service.user_service import save_new_user, update_login_time_and_score
+from ..service.user_service import save_new_user, update_login_time, get_a_user, update_logout_time_and_score
 
 dynamodb = boto3.resource('dynamodb')
 table_name = 'User'
@@ -81,10 +81,9 @@ class Auth:
 
             if user and user['id'] and user['password'] == data.get('password'):
                 auth_token = User.encode_auth_token(user['id'])
-                hours_spent = User.calculate_hours_spent(user)
 
-                update_login_time_and_score(
-                    user['id'], hours_spent, str(datetime.utcnow()))
+                update_login_time(
+                    user['id'], str(datetime.utcnow()))
 
                 if auth_token:
                     response_object = {
@@ -108,34 +107,7 @@ class Auth:
                 'message': 'Try again'
             }
             return response_object, 500
-
-    @staticmethod
-    def verify_token(new_request):
-        data = new_request.headers.get('Authorization')
-        if data:
-            auth_token = data
-        else:
-            auth_token = ''
-
-        if auth_token:
-            check_token = User.decode_auth_token(auth_token, table_name)
-
-            if check_token['token']:
-                return True
-            else:
-                response_object = {
-                    'status': 'fail',
-                    'message': 'Token tampered'
-                }
-                return response_object, 401
-        else:
-            response_object = {
-                'status': 'fail',
-                'message': 'Provide a valid auth token'
-            }
-
-        return response_object, 403
-
+     
     @staticmethod
     def logout_user(new_request):
         data = new_request.headers.get('Authorization')
@@ -146,8 +118,11 @@ class Auth:
         if auth_token:
             resp = User.decode_auth_token(auth_token, table_name)
             if not isinstance(resp, str):
-                # mark the token as blacklisted
-                return save_token(token=resp['token'])
+                user_id = resp['token'] 
+                user = get_a_user(user_id)
+                hours_spent = User.calculate_hours_spent(user) 
+                update_logout_time_and_score(user_id,hours_spent,str(datetime.utcnow()))
+                return save_token(token=resp['jti'])
             else:
                 response_object = {
                     'status': 'fail',
@@ -165,6 +140,11 @@ class Auth:
     def get_logged_in_user(new_request):
         # get the auth token
         auth_token = new_request.headers.get('Authorization')
+        if not auth_token:
+            return {
+                'status': 'fail',
+                'message': 'Provide a valid auth token.'
+            }, 401
         document = Document(__TABLE_NAME__='User')
         table = 'Blacklist'
         if auth_token:
@@ -174,10 +154,7 @@ class Auth:
                 id = resp['token']
                 user.load(dynamodb_client=boto3.client(
                     'dynamodb'), query={'id': {'S': id}})
-                
-                # for attr, value in user.__dict__.items():
-                #     logging.info(f'{attr}: {value}')
-                # TODO CHANGE THIS
+
                 response_object = {
                     'status': 'success',
                     'data': {
@@ -201,9 +178,6 @@ class Auth:
                         **({'followings': document.convert_dynamodb_item_to_string(item=user.followings)} if user.followings is not None else {}),
                         **({'total_followed': document.convert_dynamodb_item_to_string(item=user.total_followed)} if user.total_followed is not None else {}),
                          **({'badge': document.convert_dynamodb_item_to_string(item=user.badge)} if user.badge is not None else {})
-
-
-
 
                     }
                 }

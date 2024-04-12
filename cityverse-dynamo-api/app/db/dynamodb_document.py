@@ -123,6 +123,27 @@ class Document:
             # Handle any exceptions or errors here
             logging.error(f"Error: {e}")
             return None
+        
+    def get_token(self, token_id):
+        dynamodb_client = boto3.client('dynamodb')
+
+        key_condition = {'token': {'S': str(token_id)}}
+
+        try:
+            response = dynamodb_client.get_item(
+                TableName=self.__TABLE_NAME__,
+                Key=key_condition
+            )
+
+            item = response.get('Item')
+            if item:
+                return self.convert_dynamodb_item_to_string(item)
+            else:
+                return None
+        except Exception as e:
+            # Handle any exceptions or errors here
+            logging.error(f"Error: {e}")
+            return None
 
     def query(self, index, condition, value):
         dynamodb = boto3.resource('dynamodb')
@@ -165,8 +186,6 @@ class Document:
             key_condition = {'id': id}
         if name:
             key_condition['name'] = name
-
-        logging.info(key_condition)
         
         table.delete_item(Key=key_condition)
 
@@ -238,8 +257,6 @@ class Document:
             s3.upload_fileobj(image_file, self.__BUCKET_NAME__, image_key, ExtraArgs={
                               'ContentType': f'image/{file_extension[1:]}'})
             profile_image_url = f"https://{self.__BUCKET_NAME__}.s3.amazonaws.com/{image_key}"
-            logging.info(
-                f"Image uploaded to S3 successfully. URL: {profile_image_url}")
             return profile_image_url
         except FileNotFoundError:
             logging.error("Profile image file not found.")
@@ -263,8 +280,6 @@ class Document:
             s3.upload_fileobj(video_file, self.__BUCKET_NAME__, video_key, ExtraArgs={
                               'ContentType': f'video/{file_extension[1:]}'})
             video_url = f"https://{self.__BUCKET_NAME__}.s3.amazonaws.com/{video_key}"
-            logging.info(
-                f"Video uploaded to S3 successfully. URL: {video_url}")
             return video_url
         except FileNotFoundError:
             logging.error("Video file not found.")
