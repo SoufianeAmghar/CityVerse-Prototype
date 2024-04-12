@@ -326,15 +326,17 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
     if (openSnack === true) {
       setTimeout(() => {
         handleCloseSnack();
+      
       }, 3000);
+      
     }
   }, [openSnack]);
-  
+
   const call_api_get_associations = () => {
     axios
       .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "association/")
       .then((value) => {
-        console.log('association', value?.data)
+        console.log("association", value?.data);
         // setAssociation(value?.data)
         dispatch({
           type: "Associations",
@@ -344,62 +346,108 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
       .catch((err) => {});
   };
   const save = () => {
-    var json = new FormData();
-    const object = JSON.stringify({
-      created_by: sessionStorage.getItem("user_Id"),
-      modified_by: sessionStorage.getItem("user_Id"),
-      name: Name,
-      rna: Rna === "" ? undefined : Rna,
-      description: desc,
-      siege: adress === "" ? undefined : adress,
-      siege_coordinates: coor_siege,
-      sdg: selectedGoals,
-      activity: selectedActivity,
-      social_links: [xLink, fblink, instagramLink, youtubeLink],
-
-      // banner_image: "string",
-      // profile_image: selectedImage,
-    });
-    json.append("json", object);
-    json.append("banner_image", selectedBannerImage);
-    json.append("profile_image", selectedImage);
-    axios
-      .post(
-        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "/association/",
-        json,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Accept: "application/json",
-            type: "formData",
-          },
-        }
-      )
-      .then((value) => {
-        handleClickSnack();
-        call_api_get_associations();
-        setmessage({
-          ...message,
-          msg: "Successfully stored.",
-          error: false,
-        });
-        dispatch({
-          type: "ImageAssociation",
-          imageAssociation: selectedImage,
-        });
-        dispatch({
-          type: "BannerAssociation",
-          bannerAssociation: selectedBannerImage,
-        });
-      })
-      .catch((err) => {
-        handleClickSnack();
-        setmessage({
-          ...message,
-          msg: `Failed to store.`,
-          error: true,
-        });
+    
+    
+    if ( selectedActivity === []) {
+      handleClickSnack();
+      setmessage({
+        ...message,
+        msg: `Please Add activities`,
+        error: true,
       });
+    }
+    if (Rna === undefined || Rna === null) {
+      handleClickSnack();
+      setmessage({
+        ...message,
+        msg: `Please Add valide RNA`,
+        error: true,
+      });
+    }
+    if (coor_siege[0] === undefined || coor_siege[1] === undefined) {
+      handleClickSnack();
+      setmessage({
+        ...message,
+        msg: `Please verify your address, by clicking the verification icon.`,
+        error: true,
+      });
+    } else {
+      var json = new FormData();
+      const object = JSON.stringify({
+        created_by: sessionStorage.getItem("user_Id"),
+        modified_by: sessionStorage.getItem("user_Id"),
+        name: Name,
+        rna: Rna === "" ? undefined : Rna,
+        description: desc,
+        siege: adress === "" ? undefined : adress,
+        siege_coordinates: coor_siege,
+        sdg: selectedGoals,
+        activity: selectedActivity,
+        social_links: [xLink, fblink, instagramLink, youtubeLink],
+
+        // banner_image: "string",
+        // profile_image: selectedImage,
+      });
+      json.append("json", object);
+      json.append("banner_image", selectedBannerImage);
+      json.append("profile_image", selectedImage);
+      axios
+        .post(
+          process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "/association/",
+          json,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Accept: "application/json",
+              type: "formData",
+            },
+          }
+        )
+        .then((value) => {
+
+          handleClickSnack();
+          call_api_get_associations();
+          setmessage({
+            ...message,
+            msg: "Successfully stored.",
+            error: false,
+          });
+          dispatch({
+            type: "ImageAssociation",
+            imageAssociation: selectedImage,
+          });
+          dispatch({
+            type: "BannerAssociation",
+            bannerAssociation: selectedBannerImage,
+          });
+          setTimeout(() => {  
+            setcoor_siege([]);
+            setName();
+            setDesc();
+            setAdress();
+            setRna();  
+            setValuesRna({ 
+              valideRna: false,
+              error: false,
+            });
+            setValuesSiege({     
+              valideSiege: false,
+              error: false,
+            });  
+            handleClose()
+          }, 5000);       
+         
+
+        })
+        .catch((err) => {
+          handleClickSnack();
+          setmessage({
+            ...message,
+            msg: `Failed to store.`,
+            error: true,
+          });
+        });
+    }
   };
 
   return (
@@ -420,36 +468,6 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
               component="main"
               sx={{ padding: "20px" }}
             >
-              {/* <Box
-            sx={{
-              display: "flex",
-              justifyContent:"flex-start",
-              bgcolor: "background.paper",
-              alignItems: "center",
-              borderRadius: 1,
-            }}
-          >
-            <div
-              style={{
-                marginLeft: "20px",
-              }}
-            >
-              <Typography
-                color="text.primary"
-                style={{
-                  fontWeight: "600",
-                  marginLeft: "0.5%",
-                  paddingBottom: "5%",
-                }}
-                component="h1"
-                variant="h4"
-              >
-                {sessionStorage.getItem("language") === "fr"
-                  ? "Add Association"
-                  : "Add Association"}
-              </Typography>
-            </div>
-          </Box> */}
               <Box
                 component="form"
                 // onSubmit={() => ()}

@@ -1264,18 +1264,14 @@ export default function MapCart() {
                     selectedAssocition?.map((item, index) => (
                       <Marker
                         key={index}
-                        position={
-                          Array.isArray(item?.siege_coor)
-                            ? [0, 0]
-                            : [
-                                item?.siege_coordinates[0] !== "undefined"
-                                  ? parseFloat(item?.siege_coordinates[0])
-                                  : 0,
-                                item?.siege_coordinates[0] !== "undefined"
-                                  ? parseFloat(item?.siege_coordinates[1])
-                                  : 0,
-                              ]
-                        }
+                        position={[
+                          item?.siege_coordinates[0] !== undefined
+                            ? parseFloat(item?.siege_coordinates[0])
+                            : 0,
+                          item?.siege_coordinates[1] !== undefined
+                            ? parseFloat(item?.siege_coordinates[1])
+                            : 0,
+                        ]}
                         icon={iconPointOfInterset}
                       >
                         <Popup className="popup">
@@ -1283,35 +1279,6 @@ export default function MapCart() {
                         </Popup>
                       </Marker>
                     ))}
-                  {/* {openPointInterset &&
-                  association?.map(
-                    (item) =>
-                      item?.activity?.find(
-                        (element) => element?.label == selectedActivity
-                      ) && (
-                        <Marker
-                          // key={index}
-                          {...console.log(selectedActivity)}
-                          position={
-                            Array.isArray(item?.siege_coor)
-                              ? [0, 0]
-                              : [
-                                  item?.siege_coordinates[0] !== "undefined"
-                                    ? parseFloat(item?.siege_coordinates[0])
-                                    : 0,
-                                  item?.siege_coordinates[0] !== "undefined"
-                                    ? parseFloat(item?.siege_coordinates[1])
-                                    : 0,
-                                ]
-                          }
-                          icon={iconPointOfInterset}
-                        >
-                          <Popup className="popup">
-                            <CardPlace item={item} />
-                          </Popup>
-                        </Marker>
-                      )
-                  )} */}
                   {dataRéseau_cyclable.features
                     .filter(function (feature) {
                       return feature.geometry.type == "LineString";
