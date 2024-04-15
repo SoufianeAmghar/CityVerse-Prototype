@@ -1587,9 +1587,6 @@ export default function Product() {
             <AntTab label="Posts" {...a11yProps(0)} />
             <AntTab label="Missions" {...a11yProps(1)} />
             <AntTab label="Donations campaigns" {...a11yProps(2)} />
-            <AntTab label="Photos" {...a11yProps(3)} />
-            <AntTab label="Video" {...a11yProps(4)} />
-            <AntTab label="Metaverse" {...a11yProps(5)} />
           </AntTabs>
         </Grid>
       </Grid>
@@ -2692,145 +2689,6 @@ export default function Product() {
                     </Box>
                   </Suspense>
                 </TabPanel>
-                <TabPanel value={value} index={3} dir={theme.direction}>
-                  <Suspense
-                    fallback={
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          height: "100%",
-                          width: "100%",
-                        }}
-                      >
-                        <CircularProgress
-                          color="success"
-                          disableShrink
-                          sx={{
-                            animationDuration: "550ms",
-                          }}
-                          size={60}
-                          thickness={2}
-                        />
-                      </div>
-                    }
-                  >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Button onClick={() => handleOpennewImage()}>
-                        <Typography
-                          gutterBottom
-                          variant="h6"
-                          component="div"
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            color: "#08089C",
-                          }}
-                        >
-                          <AddBusinessIcon sx={{ color: "#08089C" }} />
-                          {"  "} &emsp;Ajouter Nouveau Photo
-                        </Typography>
-                      </Button>
-
-                      <ListImage itemData={itemData} />
-                    </Box>
-                  </Suspense>
-                </TabPanel>
-                <TabPanel value={value} index={4} dir={theme.direction}>
-                  <Suspense
-                    fallback={
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          height: "100%",
-                          width: "100%",
-                        }}
-                      >
-                        <CircularProgress
-                          color="success"
-                          disableShrink
-                          sx={{
-                            animationDuration: "550ms",
-                          }}
-                          size={60}
-                          thickness={2}
-                        />
-                      </div>
-                    }
-                  >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Button onClick={() => handleOpennewImage()}>
-                        <Typography
-                          gutterBottom
-                          variant="h6"
-                          component="div"
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            color: "#08089C",
-                          }}
-                        >
-                          <AddBusinessIcon sx={{ color: "#08089C" }} />
-                          {"  "} &emsp;Ajouter Nouveau video
-                        </Typography>
-                      </Button>
-                      <ListVideo itemData={itemData} />
-                    </Box>
-                  </Suspense>
-                </TabPanel>
-                <TabPanel value={value} index={5} dir={theme.direction}>
-                  <Suspense
-                    fallback={
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          height: "100%",
-                          width: "100%",
-                        }}
-                      >
-                        <CircularProgress
-                          color="success"
-                          disableShrink
-                          sx={{
-                            animationDuration: "550ms",
-                          }}
-                          size={60}
-                          thickness={2}
-                        />
-                      </div>
-                    }
-                  >
-                    <Typography
-                      gutterBottom
-                      variant="h6"
-                      component="div"
-                      sx={{ display: "flex", alignItems: "center" }}
-                    >
-                      <AddBusinessIcon sx={{ color: "#08089C" }} />
-                      {"  "} &emsp;Metaverse
-                    </Typography>
-                  </Suspense>
-                </TabPanel>
               </SwipeableViews>
             </Grid>
           </Grid>
@@ -3280,7 +3138,7 @@ const LongMenu = (idMission) => {
         <DialogActions>
           <Button
             onClick={() => {
-              handledeleteMission();
+              handleCloseApplications();
             }}
             variant="contained"
             style={styleValidate}
