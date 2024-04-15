@@ -241,7 +241,7 @@ export default function CardPlace(item) {
           component="img"
           height="160"
           image={item?.item?.banner_image}
-          alt="Paella dish"
+        
         />
         <CardContent>
           <Typography variant="body2" color="text.secondary">
