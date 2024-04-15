@@ -378,8 +378,7 @@ import React, {
       })
       .catch((err) => {
       });
-  
-      console.log("mission", object);
+
     };
     const duration = [
       { id: 1, label: "1 day" },

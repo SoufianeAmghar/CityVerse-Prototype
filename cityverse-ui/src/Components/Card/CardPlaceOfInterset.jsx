@@ -80,9 +80,7 @@ export default function CardPlace(item) {
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
-  {
-    console.log("following", following, item);
-  }
+ 
 
   useEffect(() => {
     for (let i = 0; i <= following?.length; i++) {

@@ -31,7 +31,6 @@ export default function FavouriteAssociation(item) {
   }
 }
 
-  console.log("item", item, Following, association , console.log(get_association_byIdName()));
   useEffect(() => {
     get_association_byIdName();
   }, [])

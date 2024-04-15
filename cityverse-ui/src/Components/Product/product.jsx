@@ -387,7 +387,7 @@ export default function Product() {
       )
       .then((value) => {
         setInprogress(false);
-        console.log("Posts", value.data);
+       
         dispatch({
           type: "Posts",
           posts: orderByDate(value?.data),
@@ -593,7 +593,7 @@ export default function Product() {
       address: adress,
       user_id: sessionStorage.getItem("user_Id"),
     };
-    console.log(object);
+   
     axios
       .post(
         process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
@@ -616,7 +616,7 @@ export default function Product() {
       amount: parseInt(amount),
       user_id: sessionStorage.getItem("user_Id"),
     };
-    console.log(object);
+  
     axios
       .post(
         process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
@@ -1988,7 +1988,7 @@ export default function Product() {
                               <div style={{ position: "relative" }}>
                                 {selectedPostImage &&
                                   (isPDF(selectedPostImage) === true ? (
-                                    <>{console.log(selectedPostImage)}</>
+                                    <></>
                                   ) : (
                                     <>
                                       <img
@@ -2437,29 +2437,6 @@ export default function Product() {
                                   <CardActions
                                     sx={{ flexDirection: "row-reverse" }}
                                   >
-                                    {'exist',console.log(searchIdInItems(sessionStorage.getItem('user_id'),sessionStorage.getItem('id_mission')), applications)}
-                                    {/* { searchIdInItems(sessionStorage.getItem('user_id'),applications) ? <Chip
-                                      variant="contained"
-                                      color="success"
-                                      // disabled={handleAdd()}
-                                      sx={styleValidate}
-                                      label="Already applied for"
-                                    ></Chip> : <Button
-                                      variant="contained"
-                                      // disabled={handleAdd()}
-                                      sx={{
-                                        color: "#556B2F",
-                                        borderRadius: "20px",
-                                        backgroundColor: "#FFF",
-                                        margin: "2%",
-                                      }}
-                                      onClick={() => {
-                                        handleopenApplyMission();
-                                        setIdMission(item?.id);
-                                      }}
-                                    >
-                                      Apply
-                                    </Button>} */}
                                     <Button
                                       variant="contained"
                                       // disabled={handleAdd()}
@@ -2965,7 +2942,7 @@ const LongMenu = (idMission) => {
     axios
       .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "mission/")
       .then((value) => {
-        console.log("Missions", value.data);
+       
         dispatch({
           type: "Missions",
           missions: orderByDate(value?.data),
@@ -3437,7 +3414,7 @@ const LongMenuDonations = (idDonation) => {
     axios
       .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "mission/")
       .then((value) => {
-        console.log("Missions", value.data);
+       
         dispatch({
           type: "Missions",
           missions: orderByDate(value?.data),

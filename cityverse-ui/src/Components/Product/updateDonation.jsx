@@ -212,7 +212,7 @@ import React, {
   
     return (
       <div>
-        {console.log('don', donations)}
+       
         <Modal
           open={open}
           onClose={handleClose}

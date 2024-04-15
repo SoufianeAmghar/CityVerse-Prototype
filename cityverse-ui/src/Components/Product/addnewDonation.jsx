@@ -201,7 +201,7 @@ export default function ModaladdnewDonation({ open, setOpen, goals }) {
 
   return (
     <div>
-      {console.log('don', donations)}
+    
       <Modal
         open={open}
         onClose={handleClose}

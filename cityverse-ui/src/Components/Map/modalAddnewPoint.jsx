@@ -163,10 +163,7 @@ export default function ModaladdnewPoint({ open, setOpen, goals }) {
           });
         },
         (error) => {
-          console.log(
-            "--------- ERROR WHILE FETCHING LOCATION ----------- ",
-            error
-          );
+        
         },
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
       );

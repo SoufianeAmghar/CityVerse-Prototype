@@ -188,7 +188,7 @@ export default function MapCart() {
     axios
       .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "association/")
       .then((value) => {
-        console.log("association", value?.data);
+       
         // setAssociation(value?.data)
         dispatch({
           type: "Associations",
@@ -219,13 +219,7 @@ export default function MapCart() {
         headers,
       })
       .then((value) => {
-        console.log(
-          "test",
-          convertStringArrayToNumberArray([
-            value?.data?.data?.address_coordinates?.M?.latitude?.S,
-            value?.data?.data?.address_coordinates?.M?.longitude?.S,
-          ])
-        );
+      
 
         if (
           value?.data?.data?.address_coordinates?.L?.length === 0 &&
@@ -451,7 +445,7 @@ export default function MapCart() {
     var t4 = t2 * t3;
     var t5 = t1 + t4;
     var rad_dist = Math.atan(-t5 / Math.sqrt(-t5 * t5 + 1)) + 2 * Math.atan(1);
-    console.log(rad_dist * 3437.74677 * 1.1508 * 1.6093470878864446 * 1000);
+   
     return rad_dist * 3437.74677 * 1.1508 * 1.6093470878864446 * 1000;
   }
   function LocationMarker({ testCities }) {
@@ -686,7 +680,7 @@ export default function MapCart() {
     setSelectedAssociation(
       filterArrayOfObjects(association, selectedGoals, selectedActivities)
     );
-    console.log(filteredArray);
+  
   }, [openPointInterset, selectedActivity, goal]);
   const [expanded, setExpanded] = React.useState(false);
 
@@ -1463,10 +1457,7 @@ export default function MapCart() {
                         <IconButton
                           onClick={() => {
                             setgoal(item?.goal);
-                            console.log(
-                              "sdg",
-                              handleSelectedGoals(selectedGoals, item?.short)
-                            );
+                           
                           }}
                         >
                           <img
@@ -1541,13 +1532,7 @@ export default function MapCart() {
                         <IconButton
                           onClick={() => {
                             setselecteDAcitivity(item?.label);
-                            console.log(
-                              "activities",
-                              handleselectedActivities(
-                                selectedActivities,
-                                item?.label
-                              )
-                            );
+                           
                           }}
                         >
                           <img

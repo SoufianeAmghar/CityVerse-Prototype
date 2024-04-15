@@ -17,7 +17,7 @@ export default function CardWifi(item) {
       <CardContent>
         <Typography variant="h6" component="h2">
           {item?.item?.nom_site}
-          {console.log(item?.item)}
+          
         </Typography>
         {/* <Stack direction="row" spacing={1}>
           <Chip

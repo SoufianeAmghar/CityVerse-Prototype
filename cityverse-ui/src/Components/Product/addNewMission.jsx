@@ -365,7 +365,7 @@ export default function ModaladdnewMission({ open, setOpen, goals }) {
     .catch((err) => {
     });
 
-    console.log("mission", object);
+   
   };
   const duration = [
     { id: 1, label: "1 day" },

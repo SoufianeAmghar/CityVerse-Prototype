@@ -71,7 +71,6 @@ export default function PersonalDetails() {
           type: "ImageProfile",
           imageProfile: value.data.data.profile_image?.S,
         });
-        console.log(value.data.data);
       })
       .catch((err) => {
         //deconnexion();
