@@ -54,7 +54,13 @@ def approve_application(application_id,data):
     application_document = Document(__TABLE_NAME__='Application')
     user_document = Document(__TABLE_NAME__='User')
     application = application_document.get_item(application_id)
-    user = user_document.get_item(application['user_id'])
+    if application:
+      user = user_document.get_item(application['user_id'])
+    else:
+        return {
+            'status': 'fail',
+            'message': 'Application for approval not found.',
+        }, 404
     if user:
         if 'badge' not in user or not isinstance(user['badge'], list):
             user['badge'] = []
