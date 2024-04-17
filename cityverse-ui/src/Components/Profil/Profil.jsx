@@ -392,25 +392,6 @@ export default function Profile() {
         setInprogressMissions(false);
       });
   };
-  // const call_api_get_badges_by_id = (id, n) => {
-  //   const headers = {
-  //     UserAgent: sessionStorage.getItem("user_Id"),
-  //   };
-  //   axios
-  //     .get(process.env.REACT_APP_ADMINISTRATION_USERS_SERVER + "user/" + sessionStorage.getItem("user_Id") + "/missions", {
-  //       headers,
-  //     })
-  //     .then((value) => {
-  //       // setInprogressMissions(false)
-  //       // dispatch({
-  //       //   type: "Missions_applied_for",
-  //       //   missions_applied_for: orderByDate(value?.data),
-  //       // });
-  //     })
-  //     .catch((err) => {
-  //       // setInprogressMissions(false)
-  //     });
-  // };
 
   useEffect(() => {
     call_api_get_user_info();

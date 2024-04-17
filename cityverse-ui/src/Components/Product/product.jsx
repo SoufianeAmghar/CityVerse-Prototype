@@ -337,7 +337,79 @@ export default function Product() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  // tochanche association data
+  const [openChange_profileImage, setOpenChangeProfileImage] = useState();
+  const [openChange_profile, setOpenChangeProfile] = useState();
+  const [openChange_coverImage, setOpenChangeCoverImage] = useState();
+  const [selectedImage, setSelectedImage] = useState(null);
 
+  const handleOpenProfileImage = () => {
+    setOpenChangeProfileImage(true);
+    handleClose();
+  };
+  const handleCloseProfileImage = () => {
+    setOpenChangeProfileImage(false);
+    setSelectedProfileImage(null);
+  };
+
+  const handleOpenCoverImage = () => {
+    setOpenChangeCoverImage(true);
+    handleClose();
+  };
+  const handleCloseCoverImage = () => {
+    setOpenChangeCoverImage(false);
+    setSelectedImage(null);
+  };
+  const handleOpenProfile = () => {
+    setOpenChangeProfile(true);
+    handleClose();
+  };
+  const handleCloseProfile = () => {
+    setOpenChangeProfile(false);
+    handleClose();
+  };
+
+  const handleCoverChange = (e) => {
+    const filecover = e.target.files[0];
+    setSelectedImage(e.target.files[0]);
+  };
+  const handleProfileImageChange = (e) => {
+    const file = e.target.files[0];
+    setSelectedProfileImage(e.target.files[0]);
+  };
+  const update_profile_image = () => {
+    var json = new FormData();
+    json.append("profile_image", selectedProfileImage);
+    axios
+      .put(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "user/profile/" +
+          sessionStorage.getItem("user_Id"),
+        json
+      )
+      .then((value) => {
+        // call_api_get_user_info();
+      
+      })
+      .catch((err) => {});
+  };
+  const update_banner_image = () => {
+    var json = new FormData();
+    json.append("banner_image", selectedImage);
+    axios
+      .put(
+        process.env.REACT_APP_ADMINISTRATION_USERS_SERVER +
+          "user/banner/" +
+          sessionStorage.getItem("user_Id"),
+        json
+      )
+      .then((value) => {
+        // call_api_get_user_info();     
+      })
+      .catch((err) => {});
+  };
+
+  // --------------------------------------//
   const [itemData, setItemData] = useState([
     {
       img: "https://thumbs.dreamstime.com/b/stare-de-france-stadium-official-stadium-french-national-football-team-56956107.jpg",
@@ -633,6 +705,459 @@ export default function Product() {
 
   return (
     <div style={{}}>
+      <Dialog
+        open={openChange_coverImage}
+        onClose={() => {
+          handleCloseCoverImage();
+        }}
+        maxWidth="sm"
+        fullWidth
+        style={{ boxShadow: "none" }}
+      >
+        <DialogTitle id="alert-dialog-title">
+          {sessionStorage.getItem("language") === "fr"
+            ? "Change cover image"
+            : "Change cover image"}
+        </DialogTitle>
+        <Box position="absolute" top={0} right={0}>
+          <IconButton
+            onClick={() => {
+              handleCloseCoverImage();
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            <Stack direction="row" alignItems="center" spacing={2}>
+              <input
+                accept="image/*"
+                style={{ display: "none" }}
+                id="image-upload"
+                type="file"
+                onChange={handleCoverChange}
+              />
+              <label htmlFor="image-upload">
+                <Button
+                  variant="contained"
+                  color="success"
+                  sx={{
+                    backgroundColor: "success",
+                    minWidth: "25%",
+                    borderRadius: "20px",
+                    color: "#fff",
+                  }}
+                  component="span"
+                  startIcon={<CloudUploadIcon />}
+                >
+                  Upload cover Image
+                </Button>
+              </label>
+              <div style={{ position: "relative" }}>
+                {selectedImage && (
+                  <>
+                    <img
+                      style={{
+                        width: "300px",
+                        height: "100px",
+                        borderRadius: "1%",
+                      }}
+                      src={URL.createObjectURL(selectedImage)}
+                      alt="Uploaded"
+                    />
+                    <CancelIcon
+                      style={{
+                        position: "absolute",
+                        top: "-10",
+                        right: "-10",
+                        color: "#556B2F",
+                      }}
+                      onClick={() => {
+                        setSelectedImage(null);
+                      }}
+                    />
+                  </>
+                )}
+              </div>
+            </Stack>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              update_banner_image();
+              dispatch({
+                type: "CoverProfile",
+                coverProfile:  URL.createObjectURL(selectedImage),
+              });
+              handleCloseCoverImage();
+            }}
+            variant="contained"
+            style={styleValidate}
+            color="success"
+          >
+            {sessionStorage.getItem("language") === "fr"
+              ? "Confirmer"
+              : "Confirmer"}
+          </Button>
+          <Button
+            onClick={() => {
+              handleClose();
+            }}
+            variant="contained"
+            style={styleCancelDelete}
+          >
+            {sessionStorage.getItem("language") === "fr" ? "Cacher" : "Cacher"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={openChange_profileImage}
+        onClose={() => {
+          handleCloseProfileImage();
+        }}
+        maxWidth="sm"
+        fullWidth
+        style={{ boxShadow: "none" }}
+      >
+        <DialogTitle id="alert-dialog-title">
+          {sessionStorage.getItem("language") === "fr"
+            ? "Changer la photo de profil"
+            : "Changer la photo de profil"}
+        </DialogTitle>
+        <Box position="absolute" top={0} right={0}>
+          <IconButton
+            onClick={() => {
+              handleCloseProfileImage();
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            <Stack direction="row" alignItems="center" spacing={2}>
+              <input
+                accept="image/*"
+                style={{ display: "none" }}
+                id="image-upload"
+                type="file"
+                onChange={handleProfileImageChange}
+              />
+              <label htmlFor="image-upload">
+                <Button
+                  variant="contained"
+                  color="success"
+                  sx={{
+                    backgroundColor: "success",
+                    minWidth: "25%",
+                    borderRadius: "20px",
+                    color: "#fff",
+                  }}
+                  component="span"
+                  startIcon={<CloudUploadIcon />}
+                >
+                  Upload Profile Image
+                </Button>
+              </label>
+              <div style={{ position: "relative" }}>
+                {selectedProfileImage && (
+                  <>
+                    <img
+                      style={{
+                        width: "100px",
+                        height: "100px",
+                        borderRadius: "100%",
+                      }}
+                      src={URL.createObjectURL(selectedProfileImage)}
+                      alt="Uploaded"
+                    />
+                    <CancelIcon
+                      style={{
+                        position: "absolute",
+                        top: "0",
+                        right: "0",
+                        color: "#556B2F",
+                      }}
+                      onClick={() => {
+                        setSelectedProfileImage(null);
+                      }}
+                    />
+                  </>
+                )}
+              </div>
+            </Stack>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              update_profile_image();
+              dispatch({
+                type: "ImageProfile",
+                imageProfile: URL.createObjectURL(selectedProfileImage),
+              });
+              handleCloseProfileImage();
+            }}
+            variant="contained"
+            style={styleValidate}
+            color="success"
+          >
+            {sessionStorage.getItem("language") === "fr"
+              ? "Confirmer"
+              : "Confirmer"}
+          </Button>
+          <Button
+            onClick={() => {
+              handleCloseProfileImage();
+            }}
+            variant="contained"
+            style={styleCancelDelete}
+          >
+            {sessionStorage.getItem("language") === "fr" ? "Cacher" : "Cacher"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {/* update Profile modal */}
+      <Dialog
+        open={openChange_profile}
+        onClose={() => {
+          handleCloseProfile();
+        }}
+        maxWidth="sm"
+        fullWidth
+        style={{ boxShadow: "none" }}
+      >
+        <DialogTitle id="alert-dialog-title">
+          {sessionStorage.getItem("language") === "fr"
+            ? "Change Profile"
+            : "Change Profile"}
+        </DialogTitle>
+        <Box position="absolute" top={0} right={0}>
+          <IconButton
+            onClick={() => {
+              handleCloseProfile();
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            <Grid container spacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+              <Grid item xs={6}>
+                <TextField
+                  size="small"
+                  focused
+                  variant="outlined"
+                  color="success"
+                  fullWidth
+                  InputLabelProps={{ style: { color: "black" } }}
+                  //error={name.length === 0 ? true : false}
+                  placeholder={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "Obligatoire"
+                      : "Required"
+                  }
+                  label={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "Nom d'association"
+                      : "Nom d'association"
+                  }
+                  value={""}
+                  // onChange={(e) => setFirstName(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  size="small"
+                  focused
+                  variant="outlined"
+                  color="success"
+                  fullWidth      
+                  InputLabelProps={{ style: { color: "black" } }}
+                  placeholder={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "Obligatoire"
+                      : "Required"
+                  }
+                  label={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "Localistation"
+                      : "Localistation"
+                  }
+                  value={""}
+                  // onChange={(e) => setFirstName(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  size="small"
+                  focused
+                  variant="outlined"
+                  color="success"
+                  fullWidth
+                  // InputProps={{
+                  //   className: classes.input,
+                  // }}
+                  multiline
+                  rows={4}
+                  InputLabelProps={{ style: { color: "black" } }}
+                  //error={name.length === 0 ? true : false}
+                  placeholder={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "Obligatoire"
+                      : "Required"
+                  }
+                  label={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "Description"
+                      : "Description"
+                  }
+                  value={
+                    ""
+                  }
+                  // onChange={(e) => setFirstName(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  size="small"
+                  focused
+                  variant="outlined"
+                  color="success"
+                  fullWidth
+                 
+                  InputLabelProps={{ style: { color: "black" } }}
+                  //error={name.length === 0 ? true : false}
+                  placeholder={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "Obligatoire"
+                      : "Required"
+                  }
+                  label={
+                    sessionStorage.getItem("language") === "fr" ? "X" : "X"
+                  }
+                  value={""}
+                  // onChange={(e) => setFirstName(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  size="small"
+                  focused
+                  variant="outlined"
+                  color="success"
+                  fullWidth
+                  InputLabelProps={{style: { color: "black" }}}
+                  placeholder={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "Obligatoire"
+                      : "Required"
+                  }
+                  label={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "Instagram"
+                      : "Instagram"
+                  }
+                  value={""}
+                  // onChange={(e) => setFirstName(e.target.value)}
+                />
+              </Grid>  
+              <Grid item xs={6}>
+                <TextField
+                  size="small"
+                  focused
+                  variant="outlined"
+                  color="success"
+                  fullWidth
+                  InputLabelProps={{style: { color: "black" }}}
+                  placeholder={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "Obligatoire"
+                      : "Required"
+                  }
+                  label={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "Instagram"
+                      : "Instagram"
+                  }
+                  value={""}
+                  // onChange={(e) => setFirstName(e.target.value)}
+                />
+              </Grid>  
+              <Grid item xs={6}>
+                <TextField
+                  size="small"
+                  focused
+                  variant="outlined"
+                  color="success"
+                  fullWidth
+                  InputLabelProps={{style: { color: "black" }}}
+                  placeholder={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "Obligatoire"
+                      : "Required"
+                  }
+                  label={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "Facebook"
+                      : "Facebook"
+                  }
+                  value={""}
+                  // onChange={(e) => setFirstName(e.target.value)}
+                />
+              </Grid>    
+              <Grid item xs={6}>
+                <TextField
+                  size="small"
+                  focused
+                  variant="outlined"
+                  color="success"
+                  fullWidth
+                  InputLabelProps={{style: { color: "black" }}}
+                  placeholder={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "Obligatoire"
+                      : "Required"
+                  }
+                  label={
+                    sessionStorage.getItem("language") === "fr"
+                      ? "Youtube"
+                      : "Youtube"
+                  }
+                  value={""}
+                  // onChange={(e) => setFirstName(e.target.value)}
+                />
+              </Grid>    
+            </Grid>     
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              handleCloseProfile();
+            }}
+            variant="contained"
+            style={styleValidate}
+            color="success"
+          >
+            {sessionStorage.getItem("language") === "fr"
+              ? "Confirmer"
+              : "Confirmer"}
+          </Button>
+          <Button
+            onClick={() => {
+              handleCloseProfile();
+            }}
+            variant="contained"
+            style={styleCancelDelete}
+          >
+            {sessionStorage.getItem("language") === "fr" ? "Cacher" : "Cacher"}
+          </Button>
+        </DialogActions>
+      </Dialog>
       {/* add new photos */}
       <Dialog
         open={opennewImage}
@@ -1574,6 +2099,60 @@ export default function Product() {
                   {data?.name} <StarIcon sx={{ color: "#FFD700" }} />
                 </>
               </Typography>
+              <div>
+                {" "}
+                <div>
+                  <Button
+                    id="basic-button"
+                    variant="contained"
+                    endIcon={<SettingsIcon />}
+                    sx={{
+                      background: "#fff",
+                      minWidth: "20%",
+                      borderRadius: "5px",
+                      color: "#08089C",
+                    }}
+                    aria-controls={open ? "basic-menu" : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? "true" : undefined}
+                    onClick={handleClick}
+                  >
+                    Settings
+                  </Button>
+                  <Menu
+                    id="basic-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    MenuListProps={{
+                      "aria-labelledby": "basic-button",
+                    }}
+                  >
+                    <MenuItem onClick={handleOpenProfileImage}>
+                      <Typography gutterBottom variant="body2" component="div">
+                        Modifier la photo de profile d'association
+                      </Typography>
+                    </MenuItem>
+                    <MenuItem onClick={handleOpenCoverImage}>
+                      <Typography gutterBottom variant="body2" component="div">
+                        Modifier la photo de coverture d'association
+                      </Typography>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        handleClose();
+                        // history.push("/settings");
+                        handleOpenProfile();
+                      }}
+                    >
+                      {" "}
+                      <Typography gutterBottom variant="body2" component="div">
+                        Modifier les données d'association
+                      </Typography>
+                    </MenuItem>
+                  </Menu>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -3594,18 +4173,6 @@ const LongMenuDonations = (idDonation) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          {/* <Button
-            onClick={() => {
-              handleCloseApplications();
-            }}
-            variant="contained"
-            style={styleValidate}
-            color="success"
-          >
-            {sessionStorage.getItem("language") === "fr"
-              ? "Confirmer"
-              : "Confirmer"}
-          </Button> */}
           <Button
             onClick={() => {
               handleCloseApplications();
