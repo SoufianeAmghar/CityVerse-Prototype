@@ -69,7 +69,9 @@ class Place(Resource):
         """Update a Place"""
         json_data_str = request.form.get('json')
         data = json.loads(json_data_str) if json_data_str else {}
-        return edit_association(association_id, data)
+        banner_file = request.files.get('banner_image')
+        profile_file = request.files.get('profile_image')
+        return edit_association(association_id, data,banner_file,profile_file)
     
 
 @api.route('/search')
