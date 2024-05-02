@@ -5,6 +5,10 @@ Cityverse is a virtual overlay for the physical Paris city. Powered by local new
 
 ![Diagramme vierge](https://github.com/SoufianeAmghar/CityVerse-Prototype/assets/94147142/c4930edb-61e2-4337-9294-3b2cc3cd2809)
 
+For local setups, don't forget the following command to install back-end dependencies:
+
+`pip install -r requirements.txt`
+
 ## DynamoDB Database Setup
 
 The following sections outline the key aspects of the DynamoDB database setup for the CityVerse-Prototype project as seen in the image below :
